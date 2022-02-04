@@ -3,6 +3,7 @@ using RFRocketLibrary.Utils;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
 using UnityEngine;
+#pragma warning disable 612
 
 namespace RFRocketLibrary.Models
 {

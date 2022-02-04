@@ -8,7 +8,7 @@
         public static string LiteDBAsync = "1203a2b4155bce755c56846680237d55";
         public static string MySqlData = "0ce4244755389d4c955f48d5ee1a994f";
         public static string NewtonsoftJson = "0ed248f9cf0b97fb2f7a307f498d9169";
-        public static string RFRocketLibrary = "";
+        // public static string RFRocketLibrary = "";
         public static string SystemManagement = "316e5353bf92251e7de7b67a21baf441";
         public static string SystemRuntimeSerialization = "5e51216f50d9cb1e8fc30fe538e949af";
         public static string SystemXmlLinq = "5b7595869d1270a3b99228bb49170da8";

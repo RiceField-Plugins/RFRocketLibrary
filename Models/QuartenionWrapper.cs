@@ -13,10 +13,10 @@ namespace RFRocketLibrary.Models
 
         public QuartenionWrapper(float x, float y, float z, float w)
         {
-            this.X = x;
-            this.Y = y;
-            this.Z = z;
-            this.W = w;
+            X = x;
+            Y = y;
+            Z = z;
+            W = w;
         }
         
         public QuartenionWrapper(Quaternion quaternion)

@@ -20,8 +20,8 @@
         public static string NewtonsoftJson =
             "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/Newtonsoft.Json.13.0.1.dll";
 
-        public static string RFRocketLibrary =
-            "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/RFRocketLibrary.1.0.0.dll";
+        // public static string RFRocketLibrary =
+        //     "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@latest/RFRocketLibrary.1.0.0.dll";
 
         public static string SystemManagement =
             "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/System.Management.4.0.0.0.dll";

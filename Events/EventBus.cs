@@ -23,6 +23,9 @@ namespace RFRocketLibrary.Events
             BarricadeDrop.OnSalvageRequested_Global += UnturnedEvent.OnPreBarricadeSalvagedInvoker;
             BarricadeManager.onBarricadeSpawned += UnturnedEvent.OnBarricadeSpawnedInvoker;
             BarricadeManager.onDeployBarricadeRequested += UnturnedEvent.OnPreBarricadeSpawnedInvoker;
+            BarricadeManager.OnRepaired += UnturnedEvent.OnBarricadeRepairedInvoker;
+            BarricadeManager.OnRepairRequested += UnturnedEvent.OnPreBarricadeRepairedInvoker;
+            BarricadeManager.onTransformRequested += UnturnedEvent.OnPreBarricadeTransformedInvoker;
             ItemManager.onItemDropAdded += UnturnedEvent.OnItemSpawnedInvoker;
             ItemManager.onServerSpawningItemDrop += UnturnedEvent.OnPreItemSpawnedInvoker;
             ItemManager.onItemDropRemoved += UnturnedEvent.OnItemTakenInvoker;
@@ -54,14 +57,19 @@ namespace RFRocketLibrary.Events
             PlayerEquipment.OnPunch_Global += UnturnedEvent.OnPlayerPunchedInvoker;
             UseableGun.OnReloading_Global += UnturnedEvent.OnPlayerReloadedGunInvoker;
             PlayerSkills.OnReputationChanged_Global += UnturnedEvent.OnPlayerReputationChangedInvoker;
+            PlayerLife.OnSelectingRespawnPoint += UnturnedEvent.OnPrePlayerRespawnedInvoker;
             PlayerSkills.OnSkillUpgraded_Global += UnturnedEvent.OnPlayerSkillUpgradedInvoker;
             Player.onPlayerStatIncremented += UnturnedEvent.OnPlayerStatIncrementedInvoker;
             UseableThrowable.onThrowableSpawned += UnturnedEvent.OnPlayerThrewThrowableInvoker;
+            ObjectManager.onDamageObjectRequested += UnturnedEvent.OnPreObjectDamagedInvoker;
             ResourceManager.onDamageResourceRequested += UnturnedEvent.OnPreResourceDamagedInvoker;
             ChatManager.onServerSendingMessage += UnturnedEvent.OnServerSentMessageInvoker;
             StructureDrop.OnSalvageRequested_Global += UnturnedEvent.OnPreStructureSalvagedInvoker;
             StructureManager.onStructureSpawned += UnturnedEvent.OnStructureSpawnedInvoker;
             StructureManager.onDeployStructureRequested += UnturnedEvent.OnPreStructureSpawnedInvoker;
+            StructureManager.OnRepaired += UnturnedEvent.OnStructureRepairedInvoker;
+            StructureManager.OnRepairRequested += UnturnedEvent.OnPreStructureRepairedInvoker;
+            StructureManager.onTransformRequested += UnturnedEvent.OnPreStructureTransformedInvoker;
             VehicleManager.OnVehicleExploded += UnturnedEvent.OnVehicleExplodedInvoker;
             VehicleManager.OnPreDestroyVehicle += UnturnedEvent.OnVehicleDestroyedInvoker;
             DamageTool.damageZombieRequested += UnturnedEvent.OnPreZombieDamagedInvoker;
@@ -74,15 +82,8 @@ namespace RFRocketLibrary.Events
             R.Commands.OnExecuteCommand += RocketEvent.OnPreCommandExecutedInvoker;
             
             // Harmony Events
-            try
-            {
-                var harmony = new HarmonyLib.Harmony(HarmonyId);
-                harmony.PatchAll();
-            }
-            catch (Exception e)
-            {
-                Logger.LogError($"[RFPlugins] [ERROR] EventLoad: {e.Message}");
-            }
+            var harmony = new HarmonyLib.Harmony(HarmonyId);
+            harmony.PatchAll();
 
             Initialized = true;
         }
@@ -108,6 +109,7 @@ namespace RFRocketLibrary.Events
         {
             if (!Initialized)
                 return;
+            
             Initialized = false;
         }
 
