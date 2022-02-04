@@ -74,7 +74,8 @@ namespace RFRocketLibrary.Utils
             var cacheDir = Path.Combine(librariesDir, "Cache");
             if (!Directory.Exists(cacheDir))
                 Directory.CreateDirectory(cacheDir);
-            return Path.Combine(cacheDir, "");
+            
+            return Path.Combine(cacheDir, typeof(DependencyIntegrity).GetField(dependency.ToString()).GetValue(null).ToString());
         }
 
         public static string GetIntegrity(string filePath)
