@@ -51,7 +51,7 @@ namespace RFRocketLibrary.Utils
 
         public static SteamProfile? GetSteamProfile(ulong steamId, bool useNode = true)
         {
-            var url = $"https://steamcommunity.com/profiles/{steamId}xml=1";
+            var url = $"https://steamcommunity.com/profiles/{steamId}?xml=1";
             switch (useNode)
             {
                 case true:
@@ -93,7 +93,7 @@ namespace RFRocketLibrary.Utils
 
         public static async UniTask<SteamProfile?> GetSteamProfileUniTaskAsync(ulong steamId)
         {
-            var url = $"https://steamcommunity.com/profiles/{steamId}xml=1";
+            var url = $"https://steamcommunity.com/profiles/{steamId}?xml=1";
             var wc = new WebClient();
             wc.Proxy = null;
             try
@@ -114,7 +114,7 @@ namespace RFRocketLibrary.Utils
 
         public static async Task<SteamProfile?> GetSteamProfileAsync(ulong steamId)
         {
-            var url = $"https://steamcommunity.com/profiles/{steamId}xml=1";
+            var url = $"https://steamcommunity.com/profiles/{steamId}?xml=1";
             var wc = new WebClient();
             wc.Proxy = null;
             try

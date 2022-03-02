@@ -46,9 +46,11 @@ namespace RFRocketLibrary.Helpers
                 Logger.Log(text);
                 return;
             }
+            
             if (!ulong.TryParse(player.Id, out var steamId))
                 return;
-            Say(new CSteamID(steamId), text, color);
+            
+            Say(new CSteamID(steamId), text, color, iconURL);
         }
     }
 }
