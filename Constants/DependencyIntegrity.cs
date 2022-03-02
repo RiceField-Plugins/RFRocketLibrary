@@ -2,8 +2,8 @@
 {
     public static class DependencyIntegrity
     {
-        public static string Dapper = "daeda826f01eb40b85557d062df19051";
-        public static string Harmony = "0f79188c208acc1400b8fcba02de7fa4";
+        public static string Dapper = "15441d2992a9fe398446367bb406b563";
+        public static string Harmony = "a4dbf3fac814e73c56dccaed711fa43c";
         public static string LiteDB = "4092ceeb0be21f4a8bd87daa2188bf09";
         public static string LiteDBAsync = "1203a2b4155bce755c56846680237d55";
         public static string MySqlData = "0ce4244755389d4c955f48d5ee1a994f";

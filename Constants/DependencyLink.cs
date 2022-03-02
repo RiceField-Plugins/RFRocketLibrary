@@ -3,10 +3,10 @@
     public static class DependencyLink
     {
         public static string Dapper =
-            "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/Dapper.2.0.90.dll";
+            "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/Dapper.2.0.123.dll";
 
         public static string Harmony =
-            "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/0Harmony.2.1.1.0.dll";
+            "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/0Harmony.2.2.0.0.dll";
 
         public static string LiteDB =
             "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/LiteDB.5.0.11.0.dll";

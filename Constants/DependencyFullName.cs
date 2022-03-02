@@ -3,7 +3,7 @@
     public static class DependencyFullName
     {
         public static string Dapper = "Dapper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null";
-        public static string Harmony = "0Harmony, Version=2.1.1.0, Culture=neutral, PublicKeyToken=null";
+        public static string Harmony = "0Harmony, Version=2.2.0.0, Culture=neutral, PublicKeyToken=null";
         public static string LiteDB = "LiteDB, Version=5.0.11.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27";
         public static string LiteDBAsync = "litedbasync, Version=0.0.11.0, Culture=neutral, PublicKeyToken=null";
         public static string MySqlData = "MySql.Data, Version=8.0.25.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d";

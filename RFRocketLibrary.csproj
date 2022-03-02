@@ -38,14 +38,14 @@
       <DefineConstants>LP</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="0Harmony, Version=2.1.1.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\..\Libraries\Harmony\0Harmony.dll</HintPath>
-        </Reference>
         <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\..\Libraries\RocketMod\Assembly-CSharp.dll</HintPath>
         </Reference>
         <Reference Include="com.rlabrecque.steamworks.net, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\..\Libraries\RFRocketMod\com.rlabrecque.steamworks.net.dll</HintPath>
+        </Reference>
+        <Reference Include="JBHarmony, Version=2.2.1.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\Libraries\Harmony\JBHarmony.2.2.1.0.dll</HintPath>
         </Reference>
         <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
           <HintPath>..\..\Libraries\RFRocketMod\Newtonsoft.Json.dll</HintPath>

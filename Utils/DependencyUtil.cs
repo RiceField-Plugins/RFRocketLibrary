@@ -19,15 +19,30 @@ namespace RFRocketLibrary.Utils
             var cachePath = GetCachePath(dependency);
             if (IsCacheExists(dependency))
             {
-                using var fs = File.OpenRead(cachePath);
-                assembly = StreamToByteArray(fs);
-                fs.Close();
+                try
+                {
+                    using var fs = File.Open(cachePath, FileMode.Open, FileAccess.ReadWrite);
+                    assembly = StreamToByteArray(fs);
+                    fs.Close();
+                }
+                catch (Exception)
+                {
+                    assembly = wc.DownloadData(typeof(DependencyLink).GetField(dependency.ToString()).GetValue(null)
+                        .ToString());
+                }
             }
             else
             {
                 assembly = wc.DownloadData(typeof(DependencyLink).GetField(dependency.ToString()).GetValue(null)
                     .ToString());
-                File.WriteAllBytes(cachePath, assembly);
+                try
+                {
+                    File.WriteAllBytes(cachePath, assembly);
+                }
+                catch (Exception)
+                {
+                    //
+                }
             }
 
             Assembly.Load(assembly);
@@ -41,15 +56,30 @@ namespace RFRocketLibrary.Utils
             var cachePath = GetCachePath(dependency);
             if (IsCacheExists(dependency))
             {
-                using var fs = File.OpenRead(cachePath);
-                assembly = StreamToByteArray(fs);
-                fs.Close();
+                try
+                {
+                    using var fs = File.Open(cachePath, FileMode.Open, FileAccess.ReadWrite);
+                    assembly = StreamToByteArray(fs);
+                    fs.Close();
+                }
+                catch (Exception)
+                {
+                    assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency.ToString()).GetValue(null)
+                        .ToString());
+                }
             }
             else
             {
                 assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency.ToString())
                     .GetValue(null).ToString());
-                File.WriteAllBytes(cachePath, assembly);
+                try
+                {
+                    File.WriteAllBytes(cachePath, assembly);
+                }
+                catch (Exception)
+                {
+                    //
+                }
             }
 
             Assembly.Load(assembly);
@@ -74,8 +104,9 @@ namespace RFRocketLibrary.Utils
             var cacheDir = Path.Combine(librariesDir, "Cache");
             if (!Directory.Exists(cacheDir))
                 Directory.CreateDirectory(cacheDir);
-            
-            return Path.Combine(cacheDir, typeof(DependencyIntegrity).GetField(dependency.ToString()).GetValue(null).ToString());
+
+            return Path.Combine(cacheDir,
+                typeof(DependencyIntegrity).GetField(dependency.ToString()).GetValue(null).ToString());
         }
 
         public static string GetIntegrity(string filePath)
