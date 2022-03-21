@@ -506,7 +506,7 @@ namespace RFRocketLibrary.Events
             {
                 if (ex == null)
                     return null;
-                
+
                 Logger.LogError($"[RFRocketLibrary] [ERROR] InternalPatches Exception: {ex}");
                 Logger.LogError(
                     $"[RFRocketLibrary] [ERROR] InternalPatches Exception: Failed to patch original method {original.FullDescription()} from patching type {typeof(InternalPatches).FullDescription()}");
@@ -732,7 +732,9 @@ namespace RFRocketLibrary.Events
             internal static bool OnPrePreVehicleDestroyedInvoker(uint instanceID)
             {
                 var vehicle = VehicleManager.findVehicleByNetInstanceID(instanceID);
-
+                if (vehicle == null)
+                    return true;
+                
                 var flag = true;
                 OnPrePreVehicleDestroyed?.Invoke(vehicle, ref flag);
                 if (!flag)

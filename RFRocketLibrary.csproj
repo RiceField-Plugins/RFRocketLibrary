@@ -13,6 +13,7 @@
         <FileAlignment>512</FileAlignment>
         <LangVersion>9</LangVersion>
         <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
@@ -45,7 +46,7 @@
           <HintPath>..\..\Libraries\RFRocketMod\com.rlabrecque.steamworks.net.dll</HintPath>
         </Reference>
         <Reference Include="JBHarmony, Version=2.2.1.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\..\Libraries\Harmony\JBHarmony.2.2.1.0.dll</HintPath>
+          <HintPath>..\..\Libraries\Harmony\JBHarmony.dll</HintPath>
         </Reference>
         <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
           <HintPath>..\..\Libraries\RFRocketMod\Newtonsoft.Json.dll</HintPath>
