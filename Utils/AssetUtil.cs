@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Reflection;
+using System.Diagnostics;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
 using UnityEngine;
@@ -9,6 +9,8 @@ namespace RFRocketLibrary.Utils
 {
     public static class AssetUtil
     {
+        #region Methods
+
         public static Asset GetAsset(ushort assetId, EAssetType assetType)
         {
             return Assets.find(assetType, assetId);
@@ -44,7 +46,7 @@ namespace RFRocketLibrary.Utils
             }
             catch (Exception e)
             {
-                var caller = Assembly.GetCallingAssembly().GetName().Name;
+                var caller = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly.GetName().Name;
                 Logger.LogError($"[{caller}] [ERROR] AssetUtil GiveItem: {e.Message}");
                 Logger.LogError($"[{caller}] [ERROR] Details: {e}");
                 return false;
@@ -62,11 +64,13 @@ namespace RFRocketLibrary.Utils
             }
             catch (Exception e)
             {
-                var caller = Assembly.GetCallingAssembly().GetName().Name;
+                var caller = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly.GetName().Name;
                 Logger.LogError($"[{caller}] [ERROR] AssetUtil GiveVehicle: {e.Message}");
                 Logger.LogError($"[{caller}] [ERROR] Details: {e}");
                 return false;
             }
         }
+
+        #endregion
     }
 }

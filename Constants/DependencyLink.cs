@@ -6,7 +6,7 @@
             "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/Dapper.2.0.123.dll";
 
         public static string Harmony =
-            "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/0Harmony.2.2.0.0.dll";
+            "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/0Harmony.2.2.1.0.dll";
 
         public static string LiteDB =
             "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/LiteDB.5.0.11.0.dll";
@@ -21,7 +21,7 @@
             "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/Newtonsoft.Json.13.0.1.dll";
 
         // public static string RFRocketLibrary =
-        //     "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@latest/RFRocketLibrary.1.0.0.dll";
+        //     "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@latest/RFRocketLibrary.1.0.2.dll";
 
         public static string SystemManagement =
             "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/System.Management.4.0.0.0.dll";

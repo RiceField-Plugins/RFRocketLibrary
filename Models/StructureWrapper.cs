@@ -2,7 +2,6 @@
 using Rocket.Unturned.Player;
 using SDG.Unturned;
 using UnityEngine;
-#pragma warning disable 612
 
 namespace RFRocketLibrary.Models
 {
@@ -36,25 +35,14 @@ namespace RFRocketLibrary.Models
         public static StructureWrapper Create(StructureDrop drop)
         {
             var data = drop.GetServersideData();
-            var structure = new StructureWrapper
-            {
-                Id = data.structure.id,
-                InstanceId = drop.instanceID,
-                Position = new Vector3Wrapper(data.point),
-                Rotation = new Vector3Wrapper(drop.model.transform.localEulerAngles),
-                Owner = data.owner,
-                Group = data.@group,
-                Health = data.structure.health,
-            };
-
-            return structure;
+            return Create(drop, data);
         }
 
         public static StructureWrapper Create(StructureDrop drop, StructureData data)
         {
             var structure = new StructureWrapper
             {
-                Id = data.structure.id,
+                Id = data.structure.asset.id,
                 InstanceId = drop.instanceID,
                 Position = new Vector3Wrapper(data.point),
                 Rotation = new Vector3Wrapper(drop.model.transform.localEulerAngles),
@@ -73,23 +61,28 @@ namespace RFRocketLibrary.Models
 
         public bool SpawnStructure()
         {
-            var structure = new Structure(Id, Health, GetItemStructureAsset());
-            return StructureManager.dropReplicatedStructure(structure, Position.ToVector3(),
+
+            StructureManager.onStructureSpawned += OnStructureSpawned;
+            var structureAsset = GetItemStructureAsset();
+            var structure = new Structure(structureAsset, structureAsset.health);
+            var flag = StructureManager.dropReplicatedStructure(structure, Position.ToVector3(),
                 Quaternion.Euler(Rotation.X, Rotation.Y, Rotation.Z), Owner, Group);
+            StructureManager.onStructureSpawned -= OnStructureSpawned;
+            return flag;
         }
 
-        public bool SpawnStructure(ulong owner, ulong group)
+        public bool SpawnStructure(UnturnedPlayer player)
         {
-            var structure = new Structure(Id, Health, GetItemStructureAsset());
-            return StructureManager.dropReplicatedStructure(structure, Position.ToVector3(),
-                Quaternion.Euler(Rotation.X, Rotation.Y, Rotation.Z), owner, group);
+            Owner = player.CSteamID.m_SteamID;
+            Group = player.Player.quests.groupID.m_SteamID;
+            return SpawnStructure();
         }
 
-        public bool SpawnStructure(UnturnedPlayer player, Vector3 position, Quaternion rotation, bool isGive = false)
+        private void OnStructureSpawned(StructureRegion region, StructureDrop drop)
         {
-            var structure = new Structure(Id, Health, GetItemStructureAsset());
-            return StructureManager.dropReplicatedStructure(structure, position, rotation, !isGive ? Owner : player.CSteamID.m_SteamID,
-                !isGive ? Group : player.Player.quests.groupID.m_SteamID);
+            var damage = drop.asset.health - Health;
+            if (damage != 0)
+                StructureManager.damage(drop.model, Vector3.zero, damage, 1, false);
         }
     }
 }

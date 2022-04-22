@@ -10,23 +10,47 @@ namespace RFRocketLibrary.Hooks
 {
     public static class UconomyPremiumHook
     {
-        private static bool _initialized;
-        private static MethodInfo? _getBalanceMethod;
-        private static MethodInfo? _increaseBalanceMethod;
-        private static MethodInfo? _addHistoryMethod;
-        private static EventInfo? _onBalanceUpdateEvent;
-        private static object? _uconomyInstance;
-        private static object? _databaseInstance;
-        private static object? _databaseHistoryInstance;
-
-        public static decimal InitialBalance { get; private set; }
-        public static string? MoneySymbol { get; private set; }
-        public static string? MoneyName { get; private set; }
-        public static string? MessageColor { get; private set; }
+        #region Delegates
 
         public delegate void BalanceUpdated(UnturnedPlayer player, decimal amt);
 
+        #endregion
+
+        #region Events
+
         public static event BalanceUpdated? OnBalanceUpdated;
+
+        #endregion
+
+        #region Methods
+
+        public static void AddHistory(ulong steamId, decimal balanceDelta, string description = "")
+        {
+            _addHistoryMethod?.Invoke(_databaseHistoryInstance, new object[] {steamId, balanceDelta, description});
+        }
+
+        public static bool CanBeLoaded()
+        {
+            return R.Plugins.GetPlugins().Any(c => c.Name.ToLower() == "uconomy") && !_initialized;
+        }
+
+        public static decimal? Deposit(ulong steamId, decimal amount)
+        {
+            return _increaseBalanceMethod?.Invoke(_databaseInstance, new object[]
+                {
+                    steamId.ToString(), amount
+                }) as decimal?;
+        }
+
+        public static decimal? GetBalance(ulong steamId)
+        {
+            return _getBalanceMethod?.Invoke(_databaseInstance, new object[] {steamId.ToString()}) as decimal?;
+        }
+
+        public static bool Has(ulong steamId, decimal amount)
+        {
+            return GetBalance(steamId) >= amount;
+        }
 
         public static void Load()
         {
@@ -48,11 +72,11 @@ namespace RFRocketLibrary.Hooks
                 #region Method
 
                 Logger.LogWarning("[UconomyPremiumHook] Obtaining methods...");
-                _getBalanceMethod = ReflectUtil.GetMethod(_databaseInstance?.GetType(),
+                _getBalanceMethod = ReflectionUtil.GetMethod(_databaseInstance?.GetType(),
                     "GetBalance", new[] {typeof(string)});
-                _increaseBalanceMethod = ReflectUtil.GetMethod(_databaseInstance?.GetType(),
+                _increaseBalanceMethod = ReflectionUtil.GetMethod(_databaseInstance?.GetType(),
                     "IncreaseBalance", new[] {typeof(string), typeof(decimal)});
-                _addHistoryMethod = ReflectUtil.GetMethod(_databaseHistoryInstance?.GetType(),
+                _addHistoryMethod = ReflectionUtil.GetMethod(_databaseHistoryInstance?.GetType(),
                     "Add", new[] {typeof(ulong), typeof(decimal), typeof(string)});
                 Logger.LogWarning("[UconomyPremiumHook] Methods obtained.");
 
@@ -115,9 +139,9 @@ namespace RFRocketLibrary.Hooks
             }
         }
 
-        public static bool CanBeLoaded()
+        public static void ReflectOnBalanceUpdate(UnturnedPlayer player, decimal amt)
         {
-            return R.Plugins.GetPlugins().Any(c => c.Name.ToLower() == "uconomy") && !_initialized;
+            OnBalanceUpdated?.Invoke(player, amt);
         }
 
         public static decimal? Withdraw(ulong steamId, decimal amount)
@@ -128,32 +152,20 @@ namespace RFRocketLibrary.Hooks
             }) as decimal?;
         }
 
-        public static decimal? Deposit(ulong steamId, decimal amount)
-        {
-            return _increaseBalanceMethod?.Invoke(_databaseInstance, new object[]
-                {
-                    steamId.ToString(), amount
-                }) as decimal?;
-        }
+        #endregion
 
-        public static decimal? GetBalance(ulong steamId)
-        {
-            return _getBalanceMethod?.Invoke(_databaseInstance, new object[] {steamId.ToString()}) as decimal?;
-        }
+        private static bool _initialized;
+        private static MethodInfo? _getBalanceMethod;
+        private static MethodInfo? _increaseBalanceMethod;
+        private static MethodInfo? _addHistoryMethod;
+        private static EventInfo? _onBalanceUpdateEvent;
+        private static object? _uconomyInstance;
+        private static object? _databaseInstance;
+        private static object? _databaseHistoryInstance;
 
-        public static bool Has(ulong steamId, decimal amount)
-        {
-            return GetBalance(steamId) >= amount;
-        }
-
-        public static void AddHistory(ulong steamId, decimal balanceDelta, string description = "")
-        {
-            _addHistoryMethod?.Invoke(_databaseHistoryInstance, new object[] {steamId, balanceDelta, description});
-        }
-
-        public static void ReflectOnBalanceUpdate(UnturnedPlayer player, decimal amt)
-        {
-            OnBalanceUpdated?.Invoke(player, amt);
-        }
+        public static decimal InitialBalance { get; private set; }
+        public static string? MoneySymbol { get; private set; }
+        public static string? MoneyName { get; private set; }
+        public static string? MessageColor { get; private set; }
     }
 }

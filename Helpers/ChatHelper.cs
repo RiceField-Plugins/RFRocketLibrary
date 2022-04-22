@@ -1,4 +1,6 @@
-﻿using Rocket.API;
+﻿using System.Collections.Generic;
+using RFRocketLibrary.Utils;
+using Rocket.API;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
 using Steamworks;
@@ -9,9 +11,12 @@ namespace RFRocketLibrary.Helpers
 {
     public static class ChatHelper
     {
+        #region Methods
+
         public static void Broadcast(string text, Color? color = null, string? iconURL = null)
         {
-            ChatManager.serverSendMessage(text, color ?? Color.green, null, null, EChatMode.GLOBAL, iconURL, true);
+            foreach (var s in WrapMessage(text))
+                ChatManager.serverSendMessage(s, color ?? Color.green, null, null, EChatMode.GLOBAL, iconURL, true);
         }
 
         public static void Say(UnturnedPlayer player, string text, Color? color = null, string? iconURL = null)
@@ -19,24 +24,62 @@ namespace RFRocketLibrary.Helpers
             Say(player.SteamPlayer(), text, color, iconURL);
         }
 
+        public static void Say(UnturnedPlayer sender, UnturnedPlayer receiver, string text, Color? color = null, string? iconURL = null)
+        {
+            Say(sender.SteamPlayer(), receiver.SteamPlayer(), text, color, iconURL);
+        }
+
         public static void Say(Player player, string text, Color? color = null, string? iconURL = null)
         {
             Say(player.channel.owner, text, color, iconURL);
         }
 
+        public static void Say(Player sender, Player receiver, string text, Color? color = null, string? iconURL = null)
+        {
+            Say(sender.channel.owner, receiver.channel.owner, text, color, iconURL);
+        }
+
         public static void Say(SteamPlayer player, string text, Color? color = null, string? iconURL = null)
         {
-            ChatManager.serverSendMessage(text, color ?? Color.green, null, player, EChatMode.SAY, iconURL, true);
+            Say(player, null, text, color, iconURL);
+        }
+
+        public static void Say(SteamPlayer sender, SteamPlayer? receiver, string text, Color? color = null, string? iconURL = null)
+        {
+            foreach (var s in WrapMessage(text))
+                ChatManager.serverSendMessage(s, color ?? Color.green, sender, receiver, receiver == null ? EChatMode.SAY : EChatMode.GLOBAL, iconURL,
+                    true);
         }
 
         public static void Say(CSteamID steamID, string text, Color? color = null, string? iconURL = null)
         {
             if (steamID == CSteamID.Nil || steamID.m_SteamID == 0)
                 return;
+            
             var exist = PlayerTool.getSteamPlayer(steamID);
             if (exist == null)
                 return;
+            
             Say(exist, text, color, iconURL);
+        }
+
+        public static void Say(CSteamID sender, CSteamID receiver, string text, Color? color = null, string? iconURL = null)
+        {
+            if (sender == CSteamID.Nil || sender.m_SteamID == 0)
+                return;
+            
+            if (receiver == CSteamID.Nil || receiver.m_SteamID == 0)
+                return;
+            
+            var senderPlayer = PlayerTool.getSteamPlayer(sender);
+            if (senderPlayer == null)
+                return;
+            
+            var receiverPlayer = PlayerTool.getSteamPlayer(receiver);
+            if (receiverPlayer == null)
+                return;
+            
+            Say(senderPlayer, receiverPlayer, text, color, iconURL);
         }
 
         public static void Say(IRocketPlayer player, string text, Color? color = null, string? iconURL = null)
@@ -52,5 +95,48 @@ namespace RFRocketLibrary.Helpers
             
             Say(new CSteamID(steamId), text, color, iconURL);
         }
+
+        public static void Say(IRocketPlayer sender, IRocketPlayer receiver, string text, Color? color = null, string? iconURL = null)
+        {
+            if (!ulong.TryParse(sender.Id, out var senderId))
+                return;
+            
+            if (!ulong.TryParse(receiver.Id, out var receiverId))
+                return;
+            
+            Say(new CSteamID(senderId), new CSteamID(receiverId), text, color, iconURL);
+        }
+
+        public static IEnumerable<string> WrapMessage(string text)
+        {
+            if (text.Length == 0) 
+                return new List<string>();
+            
+            var words = text.Split(' ');
+            var lines = new List<string>();
+            var currentLine = "";
+            const int maxLength = 90;
+            foreach (var currentWord in words)
+            {
+                if (currentLine.Length > maxLength ||
+                    currentLine.Length + currentWord.RemoveRichTag().Length > maxLength)
+                {
+                    lines.Add(currentLine);
+                    currentLine = "";
+                }
+  
+                if (currentLine.Length > 0)
+                    currentLine += " " + currentWord;
+                else
+                    currentLine += currentWord;
+            }
+  
+            if (currentLine.Length > 0)
+                lines.Add(currentLine);
+            
+            return lines;
+        }
+
+        #endregion
     }
 }

@@ -5,6 +5,8 @@ namespace RFRocketLibrary.Utils
 {
     public static class BarricadeUtil
     {
+        #region Methods
+
         public static void ChangeOwnerAndGroup(EBuild build, ulong owner, ulong group, ref byte[] state)
         {
             switch (build)
@@ -23,5 +25,7 @@ namespace RFRocketLibrary.Utils
                 }
             }
         }
+
+        #endregion
     }
 }

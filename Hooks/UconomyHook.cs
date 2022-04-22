@@ -54,9 +54,9 @@ namespace RFRocketLibrary.Hooks
                 #region Method
 
                 Logger.LogWarning("[UconomyHook] Obtaining methods...");
-                _getBalanceMethod = ReflectUtil.GetMethod(_databaseInstance?.GetType(),
+                _getBalanceMethod = ReflectionUtil.GetMethod(_databaseInstance?.GetType(),
                     "GetBalance", new[] {typeof(string)});
-                _increaseBalanceMethod = ReflectUtil.GetMethod(_databaseInstance?.GetType(),
+                _increaseBalanceMethod = ReflectionUtil.GetMethod(_databaseInstance?.GetType(),
                     "IncreaseBalance", new[] {typeof(string), typeof(decimal)});
 #if LP
                 _addHistoryMethod = ReflectUtil.GetMethod(_databaseHistoryInstance?.GetType(),

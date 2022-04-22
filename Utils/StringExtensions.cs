@@ -4,6 +4,13 @@ namespace RFRocketLibrary.Utils
 {
     public static class StringExtensions
     {
+        #region Methods
+
+        public static string RemoveRichTag(this string text)
+        {
+            return Regex.Replace(text, "<[^>]+>", string.Empty);;
+        }
+
         public static string SplitCamelCase(this string text, string separator = " ")
         {
             var r = new Regex(@"
@@ -12,5 +19,7 @@ namespace RFRocketLibrary.Utils
                  (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
             return r.Replace(text, separator);
         }
+
+        #endregion
     }
 }
