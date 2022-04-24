@@ -72,11 +72,11 @@ namespace RFRocketLibrary.Hooks
                 #region Method
 
                 Logger.LogWarning("[UconomyPremiumHook] Obtaining methods...");
-                _getBalanceMethod = ReflectionUtil.GetMethod(_databaseInstance?.GetType(),
+                _getBalanceMethod = ReflectionHelper.GetMethod(_databaseInstance?.GetType(),
                     "GetBalance", new[] {typeof(string)});
-                _increaseBalanceMethod = ReflectionUtil.GetMethod(_databaseInstance?.GetType(),
+                _increaseBalanceMethod = ReflectionHelper.GetMethod(_databaseInstance?.GetType(),
                     "IncreaseBalance", new[] {typeof(string), typeof(decimal)});
-                _addHistoryMethod = ReflectionUtil.GetMethod(_databaseHistoryInstance?.GetType(),
+                _addHistoryMethod = ReflectionHelper.GetMethod(_databaseHistoryInstance?.GetType(),
                     "Add", new[] {typeof(ulong), typeof(decimal), typeof(string)});
                 Logger.LogWarning("[UconomyPremiumHook] Methods obtained.");
 

@@ -92,6 +92,7 @@
         <Compile Include="Constants\DependencyFullName.cs" />
         <Compile Include="Constants\DependencyIntegrity.cs" />
         <Compile Include="Constants\DependencyLink.cs" />
+        <Compile Include="Enum\EAvatarProvider.cs" />
         <Compile Include="Enum\EDependency.cs" />
         <Compile Include="Events\EventBus.cs" />
         <Compile Include="Events\UnturnedPatchEvent.cs" />
@@ -205,8 +206,7 @@
         <Compile Include="Helpers\DSharp4Webhook\Util\Extensions\CollectionUtil.cs" />
         <Compile Include="Helpers\DSharp4Webhook\Util\Extensions\EventUtil.cs" />
         <Compile Include="Helpers\DSharp4Webhook\Util\ImageUtil.cs" />
-        <Compile Include="Helpers\ReflectionHelper\AccessCache.cs" />
-        <Compile Include="Helpers\ReflectionHelper\Reflect.cs" />
+        <Compile Include="Helpers\ReflectionHelper.cs" />
         <Compile Include="Helpers\RocketExtensions\Core\CoreSetup.cs" />
         <Compile Include="Helpers\RocketExtensions\Extensions.cs" />
         <Compile Include="Helpers\RocketExtensions\Interfaces\IStringParser.cs" />
@@ -236,12 +236,15 @@
         <Compile Include="Hooks\UconomyPremiumHook.cs" />
         <Compile Include="Library.cs" />
         <Compile Include="Models\KeyListener.cs" />
+        <Compile Include="Models\SteamWebApi.cs" />
         <Compile Include="Models\QuaternionWrapper.cs" />
+        <Compile Include="Models\RaycastInfo.cs" />
         <Compile Include="Models\SerialQueue.cs" />
         <Compile Include="Managers\AnimalManager.cs" />
         <Compile Include="Helpers\ColorHelper.cs" />
         <Compile Include="Hooks\AviEconomyHook.cs" />
         <Compile Include="Hooks\UconomyHook.cs" />
+        <Compile Include="Patches\UnturnedPatch.cs" />
         <Compile Include="Storages\JsonDataStore.cs" />
         <Compile Include="Helpers\ChatHelper.cs" />
         <Compile Include="Helpers\ImageHelper.cs" />
@@ -264,12 +267,10 @@
         <Compile Include="Utils\AssetUtil.cs" />
         <Compile Include="Utils\BarricadeUtil.cs" />
         <Compile Include="Utils\ByteArrayExtensions.cs" />
-        <Compile Include="Utils\ChatUtil.cs" />
         <Compile Include="Utils\DependencyUtil.cs" />
         <Compile Include="Utils\EnumerableExtensions.cs" />
         <Compile Include="Utils\InventoryUtil.cs" />
         <Compile Include="Utils\PlayerExtensions.cs" />
-        <Compile Include="Utils\ReflectionUtil.cs" />
         <Compile Include="Utils\SteamUtil.cs" />
         <Compile Include="Utils\StringExtensions.cs" />
         <Compile Include="Utils\StructureUtil.cs" />

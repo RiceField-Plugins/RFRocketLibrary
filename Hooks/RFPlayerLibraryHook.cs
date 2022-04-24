@@ -64,13 +64,13 @@ namespace RFRocketLibrary.Hooks
                 Logger.LogWarning("[RFPlayerLibraryHook] Obtaining methods...");
                 _playerManagerInstance =
                     _databaseInstance?.GetType().GetField("PlayerManager")?.GetValue(_databaseInstance);
-                _getInfoBySteamIdMethod = ReflectionUtil.GetMethod(_playerManagerInstance?.GetType(),
+                _getInfoBySteamIdMethod = ReflectionHelper.GetMethod(_playerManagerInstance?.GetType(),
                     "GetInfoBySteamId", new[] {typeof(ulong)});
-                _getInfoByNameMethod = ReflectionUtil.GetMethod(_playerManagerInstance?.GetType(),
+                _getInfoByNameMethod = ReflectionHelper.GetMethod(_playerManagerInstance?.GetType(),
                     "GetInfoByName", new[] {typeof(string)});
                 _playerGeolocationManagerInstance = _databaseInstance?.GetType().GetField("PlayerGeolocationManager")?
                     .GetValue(_databaseInstance);
-                _getGeolocationInfoBySteamIdMethod = ReflectionUtil.GetMethod(_playerGeolocationManagerInstance?.GetType(),
+                _getGeolocationInfoBySteamIdMethod = ReflectionHelper.GetMethod(_playerGeolocationManagerInstance?.GetType(),
                     "GetInfoBySteamId", new[] {typeof(ulong)});
                 Logger.LogWarning("[RFPlayerLibraryHook] Methods obtained.");
 

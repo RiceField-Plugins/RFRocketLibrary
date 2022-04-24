@@ -99,8 +99,6 @@ namespace RFRocketLibrary.Events
         public static event UseableThrowable.ThrowableSpawnedHandler? OnPlayerThrewThrowable;
         public static event PlayerTookItem? OnPlayerTookItem;
         public static event PlayerWonArena? OnPlayerWonArena;
-
-        // Events
         public static event DamageTool.DamageAnimalHandler? OnPreAnimalDamaged;
         public static event DamageBarricadeRequestHandler? OnPreBarricadeDamaged;
         public static event RepairBarricadeRequestHandler? OnPreBarricadeRepaired;
@@ -142,27 +140,25 @@ namespace RFRocketLibrary.Events
 
         #endregion
 
-        #region Methods
-
-        public static void OnBarricadeRepairedInvoker(CSteamID instigatorSteamId, Transform barricadeTransform,
+        internal static void OnBarricadeRepairedInvoker(CSteamID instigatorSteamId, Transform barricadeTransform,
             float totalHealing)
         {
             OnBarricadeRepaired?.Invoke(instigatorSteamId, barricadeTransform, totalHealing);
         }
 
-        public static void OnPreBarricadeDamagedInvoker(CSteamID instigatorsteamid, Transform barricadetransform, ref ushort pendingTotalDamage, ref bool shouldAllow, EDamageOrigin damageorigin)
+        internal static void OnPreBarricadeDamagedInvoker(CSteamID instigatorsteamid, Transform barricadetransform, ref ushort pendingTotalDamage, ref bool shouldAllow, EDamageOrigin damageorigin)
         {
             OnPreBarricadeDamaged?.Invoke(instigatorsteamid, barricadetransform, ref pendingTotalDamage, ref shouldAllow, damageorigin);
         }
 
-        public static void OnPreBarricadeRepairedInvoker(CSteamID instigatorSteamId, Transform barricadeTransform,
+        internal static void OnPreBarricadeRepairedInvoker(CSteamID instigatorSteamId, Transform barricadeTransform,
             ref float pendingTotalHealing, ref bool shouldAllow)
         {
             OnPreBarricadeRepaired?.Invoke(instigatorSteamId, barricadeTransform, ref pendingTotalHealing,
                 ref shouldAllow);
         }
 
-        public static void OnPreBarricadeTransformedInvoker(CSteamID instigator, byte x, byte y, ushort plant,
+        internal static void OnPreBarricadeTransformedInvoker(CSteamID instigator, byte x, byte y, ushort plant,
             uint instanceId, ref Vector3 point, ref byte angle_x, ref byte angle_y, ref byte angle_z,
             ref bool shouldAllow)
         {
@@ -170,60 +166,58 @@ namespace RFRocketLibrary.Events
                 ref angle_z, ref shouldAllow);
         }
 
-        public static void OnPreObjectDamagedInvoker(CSteamID instigatorSteamId, Transform objectTransform,
+        internal static void OnPreObjectDamagedInvoker(CSteamID instigatorSteamId, Transform objectTransform,
             byte section, ref ushort pendingTotalDamage, ref bool shouldAllow, EDamageOrigin damageOrigin)
         {
             OnPreObjectDamaged?.Invoke(instigatorSteamId, objectTransform, section, ref pendingTotalDamage,
                 ref shouldAllow, damageOrigin);
         }
 
-        public static void OnPrePlayerRespawnedInvoker(PlayerLife sender, bool wantsToSpawnAtHome, ref Vector3 position,
+        internal static void OnPrePlayerRespawnedInvoker(PlayerLife sender, bool wantsToSpawnAtHome, ref Vector3 position,
             ref float yaw)
         {
             OnPrePlayerRespawned?.Invoke(sender, wantsToSpawnAtHome, ref position, ref yaw);
         }
 
-        public static void OnPreSignModifiedInvoker(CSteamID instigator, InteractableSign sign, ref string text, ref bool shouldallow)
+        internal static void OnPreSignModifiedInvoker(CSteamID instigator, InteractableSign sign, ref string text, ref bool shouldallow)
         {
             OnPreSignModified?.Invoke(instigator, sign, ref text, ref shouldallow);
         }
 
-        public static void OnPreStorageOpenedInvoker(CSteamID instigator, InteractableStorage storage, ref bool shouldallow)
+        internal static void OnPreStorageOpenedInvoker(CSteamID instigator, InteractableStorage storage, ref bool shouldallow)
         {
             OnPreStorageOpened?.Invoke(instigator, storage, ref shouldallow);
         }
 
-        public static void OnPreStructureDamagedInvoker(CSteamID instigatorsteamid, Transform structuretransform, ref ushort pendingtotaldamage, ref bool shouldallow, EDamageOrigin damageorigin)
+        internal static void OnPreStructureDamagedInvoker(CSteamID instigatorsteamid, Transform structuretransform, ref ushort pendingtotaldamage, ref bool shouldallow, EDamageOrigin damageorigin)
         {
             OnPreStructureDamaged?.Invoke(instigatorsteamid, structuretransform, ref pendingtotaldamage, ref shouldallow, damageorigin);
         }
 
-        public static void OnPreStructureRepairedInvoker(CSteamID instigatorSteamId, Transform structureTransform,
+        internal static void OnPreStructureRepairedInvoker(CSteamID instigatorSteamId, Transform structureTransform,
             ref float pendingTotalHealing, ref bool shouldAllow)
         {
             OnPreStructureRepaired?.Invoke(instigatorSteamId, structureTransform, ref pendingTotalHealing,
                 ref shouldAllow);
         }
 
-        public static void OnPreStructureTransformedInvoker(CSteamID instigator, byte x, byte y, uint instanceId,
+        internal static void OnPreStructureTransformedInvoker(CSteamID instigator, byte x, byte y, uint instanceId,
             ref Vector3 point, ref byte angle_x, ref byte angle_y, ref byte angle_z, ref bool shouldAllow)
         {
             OnPreStructureTransformed?.Invoke(instigator, x, y, instanceId, ref point, ref angle_x, ref angle_y,
                 ref angle_z, ref shouldAllow);
         }
 
-        public static void OnQuestObjectUsedInvoker(Player player, InteractableObject @object)
+        internal static void OnQuestObjectUsedInvoker(Player player, InteractableObject @object)
         {
             OnQuestObjectUsed?.Invoke(player, @object);
         }
 
-        public static void OnStructureRepairedInvoker(CSteamID instigatorSteamId, Transform structureTransform,
+        internal static void OnStructureRepairedInvoker(CSteamID instigatorSteamId, Transform structureTransform,
             float totalHealing)
         {
             OnStructureRepaired?.Invoke(instigatorSteamId, structureTransform, totalHealing);
         }
-
-        #endregion
 
         // Invokers
         internal static void OnPreAnimalDamagedInvoker(ref DamageAnimalParameters parameters, ref bool shouldAllow)
@@ -417,6 +411,7 @@ namespace RFRocketLibrary.Events
                         OnPrePlayerChoppedResource?.Invoke(player, resource, damageOrigin, ref shouldAllow2);
                         if (!shouldAllow2)
                             return;
+                        
                         OnPlayerChoppedResource?.Invoke(player, resource, damageOrigin);
                     }
 
@@ -426,6 +421,7 @@ namespace RFRocketLibrary.Events
                         OnPrePlayerMinedResource?.Invoke(player, resource, damageOrigin, ref shouldAllow2);
                         if (!shouldAllow2)
                             return;
+                        
                         OnPlayerMinedResource?.Invoke(player, resource, damageOrigin);
                     }
                 }

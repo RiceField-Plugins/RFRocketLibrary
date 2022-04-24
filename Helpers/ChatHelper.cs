@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using RFRocketLibrary.Utils;
 using Rocket.API;
 using Rocket.Unturned.Player;
@@ -12,6 +13,12 @@ namespace RFRocketLibrary.Helpers
     public static class ChatHelper
     {
         #region Methods
+
+        public static void DisableMaxMessageLengthLimit()
+        {
+            typeof(ChatManager).GetField("MAX_MESSAGE_LENGTH", BindingFlags.Public | BindingFlags.Static)?
+                .SetValue(null, int.MaxValue);
+        }
 
         public static void Broadcast(string text, Color? color = null, string? iconURL = null)
         {
@@ -114,24 +121,32 @@ namespace RFRocketLibrary.Helpers
             
             var words = text.Split(' ');
             var lines = new List<string>();
-            var currentLine = "";
+            var currentLine = string.Empty;
+            var cleanLength = 0;
             const int maxLength = 90;
             foreach (var currentWord in words)
             {
-                if (currentLine.Length > maxLength ||
-                    currentLine.Length + currentWord.RemoveRichTag().Length > maxLength)
+                var cleanWord = currentWord.RemoveRichTag();
+                if (cleanLength > maxLength ||
+                    cleanLength + cleanWord.Length > maxLength)
                 {
                     lines.Add(currentLine);
-                    currentLine = "";
+                    currentLine = string.Empty;
+                    cleanLength = 0;
                 }
-  
-                if (currentLine.Length > 0)
+                
+                if (cleanLength > 0)
+                {
                     currentLine += " " + currentWord;
+                    cleanLength += 1;
+                }
                 else
                     currentLine += currentWord;
+                
+                cleanLength += cleanWord.Length;
             }
   
-            if (currentLine.Length > 0)
+            if (cleanLength > 0)
                 lines.Add(currentLine);
             
             return lines;

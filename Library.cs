@@ -1,45 +1,66 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using RFRocketLibrary.Events;
-using SDG.Unturned;
+﻿using RFRocketLibrary.Events;
+using RFRocketLibrary.Patches;
 
 namespace RFRocketLibrary
 {
     public static class Library
     {
+        private static string HarmonyId => "RFRocketLibrary.Patches";
         private static bool Initialized { get; set; }
         private static uint AttachedAssembly { get; set; }
-        private static uint AttachedAssemblyWithHarmony { get; set; }
+        private static uint Event_AttachedAssembly { get; set; }
+        private static uint Event_AttachedAssemblyWithHarmony { get; set; }
 
         private static void Initialize()
         {
+            AttachedAssembly++;
             if (Initialized)
                 return;
-            
+
+            var harmony = new HarmonyLib.Harmony(HarmonyId);
+
+            var processor = new HarmonyLib.PatchClassProcessor(harmony, typeof(UnturnedPatch));
+            processor.Patch();
+
             Initialized = true;
+        }
+
+        private static void Uninitialize()
+        {
+            AttachedAssembly--;
+            if (!Initialized)
+                return;
+
+            if (AttachedAssembly > 0)
+                return;
+
+            var harmony = new HarmonyLib.Harmony(HarmonyId);
+            harmony.UnpatchAll();
+
+            Initialized = false;
         }
 
         public static void AttachEvent(bool withHarmony = false)
         {
             EventBus.Load();
-            AttachedAssembly++;
+            Event_AttachedAssembly++;
             if (withHarmony)
             {
                 EventBus.LoadHarmony();
-                AttachedAssemblyWithHarmony++;
+                Event_AttachedAssemblyWithHarmony++;
             }
         }
 
         public static void DetachEvent(bool withHarmony = false)
         {
-            AttachedAssembly--;
-            if (AttachedAssembly == 0)
+            Event_AttachedAssembly--;
+            if (Event_AttachedAssembly == 0)
                 EventBus.Unload();
-            
+
             if (withHarmony)
             {
-                AttachedAssemblyWithHarmony--;
-                if (AttachedAssemblyWithHarmony == 0)
+                Event_AttachedAssemblyWithHarmony--;
+                if (Event_AttachedAssemblyWithHarmony == 0)
                     EventBus.UnloadHarmony();
             }
         }

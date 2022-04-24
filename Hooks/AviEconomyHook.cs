@@ -126,12 +126,12 @@ namespace RFRocketLibrary.Hooks
                 _bankType = economyPlugin.GetType().Assembly.GetType("avirockets.unturned.AviEconomy.Bank");
                 if (_bankType == null)
                     Logger.LogError("[AviEconomyHook] AviEconomy Bank type couldn't be loaded...");
-                _getBalanceMethod = ReflectionUtil.GetMethod(_bankType, "GetBalance",
+                _getBalanceMethod = ReflectionHelper.GetMethod(_bankType, "GetBalance",
                     BindingFlags.Static | BindingFlags.Public,
                     new[] {typeof(string)});
                 if (_getBalanceMethod == null)
                     Logger.LogError("[AviEconomyHook] AviEconomy GetBalance method couldn't be loaded...");
-                _payAsServerMethod = ReflectionUtil.GetMethod(_bankType, "PayAsServer",
+                _payAsServerMethod = ReflectionHelper.GetMethod(_bankType, "PayAsServer",
                     BindingFlags.Static | BindingFlags.Public,
                     new[]
                     {

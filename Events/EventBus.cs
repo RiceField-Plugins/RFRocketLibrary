@@ -95,8 +95,11 @@ namespace RFRocketLibrary.Events
                     return;
                 
                 var harmony = new HarmonyLib.Harmony(HarmonyId);
-                harmony.PatchAll();
+                // harmony.PatchAll();
 
+                var processor = new HarmonyLib.PatchClassProcessor(harmony, typeof(UnturnedPatchEvent));
+                processor.Patch();
+                
                 InitializedHarmony = true;
             }
             catch (Exception e)
@@ -204,7 +207,7 @@ namespace RFRocketLibrary.Events
 
         #endregion
 
-        private const string HarmonyId = "RFRocketLibrary.Patches";
+        private const string HarmonyId = "RFRocketLibrary.Events";
         private static bool Initialized { get; set; }
         private static bool InitializedHarmony { get; set; }
     }

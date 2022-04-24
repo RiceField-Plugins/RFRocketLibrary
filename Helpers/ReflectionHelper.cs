@@ -5,7 +5,7 @@ using Rocket.Core.Logging;
 
 namespace RFRocketLibrary.Utils
 {
-    public static class ReflectionUtil
+    public static class ReflectionHelper
     {
         #region Methods
 
