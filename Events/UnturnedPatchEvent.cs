@@ -469,8 +469,9 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(VehicleManager), "ReceiveStealVehicleBattery")]
             [HarmonyPrefix]
-            internal static bool OnPlayerStealVehicleBatteryInvoker(in ServerInvocationContext context)
+            internal static bool OnPlayerStealVehicleBatteryInvoker(out bool __state, in ServerInvocationContext context)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
@@ -481,15 +482,15 @@ namespace RFRocketLibrary.Events
 
                 var shouldAllow = true;
                 OnPrePlayerStealVehicleBattery?.Invoke(player, vehicle, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(VehicleManager), "ReceiveStealVehicleBattery")]
             [HarmonyPostfix]
-            internal static void OnPlayerStealVehicleBatteryInvoker(bool __runOriginal,
-                in ServerInvocationContext context)
+            internal static void OnPlayerStealVehicleBatteryInvoker(bool __state, in ServerInvocationContext context)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -505,18 +506,19 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(PlayerStance), "ReceiveClimbRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerClimbedInvoker(PlayerStance __instance, Vector3 direction)
+            internal static bool OnPlayerClimbedInvoker(out bool __state, PlayerStance __instance, Vector3 direction)
             {
                 var shouldAllow = true;
                 OnPrePlayerClimbed?.Invoke(__instance.player, direction, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(PlayerStance), "ReceiveClimbRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerClimbedInvoker(bool __runOriginal, PlayerStance __instance, Vector3 direction)
+            internal static void OnPlayerClimbedInvoker(bool __state, PlayerStance __instance, Vector3 direction)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnPlayerClimbed?.Invoke(__instance.player, direction);
@@ -533,20 +535,25 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(PlayerLife), "ReceiveSuicideRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerSuicideInvoker(PlayerLife __instance)
+            internal static bool OnPlayerSuicideInvoker(out bool __state, PlayerLife __instance)
             {
+                __state = false;
                 if (__instance.health > 100)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerSuicided?.Invoke(__instance.player, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(PlayerLife), "ReceiveSuicideRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerSuicideInvoker(bool __runOriginal, PlayerLife __instance)
+            internal static void OnPlayerSuicideInvoker(bool __state, PlayerLife __instance)
             {
+                if (!__state)
+                    return;
+                
                 if (!__instance.isDead)
                     return;
 
@@ -555,9 +562,10 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableBed), "ReceiveClaimRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedBedInvoker(InteractableBed __instance,
+            internal static bool OnPlayerInteractedBedInvoker(out bool __state, InteractableBed __instance,
                 in ServerInvocationContext context)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
@@ -565,15 +573,16 @@ namespace RFRocketLibrary.Events
                 var claim = !__instance.isClaimed;
                 var shouldAllow = true;
                 OnPrePlayerInteractedBed?.Invoke(player, __instance, claim, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableBed), "ReceiveClaimRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedBedInvoker(bool __runOriginal, InteractableBed __instance,
+            internal static void OnPlayerInteractedBedInvoker(bool __state, InteractableBed __instance,
                 in ServerInvocationContext context)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -586,25 +595,26 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableMannequin), "ReceivePoseRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedMannequinInvoker(InteractableMannequin __instance,
+            internal static bool OnPlayerInteractedMannequinInvoker(out bool __state, InteractableMannequin __instance,
                 in ServerInvocationContext context, byte poseComp)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedMannequinPose?.Invoke(player, __instance, poseComp, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableMannequin), "ReceivePoseRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedMannequinInvoker(bool __runOriginal,
-                InteractableMannequin __instance,
-                in ServerInvocationContext context, byte poseComp)
+            internal static void OnPlayerInteractedMannequinInvoker(bool __state,
+                InteractableMannequin __instance, in ServerInvocationContext context, byte poseComp)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -616,25 +626,27 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableMannequin), "ReceiveUpdateRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedMannequinInvoker(InteractableMannequin __instance,
+            internal static bool OnPlayerInteractedMannequinInvoker(out bool __state, InteractableMannequin __instance,
                 in ServerInvocationContext context, EMannequinUpdateMode updateMode)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedMannequinUpdate?.Invoke(player, __instance, updateMode, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableMannequin), "ReceiveUpdateRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedMannequinInvoker(bool __runOriginal,
+            internal static void OnPlayerInteractedMannequinInvoker(bool __state,
                 InteractableMannequin __instance,
                 in ServerInvocationContext context, EMannequinUpdateMode updateMode)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -646,24 +658,26 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableStorage), "ReceiveRotDisplayRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedDisplayInvoker(InteractableStorage __instance,
+            internal static bool OnPlayerInteractedDisplayInvoker(out bool __state, InteractableStorage __instance,
                 in ServerInvocationContext context, byte rotComp)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedDisplay?.Invoke(player, __instance, rotComp, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableStorage), "ReceiveRotDisplayRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedDisplayInvoker(bool __runOriginal, InteractableStorage __instance,
+            internal static void OnPlayerInteractedDisplayInvoker(bool __state, InteractableStorage __instance,
                 in ServerInvocationContext context, byte rotComp)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -675,24 +689,26 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableStorage), "ReceiveInteractRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedStorageInvoker(InteractableStorage __instance,
+            internal static bool OnPlayerInteractedStorageInvoker(out bool __state, InteractableStorage __instance,
                 in ServerInvocationContext context, bool quickGrab)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedStorage?.Invoke(player, __instance, quickGrab, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableStorage), "ReceiveInteractRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedStorageInvoker(bool __runOriginal, InteractableStorage __instance,
+            internal static void OnPlayerInteractedStorageInvoker(bool __state, InteractableStorage __instance,
                 in ServerInvocationContext context, bool quickGrab)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -704,24 +720,26 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableDoor), "ReceiveToggleRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedDoorInvoker(InteractableDoor __instance,
+            internal static bool OnPlayerInteractedDoorInvoker(out bool __state, InteractableDoor __instance,
                 in ServerInvocationContext context, bool desiredOpen)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedDoor?.Invoke(player, __instance, desiredOpen, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableDoor), "ReceiveToggleRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedDoorInvoker(bool __runOriginal, InteractableDoor __instance,
+            internal static void OnPlayerInteractedDoorInvoker(bool __state, InteractableDoor __instance,
                 in ServerInvocationContext context, bool desiredOpen)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -733,24 +751,26 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableFire), "ReceiveToggleRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedFireInvoker(InteractableFire __instance,
+            internal static bool OnPlayerInteractedFireInvoker(out bool __state, InteractableFire __instance,
                 in ServerInvocationContext context, bool desiredLit)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedFire?.Invoke(player, __instance, desiredLit, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableFire), "ReceiveToggleRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedFireInvoker(bool __runOriginal, InteractableFire __instance,
+            internal static void OnPlayerInteractedFireInvoker(bool __state, InteractableFire __instance,
                 in ServerInvocationContext context, bool desiredLit)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -762,25 +782,27 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableGenerator), "ReceiveToggleRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedGeneratorInvoker(InteractableGenerator __instance,
+            internal static bool OnPlayerInteractedGeneratorInvoker(out bool __state, InteractableGenerator __instance,
                 in ServerInvocationContext context, bool desiredPowered)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedGenerator?.Invoke(player, __instance, desiredPowered, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableGenerator), "ReceiveToggleRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedGeneratorInvoker(bool __runOriginal,
+            internal static void OnPlayerInteractedGeneratorInvoker(bool __state,
                 InteractableGenerator __instance,
                 in ServerInvocationContext context, bool desiredPowered)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -792,24 +814,26 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableOven), "ReceiveToggleRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedOvenInvoker(InteractableOven __instance,
+            internal static bool OnPlayerInteractedOvenInvoker(out bool __state, InteractableOven __instance,
                 in ServerInvocationContext context, bool desiredLit)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedOven?.Invoke(player, __instance, desiredLit, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableOven), "ReceiveToggleRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedOvenInvoker(bool __runOriginal, InteractableOven __instance,
+            internal static void OnPlayerInteractedOvenInvoker(bool __state, InteractableOven __instance,
                 in ServerInvocationContext context, bool desiredLit)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -821,24 +845,26 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableOxygenator), "ReceiveToggleRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedOxygenatorInvoker(InteractableOxygenator __instance,
+            internal static bool OnPlayerInteractedOxygenatorInvoker(out bool __state, InteractableOxygenator __instance,
                 in ServerInvocationContext context, bool desiredPowered)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedOxygenator?.Invoke(player, __instance, desiredPowered, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableOxygenator), "ReceiveToggleRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedOxygenatorInvoker(bool __runOriginal,
+            internal static void OnPlayerInteractedOxygenatorInvoker(bool __state,
                 InteractableOxygenator __instance, in ServerInvocationContext context, bool desiredPowered)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -850,24 +876,26 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableSafezone), "ReceiveToggleRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedSafezoneInvoker(InteractableSafezone __instance,
+            internal static bool OnPlayerInteractedSafezoneInvoker(out bool __state, InteractableSafezone __instance,
                 in ServerInvocationContext context, bool desiredPowered)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedSafezone?.Invoke(player, __instance, desiredPowered, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableSafezone), "ReceiveToggleRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedSafezoneInvoker(bool __runOriginal, InteractableSafezone __instance,
+            internal static void OnPlayerInteractedSafezoneInvoker(bool __state, InteractableSafezone __instance,
                 in ServerInvocationContext context, bool desiredPowered)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -879,24 +907,26 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableSign), "ReceiveChangeTextRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedSignInvoker(InteractableSign __instance,
+            internal static bool OnPlayerInteractedSignInvoker(out bool __state, InteractableSign __instance,
                 in ServerInvocationContext context, string newText)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedSign?.Invoke(player, __instance, newText, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableSign), "ReceiveChangeTextRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedSignInvoker(bool __runOriginal, InteractableSign __instance,
+            internal static void OnPlayerInteractedSignInvoker(bool __state, InteractableSign __instance,
                 in ServerInvocationContext context, string newText)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -908,24 +938,26 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableSpot), "ReceiveToggleRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedSpotInvoker(InteractableSpot __instance,
+            internal static bool OnPlayerInteractedSpotInvoker(out bool __state, InteractableSpot __instance,
                 in ServerInvocationContext context, bool desiredPowered)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedSpot?.Invoke(player, __instance, desiredPowered, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableSpot), "ReceiveToggleRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedSpotInvoker(bool __runOriginal, InteractableSpot __instance,
+            internal static void OnPlayerInteractedSpotInvoker(bool __state, InteractableSpot __instance,
                 in ServerInvocationContext context, bool desiredPowered)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -937,24 +969,26 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableStereo), "ReceiveTrackRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedStereoInvoker(InteractableStereo __instance,
+            internal static bool OnPlayerInteractedStereoInvoker(out bool __state, InteractableStereo __instance,
                 in ServerInvocationContext context, Guid newTrack)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedStereoTrack?.Invoke(player, __instance, newTrack, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableStereo), "ReceiveTrackRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedStereoInvoker(bool __runOriginal, InteractableStereo __instance,
+            internal static void OnPlayerInteractedStereoInvoker(bool __state, InteractableStereo __instance,
                 in ServerInvocationContext context, Guid newTrack)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -966,24 +1000,26 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableStereo), "ReceiveChangeVolumeRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedStereoInvoker(InteractableStereo __instance,
+            internal static bool OnPlayerInteractedStereoInvoker(out bool __state, InteractableStereo __instance,
                 in ServerInvocationContext context, byte newVolume)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedStereoVolume?.Invoke(player, __instance, newVolume, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableStereo), "ReceiveChangeVolumeRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedStereoInvoker(bool __runOriginal, InteractableStereo __instance,
+            internal static void OnPlayerInteractedStereoInvoker(bool __state, InteractableStereo __instance,
                 in ServerInvocationContext context, byte newVolume)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -995,24 +1031,26 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableLibrary), "ReceiveTransferLibraryRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerInteractedLibraryInvoker(InteractableLibrary __instance,
+            internal static bool OnPlayerInteractedLibraryInvoker(out bool __state, InteractableLibrary __instance,
                 in ServerInvocationContext context, byte transaction, uint delta)
             {
+                __state = false;
                 var player = context.GetPlayer();
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerInteractedLibrary?.Invoke(player, __instance, transaction, delta, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableLibrary), "ReceiveTransferLibraryRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerInteractedLibraryInvoker(bool __runOriginal, InteractableLibrary __instance,
+            internal static void OnPlayerInteractedLibraryInvoker(bool __state, InteractableLibrary __instance,
                 in ServerInvocationContext context, byte transaction, uint delta)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var player = context.GetPlayer();
@@ -1024,20 +1062,21 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableTank), "ServerSetAmount")]
             [HarmonyPrefix]
-            internal static bool OnTankUpdatedInvoker(InteractableTank __instance, ref ushort newAmount)
+            internal static bool OnTankUpdatedInvoker(out bool __state, InteractableTank __instance, ref ushort newAmount)
             {
                 var shouldAllow = true;
                 OnPreTankUpdated?.Invoke(BarricadeUtil.FindDropFast(__instance.transform), ref newAmount,
                     ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableTank), "ServerSetAmount")]
             [HarmonyPostfix]
-            internal static void OnTankUpdatedInvoker(bool __runOriginal, InteractableTank __instance,
+            internal static void OnTankUpdatedInvoker(bool __state, InteractableTank __instance,
                 ref ushort newAmount)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnTankUpdated?.Invoke(BarricadeUtil.FindDropFast(__instance.transform), newAmount);
@@ -1045,19 +1084,20 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(ObjectManager), "ReceiveObjectResourceState")]
             [HarmonyPrefix]
-            internal static bool ReceiveObjectResourceState(byte x, byte y, ushort index, ref ushort amount)
+            internal static bool ReceiveObjectResourceState(out bool __state, byte x, byte y, ushort index, ref ushort amount)
             {
                 var shouldAllow = true;
                 OnPreObjectResourceUpdated?.Invoke(LevelObjects.objects[x, y][index], ref amount, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(ObjectManager), "ReceiveObjectResourceState")]
             [HarmonyPostfix]
-            internal static void ReceiveObjectResourceState(bool __runOriginal, byte x, byte y, ushort index,
+            internal static void ReceiveObjectResourceState(bool __state, byte x, byte y, ushort index,
                 ushort amount)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnObjectResourceUpdated?.Invoke(LevelObjects.objects[x, y][index], amount);
@@ -1076,11 +1116,8 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(Animal), "tick")]
             [HarmonyPostfix]
-            internal static void OnAnimalMovementChangedInvoker(bool __runOriginal, Vector3 __state, Animal __instance)
+            internal static void OnAnimalMovementChangedInvoker(Vector3 __state, Animal __instance)
             {
-                if (!__runOriginal)
-                    return;
-
                 if (__instance.transform.position == __state)
                     return;
 
@@ -1089,19 +1126,20 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableOil), "askBurn")]
             [HarmonyPrefix]
-            internal static bool OnOilTankBurnedInvoker(InteractableOil __instance, ref ushort amount)
+            internal static bool OnOilTankBurnedInvoker(out bool __state, InteractableOil __instance, ref ushort amount)
             {
                 var shouldAllow = true;
                 OnPreOilTankBurned?.Invoke(BarricadeUtil.FindDropFast(__instance.transform), ref amount,
                     ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(InteractableOil), "askBurn")]
             [HarmonyPostfix]
-            internal static void OnOilTankBurnedInvoker(bool __runOriginal, InteractableOil __instance, ushort amount)
+            internal static void OnOilTankBurnedInvoker(bool __state, InteractableOil __instance, ushort amount)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnOilTankBurned?.Invoke(BarricadeUtil.FindDropFast(__instance.transform), amount);
@@ -1109,20 +1147,21 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(BarricadeManager), "updateRainBarrel")]
             [HarmonyPrefix]
-            internal static bool OnRainBarrelUpdatedInvoker(Transform transform, ref bool isFull, ref bool shouldSend)
+            internal static bool OnRainBarrelUpdatedInvoker(out bool __state, Transform transform, ref bool isFull, ref bool shouldSend)
             {
                 var shouldAllow = true;
                 OnPreRainBarrelUpdated?.Invoke(BarricadeUtil.FindDropFast(transform), ref isFull, ref shouldSend,
                     ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(BarricadeManager), "updateRainBarrel")]
             [HarmonyPostfix]
-            internal static void OnRainBarrelUpdatedInvoker(bool __runOriginal, Transform transform, bool isFull,
+            internal static void OnRainBarrelUpdatedInvoker(bool __state, Transform transform, bool isFull,
                 bool shouldSend)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnRainBarrelUpdated?.Invoke(BarricadeUtil.FindDropFast(transform), isFull, shouldSend);
@@ -1295,13 +1334,10 @@ namespace RFRocketLibrary.Events
             [HarmonyPatch(typeof(PlayerMovement), "simulate", typeof(uint), typeof(int), typeof(int), typeof(int),
                 typeof(float), typeof(float), typeof(bool), typeof(bool), typeof(float))]
             [HarmonyPostfix]
-            internal static void OnPlayerMovementChangedInvoker(bool __runOriginal, PlayerMovement __instance,
+            internal static void OnPlayerMovementChangedInvoker(PlayerMovement __instance,
                 Vector3 __state, uint simulation, int recov, int input_x, int input_y, float look_x, float look_y,
                 bool inputJump, bool inputSprint, float deltaTime)
             {
-                if (!__runOriginal)
-                    return;
-
                 if (__instance.transform.position == __state)
                     return;
 
@@ -1311,40 +1347,40 @@ namespace RFRocketLibrary.Events
             [HarmonyPatch(typeof(Player), "teleportToLocationUnsafe")]
             [HarmonyPrefix]
             internal static bool OnPlayerTeleportedInvoker(Player __instance,
-                out Vector3 __state, ref Vector3 position, ref float yaw)
+                out Tuple<bool, Vector3> __state, ref Vector3 position, ref float yaw)
             {
-                __state = __instance.transform.position;
                 var shouldAllow = true;
                 OnPrePlayerTeleported?.Invoke(__instance, ref position, ref yaw, ref shouldAllow);
+                __state = new Tuple<bool, Vector3>(shouldAllow, __instance.transform.position);
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(Player), "teleportToLocationUnsafe")]
             [HarmonyPostfix]
-            internal static void OnPlayerTeleportedInvoker(bool __runOriginal, Player __instance,
-                Vector3 __state, Vector3 position, float yaw)
+            internal static void OnPlayerTeleportedInvoker(Tuple<bool, Vector3> __state, Player __instance, Vector3 position, float yaw)
             {
-                if (!__runOriginal)
+                if (__state is not {Item1: true})
                     return;
 
-                OnPlayerTeleported?.Invoke(__instance, __state, position, yaw);
+                OnPlayerTeleported?.Invoke(__instance, __state.Item2, position, yaw);
             }
 
             [HarmonyPatch(typeof(AnimalManager), "sendAnimalAlive")]
             [HarmonyPrefix]
-            internal static bool OnPreAnimalSpawnedInvoker(Animal animal, ref Vector3 newPosition, ref byte newAngle)
+            internal static bool OnPreAnimalSpawnedInvoker(out bool __state, Animal animal, ref Vector3 newPosition, ref byte newAngle)
             {
                 var shouldAllow = true;
                 OnPreAnimalSpawned?.Invoke(animal, ref newPosition, ref newAngle, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(AnimalManager), "sendAnimalAlive")]
             [HarmonyPostfix]
-            internal static void OnPreAnimalSpawnedInvoker(bool __runOriginal, Animal animal, Vector3 newPosition,
+            internal static void OnPreAnimalSpawnedInvoker(bool __state, Animal animal, Vector3 newPosition,
                 byte newAngle)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnAnimalSpawned?.Invoke(animal, newPosition, newAngle);
@@ -1352,22 +1388,23 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(ItemManager), "ReceiveItem")]
             [HarmonyPrefix]
-            internal static bool OnPreItemSpawnedInvoker(byte x, byte y, ref ushort id, ref byte amount,
+            internal static bool OnPreItemSpawnedInvoker(out bool __state, byte x, byte y, ref ushort id, ref byte amount,
                 ref byte quality,
                 ref byte[] state, ref Vector3 point, uint instanceID)
             {
                 var shouldAllow = true;
                 OnPreItemSpawned?.Invoke(x, y, ref id, ref amount, ref quality, ref state, ref point, instanceID,
                     ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(ItemManager), "ReceiveItem")]
             [HarmonyPostfix]
-            internal static void OnPreItemSpawnedInvoker(bool __runOriginal, byte x, byte y, ushort id, byte amount,
+            internal static void OnPreItemSpawnedInvoker(bool __state, byte x, byte y, ushort id, byte amount,
                 byte quality, byte[] state, Vector3 point, uint instanceID)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnItemSpawned?.Invoke(x, y, id, amount, quality, state, point, instanceID);
@@ -1375,18 +1412,19 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(ResourceManager), "ServerSetResourceAlive")]
             [HarmonyPrefix]
-            internal static bool OnPreResourceSpawnedInvoker(byte x, byte y, ushort index)
+            internal static bool OnPreResourceSpawnedInvoker(out bool __state, byte x, byte y, ushort index)
             {
                 var shouldAllow = true;
                 OnPreResourceSpawned?.Invoke(LevelGround.trees[x, y][index], ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(ResourceManager), "ServerSetResourceAlive")]
             [HarmonyPostfix]
-            internal static void OnPreResourceSpawnedInvoker(bool __runOriginal, byte x, byte y, ushort index)
+            internal static void OnPreResourceSpawnedInvoker(bool __state, byte x, byte y, ushort index)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnResourceSpawned?.Invoke(LevelGround.trees[x, y][index]);
@@ -1394,19 +1432,20 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(VehicleManager), "addVehicleAtSpawn")]
             [HarmonyPrefix]
-            internal static bool OnPreVehicleSpawnedFromSpawnpointInvoker(VehicleSpawnpoint spawn)
+            internal static bool OnPreVehicleSpawnedFromSpawnpointInvoker(out bool __state, VehicleSpawnpoint spawn)
             {
                 var shouldAllow = true;
                 OnPreVehicleSpawnedFromSpawnpoint?.Invoke(spawn, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(VehicleManager), "addVehicleAtSpawn")]
             [HarmonyPostfix]
-            internal static void OnPreVehicleSpawnedFromSpawnpointInvoker(bool __runOriginal,
+            internal static void OnPreVehicleSpawnedFromSpawnpointInvoker(bool __state,
                 InteractableVehicle __result, VehicleSpawnpoint spawn)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnVehicleSpawnedFromSpawnpoint?.Invoke(spawn, __result);
@@ -1414,7 +1453,7 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(VehicleManager), "SpawnVehicleV3")]
             [HarmonyPrefix]
-            internal static bool OnPreVehicleSpawnedInvoker(ref VehicleAsset asset, ref ushort skinID,
+            internal static bool OnPreVehicleSpawnedInvoker(out bool __state, ref VehicleAsset asset, ref ushort skinID,
                 ref ushort mythicID, ref float roadPosition, ref Vector3 point, ref Quaternion angle, ref bool sirens,
                 ref bool blimp,
                 ref bool headlights, ref bool taillights, ref ushort fuel, ref ushort health, ref ushort batteryCharge,
@@ -1425,18 +1464,19 @@ namespace RFRocketLibrary.Events
                 OnPreVehicleSpawned?.Invoke(ref asset, ref skinID, ref mythicID, ref roadPosition, ref point, ref angle,
                     ref sirens, ref blimp, ref headlights, ref taillights, ref fuel, ref health, ref batteryCharge,
                     ref owner, ref group, ref locked, ref turrets, ref tireAliveMask, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(VehicleManager), "SpawnVehicleV3")]
             [HarmonyPostfix]
-            internal static void OnPreVehicleSpawnedInvoker(bool __runOriginal,
+            internal static void OnPreVehicleSpawnedInvoker(bool __state,
                 InteractableVehicle __result,
                 VehicleAsset asset, ushort skinID, ushort mythicID, float roadPosition, Vector3 point, Quaternion angle,
                 bool sirens, bool blimp, bool headlights, bool taillights, ushort fuel, ushort health,
                 ushort batteryCharge, CSteamID owner, CSteamID group, bool locked, byte[][] turrets, byte tireAliveMask)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnVehicleSpawned?.Invoke(__result);
@@ -1444,23 +1484,24 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(ZombieManager), "sendZombieAlive")]
             [HarmonyPrefix]
-            internal static bool OnPreZombieSpawnedInvoker(Zombie zombie, ref byte newType,
+            internal static bool OnPreZombieSpawnedInvoker(out bool __state, Zombie zombie, ref byte newType,
                 ref byte newSpeciality, ref byte newShirt, ref byte newPants, ref byte newHat, ref byte newGear,
                 ref Vector3 newPosition, ref byte newAngle)
             {
                 var shouldAllow = true;
                 OnPreZombieSpawned?.Invoke(zombie, ref newType, ref newSpeciality, ref newShirt, ref newPants,
                     ref newHat, ref newGear, ref newPosition, ref newAngle, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(ZombieManager), "sendZombieAlive")]
             [HarmonyPostfix]
-            internal static void OnPreZombieSpawnedInvoker(bool __runOriginal, Zombie zombie, byte newType,
+            internal static void OnPreZombieSpawnedInvoker(bool __state, Zombie zombie, byte newType,
                 byte newSpeciality, byte newShirt, byte newPants, byte newHat, byte newGear,
                 Vector3 newPosition, byte newAngle)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnZombieSpawned?.Invoke(zombie, newType, newSpeciality, newShirt, newPants,
@@ -1487,13 +1528,9 @@ namespace RFRocketLibrary.Events
                 typeof(bool), typeof(Vector3), typeof(Quaternion), typeof(float), typeof(float), typeof(int),
                 typeof(float))]
             [HarmonyPostfix]
-            internal static void OnVehicleMovementChangedByPlayerInvoker(bool __runOriginal,
-                InteractableVehicle __instance, Vector3 __state, uint simulation, int recov, bool inputStamina,
+            internal static void OnVehicleMovementChangedByPlayerInvoker(InteractableVehicle __instance, Vector3 __state, uint simulation, int recov, bool inputStamina,
                 Vector3 point, Quaternion angle, float newSpeed, float newPhysicsSpeed, int newTurn, float delta)
             {
-                if (!__runOriginal)
-                    return;
-
                 OnVehicleMovementChangedByPlayer?.Invoke(__instance,
                     __instance.passengers.ElementAtOrDefault(0)?.player?.player, __state);
             }
@@ -1508,12 +1545,9 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(InteractableVehicle), "updateSafezoneStatus")]
             [HarmonyPostfix]
-            internal static void OnVehicleMovementChangedInvoker(bool __runOriginal, InteractableVehicle __instance,
+            internal static void OnVehicleMovementChangedInvoker(InteractableVehicle __instance,
                 Vector3 __state, float deltaSeconds)
             {
-                if (!__runOriginal)
-                    return;
-
                 if (__instance.transform.position == __state)
                     return;
 
@@ -1533,11 +1567,8 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(Zombie), "tick")]
             [HarmonyPostfix]
-            internal static void OnZombieMovementChangedInvoker(bool __runOriginal, Zombie __instance, Vector3 __state)
+            internal static void OnZombieMovementChangedInvoker(Zombie __instance, Vector3 __state)
             {
-                if (!__runOriginal)
-                    return;
-
                 if (__instance.transform.position == __state)
                     return;
 
@@ -1546,10 +1577,10 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(AnimalManager), "ReceiveAnimalDead")]
             [HarmonyPostfix]
-            internal static void OnAnimalKilledInvoker(bool __runOriginal, ushort index, ref Vector3 newRagdoll,
+            internal static void OnAnimalKilledInvoker(bool __state, ushort index, ref Vector3 newRagdoll,
                 ref ERagdollEffect newRagdollEffect)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnAnimalKilled?.Invoke(AnimalManager.animals.ElementAtOrDefault(index), ref newRagdoll,
@@ -1558,27 +1589,29 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(Animal), "askDamage")]
             [HarmonyPrefix]
-            internal static bool OnPreAnimalKilledInvoker(Animal __instance, ushort ___health, ushort amount,
+            internal static bool OnPreAnimalKilledInvoker(out bool __state, Animal __instance, ushort ___health, ushort amount,
                 ref Vector3 newRagdoll, ref EPlayerKill kill, ref uint xp, ref bool trackKill, ref bool dropLoot,
                 ref ERagdollEffect ragdollEffect)
             {
+                __state = true;
                 if (___health > amount)
                     return true;
 
                 var shouldAllow = true;
                 OnPreAnimalKilled?.Invoke(__instance, ref newRagdoll, ref kill, ref xp, ref trackKill, ref dropLoot,
                     ref ragdollEffect, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(Animal), "askDamage")]
             [HarmonyPostfix]
-            internal static void OnPreAnimalKilledInvoker(bool __runOriginal, Animal __instance, ushort ___health,
+            internal static void OnPreAnimalKilledInvoker(bool __state, Animal __instance, ushort ___health,
                 ushort amount,
                 ref Vector3 newRagdoll, ref EPlayerKill kill, ref uint xp, ref bool trackKill, ref bool dropLoot,
                 ref ERagdollEffect ragdollEffect)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnAnimalDamaged?.Invoke(__instance, amount, kill, xp);
@@ -1586,7 +1619,7 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(BarricadeManager), "InternalSetBarricadeTransform")]
             [HarmonyPostfix]
-            internal static void OnBarricadeTransformedInvoker(bool __runOriginal, byte x, byte y, ushort plant,
+            internal static void OnBarricadeTransformedInvoker(byte x, byte y, ushort plant,
                 BarricadeDrop barricade, Vector3 point, byte angle_x, byte angle_y, byte angle_z)
             {
                 OnBarricadeTransformed?.Invoke(x, y, plant, barricade, point, angle_x, angle_y, angle_z);
@@ -1595,20 +1628,21 @@ namespace RFRocketLibrary.Events
             [HarmonyPatch(typeof(BarricadeManager), "destroyBarricade")]
             [HarmonyPatch(new[] {typeof(BarricadeDrop), typeof(byte), typeof(byte), typeof(ushort)})]
             [HarmonyPrefix]
-            internal static bool OnPreBarricadeDestroyedInvoker(BarricadeDrop barricade, byte x, byte y, ushort plant)
+            internal static bool OnPreBarricadeDestroyedInvoker(out bool __state, BarricadeDrop barricade, byte x, byte y, ushort plant)
             {
                 var shouldAllow = true;
                 OnPreBarricadeDestroyed?.Invoke(barricade, x, y, plant, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(BarricadeManager), "destroyBarricade")]
             [HarmonyPatch(new[] {typeof(BarricadeDrop), typeof(byte), typeof(byte), typeof(ushort)})]
             [HarmonyPostfix]
-            internal static void OnPreBarricadeDestroyedInvoker(bool __runOriginal, BarricadeDrop barricade, byte x,
+            internal static void OnPreBarricadeDestroyedInvoker(bool __state, BarricadeDrop barricade, byte x,
                 byte y, ushort plant)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnBarricadeDestroyed?.Invoke(barricade, x, y, plant);
@@ -1665,21 +1699,15 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(UseableMelee), "fire")]
             [HarmonyPostfix]
-            internal static void OnPlayerAttackInvoker(bool __runOriginal, UseableMelee __instance)
+            internal static void OnPlayerAttackInvoker(UseableMelee __instance)
             {
-                if (!__runOriginal)
-                    return;
-
                 OnPlayerAttack?.Invoke(__instance.player);
             }
 
             [HarmonyPatch(typeof(UseableGun), "jab")]
             [HarmonyPostfix]
-            internal static void OnPlayerAttackInvoker2(bool __runOriginal, UseableGun __instance)
+            internal static void OnPlayerAttackInvoker2(UseableGun __instance)
             {
-                if (!__runOriginal)
-                    return;
-
                 OnPlayerAttack?.Invoke(__instance.player);
             }
 
@@ -1706,27 +1734,29 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(PlayerLife), "doDamage")]
             [HarmonyPrefix]
-            internal static bool OnPrePlayerKilledInvoker(PlayerLife __instance, byte amount, ref Vector3 newRagdoll,
+            internal static bool OnPrePlayerKilledInvoker(out bool __state, PlayerLife __instance, byte amount, ref Vector3 newRagdoll,
                 ref EDeathCause newCause, ref ELimb newLimb, ref CSteamID newKiller, ref EPlayerKill kill,
                 ref bool trackKill, ref ERagdollEffect newRagdollEffect, bool canCauseBleeding = true)
             {
+                __state = true;
                 if (__instance.health > amount)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerKilled?.Invoke(__instance.player, ref newRagdoll, ref newCause, ref newLimb,
                     ref newKiller, ref kill, ref trackKill, ref newRagdollEffect, ref shouldAllow);
+                __state = false;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(PlayerLife), "doDamage")]
             [HarmonyPostfix]
-            internal static void OnPrePlayerKilledInvoker(bool __runOriginal, PlayerLife __instance, byte amount,
+            internal static void OnPrePlayerKilledInvoker(bool __state, PlayerLife __instance, byte amount,
                 ref Vector3 newRagdoll,
                 ref EDeathCause newCause, ref ELimb newLimb, ref CSteamID newKiller, ref EPlayerKill kill,
                 ref bool trackKill, ref ERagdollEffect newRagdollEffect, bool canCauseBleeding = true)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnPlayerDamaged?.Invoke(__instance.player, amount, newCause, newLimb, newKiller, kill);
@@ -1734,12 +1764,9 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(ResourceManager), "ReceiveResourceDead")]
             [HarmonyPostfix]
-            internal static void OnPreResourceDeadInvoker(bool __runOriginal, byte x, byte y, ushort index,
+            internal static void OnPreResourceDeadInvoker(byte x, byte y, ushort index,
                 ref Vector3 ragdoll)
             {
-                if (!__runOriginal)
-                    return;
-
                 var resourceSpawnpoint = LevelGround.trees[x, y]?[index];
                 if (resourceSpawnpoint == null)
                     return;
@@ -1775,22 +1802,27 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(UseableGun), "ReceiveChangeFiremode")]
             [HarmonyPrefix]
-            internal static bool OnPrePlayerFiremodeChangedInvoker(UseableGun __instance, EFiremode newFiremode)
+            internal static bool OnPrePlayerFiremodeChangedInvoker(out bool __state, UseableGun __instance, EFiremode newFiremode)
             {
+                __state = false;
                 var player = __instance.player;
                 if (player == null)
                     return true;
 
                 var shouldAllow = true;
                 OnPrePlayerFiremodeChanged?.Invoke(player, newFiremode, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(UseableGun), "ReceiveChangeFiremode")]
             [HarmonyPostfix]
-            internal static void OnPrePlayerFiremodeChangedInvoker(bool __runOriginal, UseableGun __instance,
+            internal static void OnPrePlayerFiremodeChangedInvoker(bool __state, UseableGun __instance,
                 EFiremode newFiremode)
             {
+                if (!__state)
+                    return;
+                
                 var player = __instance.player;
                 if (player == null)
                     return;
@@ -1800,9 +1832,10 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(ResourceManager), "ReceiveForageRequest")]
             [HarmonyPrefix]
-            internal static bool OnPrePlayerForagedResourceInvoker(in ServerInvocationContext context, byte x, byte y,
+            internal static bool OnPrePlayerForagedResourceInvoker(out bool __state, in ServerInvocationContext context, byte x, byte y,
                 ushort index)
             {
+                __state = false;
                 var resourceSpawnpoint = LevelGround.trees[x, y]?[index];
                 if (resourceSpawnpoint == null)
                     return true;
@@ -1813,16 +1846,17 @@ namespace RFRocketLibrary.Events
 
                 var shouldAllow = true;
                 OnPrePlayerForagedResource?.Invoke(player, resourceSpawnpoint, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(ResourceManager), "ReceiveForageRequest")]
             [HarmonyPostfix]
-            internal static void OnPrePlayerForagedResourceInvoker(bool __runOriginal,
+            internal static void OnPrePlayerForagedResourceInvoker(bool __state,
                 in ServerInvocationContext context, byte x, byte y,
                 ushort index)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 var resourceSpawnpoint = LevelGround.trees[x, y]?[index];
@@ -1838,7 +1872,7 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(StructureManager), "InternalSetStructureTransform")]
             [HarmonyPostfix]
-            internal static void OnStructureTransformedInvoker(bool __runOriginal, byte x, byte y, StructureDrop drop,
+            internal static void OnStructureTransformedInvoker(byte x, byte y, StructureDrop drop,
                 Vector3 point, byte angle_x, byte angle_y, byte angle_z)
             {
                 OnStructureTransformed?.Invoke(x, y, drop, point, angle_x, angle_y, angle_z);
@@ -1847,22 +1881,22 @@ namespace RFRocketLibrary.Events
             [HarmonyPatch(typeof(StructureManager), "destroyStructure")]
             [HarmonyPatch(new[] {typeof(StructureDrop), typeof(byte), typeof(byte), typeof(Vector3)})]
             [HarmonyPrefix]
-            internal static bool OnPreStructureDestroyedInvoker(StructureDrop structure, byte x, byte y,
+            internal static bool OnPreStructureDestroyedInvoker(out bool __state, StructureDrop structure, byte x, byte y,
                 ref Vector3 ragdoll)
             {
                 var shouldAllow = true;
                 OnPreStructureDestroyed?.Invoke(structure, x, y, ref ragdoll, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(StructureManager), "destroyStructure")]
             [HarmonyPatch(new[] {typeof(StructureDrop), typeof(byte), typeof(byte), typeof(Vector3)})]
             [HarmonyPostfix]
-            internal static void OnPreStructureDestroyedInvoker(bool __runOriginal, StructureDrop structure, byte x,
-                byte y,
-                ref Vector3 ragdoll)
+            internal static void OnPreStructureDestroyedInvoker(bool __state, StructureDrop structure, byte x,
+                byte y, ref Vector3 ragdoll)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnStructureDestroyed?.Invoke(structure, x, y, ragdoll);
@@ -1904,26 +1938,28 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(Zombie), "askDamage")]
             [HarmonyPrefix]
-            internal static bool OnPreZombieKilledInvoker(Zombie __instance, ushort ___health, ushort amount,
+            internal static bool OnPreZombieKilledInvoker(out bool __state, Zombie __instance, ushort ___health, ushort amount,
                 ref Vector3 newRagdoll, ref EPlayerKill kill, ref uint xp, ref bool trackKill, ref bool dropLoot,
                 ref EZombieStunOverride stunOverride, ref ERagdollEffect ragdollEffect)
             {
+                __state = true;
                 if (___health > amount)
                     return true;
 
                 var shouldAllow = true;
                 OnPreZombieKilled?.Invoke(__instance, ref newRagdoll, ref kill, ref xp, ref trackKill, ref dropLoot,
                     ref stunOverride, ref ragdollEffect, ref shouldAllow);
+                __state = shouldAllow;
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(Zombie), "askDamage")]
             [HarmonyPostfix]
-            internal static void OnPreZombieKilledInvoker(bool __runOriginal, Zombie __instance, ushort amount,
+            internal static void OnPreZombieKilledInvoker(bool __state, Zombie __instance, ushort amount,
                 Vector3 newRagdoll, EPlayerKill kill, uint xp, bool trackKill, bool dropLoot,
                 EZombieStunOverride stunOverride, ERagdollEffect ragdollEffect)
             {
-                if (!__runOriginal)
+                if (!__state)
                     return;
 
                 OnZombieDamaged?.Invoke(__instance, amount, kill, xp);
