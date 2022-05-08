@@ -1,5 +1,7 @@
 ﻿using System;
+using HarmonyLib;
 using SDG.Unturned;
+using UnityEngine;
 
 namespace RFRocketLibrary.Utils
 {
@@ -24,6 +26,12 @@ namespace RFRocketLibrary.Utils
                     break;
                 }
             }
+        }
+        
+        public static BarricadeDrop FindDropFast(Transform barricadeTransform)
+        {
+            var fastBarricade = Traverse.Create<BarricadeDrop>().Method("FindByRootFast", new[] {typeof(Transform)});
+            return fastBarricade.GetValue<BarricadeDrop>(barricadeTransform);
         }
 
         #endregion

@@ -1,16 +1,17 @@
 ﻿// using Cysharp.Threading.Tasks;
+
 using Rocket.API;
 using Rocket.Core;
 using Rocket.Core.Plugins;
-using RocketExtensions.Core;
 using RocketExtensions.Models;
 using RocketExtensions.Models.Exceptions;
-using RocketExtensions.Utilities.ShimmyMySherbet.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using RFRocketLibrary.Helpers;
+using RocketExtensions.Utilities;
 using UnityEngine;
 using Logger = Rocket.Core.Logging.Logger;
 using RocketCaller = Rocket.API.AllowedCaller;
@@ -19,7 +20,7 @@ namespace RocketExtensions.Plugins
 {
     public abstract class RocketCommand : IRocketCommand
     {
-        private CommandActor? _actor;
+        private CommandActorAttribute? _actor;
         private IRocketPlugin? _plugin;
         private bool _pluginInit;
 
@@ -32,7 +33,7 @@ namespace RocketExtensions.Plugins
                     _plugin = R.Plugins.GetPlugin(GetType().Assembly);
                     _pluginInit = true;
                 }
-                
+
                 return _plugin;
             }
         }
@@ -42,7 +43,8 @@ namespace RocketExtensions.Plugins
             get
             {
                 var typ = GetType();
-                _actor ??= typ.GetCustomAttribute<CommandActor>() ?? new CommandActor(RocketCaller.Both);
+                _actor ??= typ.GetCustomAttribute<CommandActorAttribute>() ??
+                           new CommandActorAttribute(RocketCaller.Both);
                 return _actor.Actor;
             }
         }
@@ -57,13 +59,13 @@ namespace RocketExtensions.Plugins
                 {
                     var typ = GetType();
 
-                    var nm = typ.GetCustomAttribute<CommandName>();
+                    var nm = typ.GetCustomAttribute<CommandNameAttribute>();
                     if (nm != null)
                         _name = nm.Name;
                     else
                     {
                         var className = typ.Name;
-                        var cmdIndex = className.IndexOf("command", 0, StringComparison.InvariantCultureIgnoreCase);
+                        var cmdIndex = className.IndexOf("Command", 0, StringComparison.OrdinalIgnoreCase);
                         if (cmdIndex != -1)
                             className = className.Remove(cmdIndex, 7);
 
@@ -77,35 +79,38 @@ namespace RocketExtensions.Plugins
 
         private string? _help;
         private string? _syntax;
+        private bool? _allowSimultaneousCall;
 
         private void m_InitInfo()
         {
             var typ = GetType();
-            var info = typ.GetCustomAttribute<CommandInfo>();
+            var info = typ.GetCustomAttribute<CommandInfoAttribute>();
             if (info != null)
             {
                 _help = info.Help;
                 _syntax = !string.IsNullOrEmpty(info.Syntax) ? info.Syntax : Name;
+                _allowSimultaneousCall = info.AllowSimultaneousCalls;
             }
             else
             {
                 _help = "";
                 _syntax = Name;
+                _allowSimultaneousCall = false;
             }
         }
 
-        public string? Help
+        public string Help
         {
             get
             {
                 if (_help == null)
                     m_InitInfo();
-                
+
                 return _help;
             }
         }
 
-        public string? Syntax
+        public string Syntax
         {
             get
             {
@@ -113,6 +118,17 @@ namespace RocketExtensions.Plugins
                     m_InitInfo();
 
                 return _syntax;
+            }
+        }
+
+        public bool AllowSimultaneousCalls
+        {
+            get
+            {
+                if (_allowSimultaneousCall == null)
+                    m_InitInfo();
+
+                return _allowSimultaneousCall.Value;
             }
         }
 
@@ -124,10 +140,10 @@ namespace RocketExtensions.Plugins
             {
                 if (_aliases == null)
                 {
-                    var info = GetType().GetCustomAttribute<CommandAliases>();
+                    var info = GetType().GetCustomAttribute<CommandAliasesAttribute>();
                     _aliases = info != null ? info.Aliases : new List<string>();
                 }
-                
+
                 return _aliases;
             }
         }
@@ -139,30 +155,71 @@ namespace RocketExtensions.Plugins
             get
             {
                 var typ = GetType();
-                var inst = typ.GetCustomAttribute<CommandPermissions>();
+                var inst = typ.GetCustomAttribute<CommandPermissionsAttribute>();
                 if (inst != null)
                     _permissions = inst.Permissions;
                 else
                 {
                     var asmName = typ.Assembly.GetName().Name;
-                    _permissions = new List<string> { $"{asmName}.{Name}" };
+                    _permissions = new List<string> {$"{asmName}.{Name}"};
                 }
 
                 return _permissions;
             }
         }
 
+        private List<RunningCommand> RunningCommands { get; } = new();
+        private ExtendedRocketPlugin? _extendedPlugin;
+
+        public ExtendedRocketPlugin? ExtendedPlugin
+        {
+            get
+            {
+                if (_extendedPlugin != null)
+                    return _extendedPlugin;
+
+                if (Plugin is ExtendedRocketPlugin extendedRocketPlugin)
+                {
+                    _extendedPlugin = extendedRocketPlugin;
+                    return extendedRocketPlugin;
+                }
+
+                return null;
+            }
+        }
+
         public void Execute(IRocketPlayer caller, string[] command)
         {
-            CoreSetup.CheckInit();
             var context = new CommandContext(caller, this, command);
-            Task.Run(async () => await Run(context));
+
+            var runningCommand = RunningCommands.FirstOrDefault(x =>
+                x.Caller.Id.Equals(context.Player.Id, StringComparison.OrdinalIgnoreCase));
+            if (runningCommand == null)
+            {
+                runningCommand = new RunningCommand {Caller = context.Player, Instances = 1};
+                RunningCommands.Add(runningCommand);
+            }
+            else
+                runningCommand.Instances++;
+            
+            if (ExtendedPlugin == null)
+                Task.Run(async () => await Run(context));
+            else
+                ExtendedPlugin.CommandQueue.Enqueue(async () => await Run(context));
         }
 
         private async Task Run(CommandContext context)
         {
+            var runningCommand = RunningCommands.First(x =>
+                x.Caller.Id.Equals(context.Player.Id, StringComparison.OrdinalIgnoreCase));
             try
             {
+                if (!AllowSimultaneousCalls && runningCommand.Instances > 1)
+                {
+                    await context.ReplyAsync($"This command does not support simultaneous calls. Please wait for previous command to finish!", Color.yellow);
+                    await context.CancelCooldownAsync();
+                }
+                
                 await Execute(context);
             }
             catch (InvalidArgumentException invalid)
@@ -194,6 +251,10 @@ namespace RocketExtensions.Plugins
                 Logger.LogError(ex.StackTrace);
                 await context.ReplyAsync("An error occurred during the execution of this command", Color.red);
             }
+            finally
+            {
+                runningCommand.Instances--;
+            }
         }
 
         public T? GetPluginInstance<T>() where T : IRocketPlugin
@@ -207,7 +268,7 @@ namespace RocketExtensions.Plugins
             dynamic? plugin = typeof(T).Assembly.TryGetPlugin(cType);
             if (plugin == null)
                 return default;
-            
+
             var configInstance = plugin.Configuration.Instance;
 
             if (configInstance == null)
@@ -218,7 +279,7 @@ namespace RocketExtensions.Plugins
 
             if (configInstance is T instance)
                 return instance;
-            
+
             return default;
         }
 
@@ -227,7 +288,8 @@ namespace RocketExtensions.Plugins
         /// <summary>
         /// Sends a message to the specified player
         /// </summary>
-        public async Task SayAsync(IRocketPlayer player, string message, Color? messageColor = null, string? iconUrl = null)
+        public async Task SayAsync(IRocketPlayer player, string message, Color? messageColor = null,
+            string? iconUrl = null)
         {
             messageColor ??= Color.green;
             await ThreadTool.RunOnGameThreadAsync(ChatHelper.Say, player, message, messageColor, iconUrl);

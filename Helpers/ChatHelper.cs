@@ -22,18 +22,21 @@ namespace RFRocketLibrary.Helpers
 
         public static void Broadcast(string text, Color? color = null, string? iconURL = null)
         {
-            foreach (var s in WrapMessage(text))
-                ChatManager.serverSendMessage(s, color ?? Color.green, null, null, EChatMode.GLOBAL, iconURL, true);
+            foreach (var message in WrapMessage(text))
+            {
+                Logger.Log($"Broadcast: {message}");
+                ChatManager.serverSendMessage(message, color ?? Color.green, null, null, EChatMode.GLOBAL, iconURL, true);
+            }
         }
 
         public static void Say(UnturnedPlayer player, string text, Color? color = null, string? iconURL = null)
         {
-            Say(player.SteamPlayer(), text, color, iconURL);
+            Say(player.Player.channel.owner, text, color, iconURL);
         }
 
         public static void Say(UnturnedPlayer sender, UnturnedPlayer receiver, string text, Color? color = null, string? iconURL = null)
         {
-            Say(sender.SteamPlayer(), receiver.SteamPlayer(), text, color, iconURL);
+            Say(sender.Player.channel.owner, receiver.Player.channel.owner, text, color, iconURL);
         }
 
         public static void Say(Player player, string text, Color? color = null, string? iconURL = null)
@@ -48,10 +51,10 @@ namespace RFRocketLibrary.Helpers
 
         public static void Say(SteamPlayer player, string text, Color? color = null, string? iconURL = null)
         {
-            Say(player, null, text, color, iconURL);
+            Say(null, player, text, color, iconURL);
         }
 
-        public static void Say(SteamPlayer sender, SteamPlayer? receiver, string text, Color? color = null, string? iconURL = null)
+        public static void Say(SteamPlayer? sender, SteamPlayer? receiver, string text, Color? color = null, string? iconURL = null)
         {
             foreach (var s in WrapMessage(text))
                 ChatManager.serverSendMessage(s, color ?? Color.green, sender, receiver, receiver == null ? EChatMode.SAY : EChatMode.GLOBAL, iconURL,
@@ -63,11 +66,11 @@ namespace RFRocketLibrary.Helpers
             if (steamID == CSteamID.Nil || steamID.m_SteamID == 0)
                 return;
             
-            var exist = PlayerTool.getSteamPlayer(steamID);
-            if (exist == null)
+            var steamPlayer = PlayerTool.getSteamPlayer(steamID);
+            if (steamPlayer == null)
                 return;
             
-            Say(exist, text, color, iconURL);
+            Say(steamPlayer, text, color, iconURL);
         }
 
         public static void Say(CSteamID sender, CSteamID receiver, string text, Color? color = null, string? iconURL = null)
@@ -96,7 +99,13 @@ namespace RFRocketLibrary.Helpers
                 Logger.Log(text);
                 return;
             }
-            
+
+            if (player is UnturnedPlayer uPlayer)
+            {
+                Say(uPlayer, text, color, iconURL);
+                return;
+            }
+
             if (!ulong.TryParse(player.Id, out var steamId))
                 return;
             
@@ -105,6 +114,12 @@ namespace RFRocketLibrary.Helpers
 
         public static void Say(IRocketPlayer sender, IRocketPlayer receiver, string text, Color? color = null, string? iconURL = null)
         {
+            if (sender is UnturnedPlayer senderU && receiver is UnturnedPlayer receiverU)
+            {
+                Say(senderU, receiverU, text, color, iconURL);
+                return;
+            }
+            
             if (!ulong.TryParse(sender.Id, out var senderId))
                 return;
             
@@ -123,7 +138,7 @@ namespace RFRocketLibrary.Helpers
             var lines = new List<string>();
             var currentLine = string.Empty;
             var cleanLength = 0;
-            const int maxLength = 90;
+            const int maxLength = 120;
             foreach (var currentWord in words)
             {
                 var cleanWord = currentWord.RemoveRichTag();

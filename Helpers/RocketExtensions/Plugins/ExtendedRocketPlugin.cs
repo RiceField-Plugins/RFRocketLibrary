@@ -1,65 +1,56 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using RFRocketLibrary.API.Interfaces;
+using RFRocketLibrary.Models;
 // using Cysharp.Threading.Tasks;
 using Rocket.API;
+using Rocket.Core;
+using Rocket.Core.Assets;
 using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
-using RocketExtensions.Utilities.ShimmyMySherbet.Extensions;
+using RocketExtensions.Utilities;
 
 namespace RocketExtensions.Plugins
 {
-    public abstract class ExtendedRocketPlugin : RocketPlugin
+    public class ExtendedRocketPlugin<TPluginConfig> : ExtendedRocketPlugin, IRocketPlugin<TPluginConfig>
+        where TPluginConfig : class, IRocketPluginConfiguration
     {
+        public IAsset<TPluginConfig?> Configuration { get; }
+
+        public ExtendedRocketPlugin()
+        {
+            var configurationFile = Path.Combine(Directory,
+                string.Format(Rocket.Core.Environment.PluginConfigurationFileTemplate, Name));
+            var url = "";
+            if (R.Settings.Instance.WebConfigurations.Enabled)
+                url = string.Format(Rocket.Core.Environment.WebConfigurationTemplate,
+                    R.Settings.Instance.WebConfigurations.Url, Name, R.Implementation.InstanceId);
+            else if (File.Exists(configurationFile))
+                url = File.ReadAllLines(configurationFile).First().Trim();
+
+            if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+                Configuration = new WebXMLFileAsset<TPluginConfig?>(uri, null, _ => { base.LoadPlugin(); });
+            else
+                Configuration = new XMLFileAsset<TPluginConfig?>(configurationFile);
+        }
+
+        public override void LoadPlugin()
+        {
+            Configuration.Load(_ => base.LoadPlugin() );
+        }
+    }
+
+    public class ExtendedRocketPlugin : RocketPlugin
+    {
+        public ISerialQueue? CommandQueue { get; private set; }
+
         public override void LoadPlugin()
         {
             base.LoadPlugin();
-            // UniTask.RunOnThreadPool(RunLoadAsync);
-            Task.Run(async () => await RunLoadAsync());
-        }
-
-        public void LogError(Exception e)
-        {
-            var asm = GetType().Assembly.GetName();
-            var caller = asm.Name;
-            Logger.LogError($"[{caller}] [ERROR] Error: {e.Message}");
-            Logger.LogError($"[{caller}] [ERROR] Plugin: {asm.Name} v{asm.Version}");
-            Logger.LogError($"[{caller}] [ERROR] Source: {e.Source}");
-            Logger.LogError($"[{caller}] [ERROR] {e.StackTrace}");
-
-            if (e.InnerException != null)
-            {
-                Logger.LogError($"[{caller}] [ERROR] Inner: {e.InnerException.Message}");
-                Logger.LogError($"[{caller}] [ERROR] {e.InnerException.StackTrace}");
-            }
-        }
-
-        // private async UniTask RunLoadAsync()
-        private async Task RunLoadAsync()
-        {
-            try
-            {
-                await LoadAsync();
-            }
-            catch (Exception e)
-            {
-                var caller = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly.GetName().Name;
-                Logger.LogError($"[{caller}] [ERROR] An exception occurred during plugin load (async)");
-                LogError(e);
-                await UnloadAsync(PluginState.Failure);
-            }
-        }
-
-        // public async UniTask UnloadAsync(PluginState state = PluginState.Unloaded)
-        public async Task UnloadAsync(PluginState state = PluginState.Unloaded)
-        {
-            await ThreadTool.RunOnGameThreadAsync(UnloadPlugin, state);
-        }
-
-        // public virtual UniTask LoadAsync()
-        public virtual Task LoadAsync()
-        {
-            return Task.CompletedTask;
+            CommandQueue = new SerialQueue();
         }
     }
 }

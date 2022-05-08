@@ -9,7 +9,7 @@ using Logger = Rocket.Core.Logging.Logger;
 namespace RocketExtensions.Models
 {
     /// <summary>
-    /// A faster high-performance version of <seealso cref="FastTaskDispatcher"/>
+    /// A faster high-performance version of <seealso cref="Rocket.Core.Utils.TaskDispatcher"/>
     /// </summary>
     public class FastTaskDispatcher : MonoBehaviour
     {

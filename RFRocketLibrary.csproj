@@ -39,7 +39,7 @@
       <DefineConstants>LP</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="0Harmony, Version=2.2.0.0, Culture=neutral, PublicKeyToken=null">
+        <Reference Include="0Harmony">
           <HintPath>..\..\Libraries\Harmony\0Harmony.dll</HintPath>
         </Reference>
         <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -67,6 +67,7 @@
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
+        <Reference Include="System.Drawing" />
         <Reference Include="System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
           <HintPath>..\..\Libraries\RocketMod\System.Net.Http.dll</HintPath>
         </Reference>
@@ -74,9 +75,6 @@
           <HintPath>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Runtime.dll</HintPath>
         </Reference>
         <Reference Include="System.Xml" />
-        <Reference Include="UniTask, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\..\Libraries\UniTask\UniTask.dll</HintPath>
-        </Reference>
         <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\..\Libraries\RocketMod\UnityEngine.dll</HintPath>
         </Reference>
@@ -85,6 +83,9 @@
         </Reference>
         <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\..\Libraries\RocketMod\UnityEngine.PhysicsModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEx">
+          <HintPath>..\..\Libraries\RFRocketMod\UnityEx.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
@@ -112,102 +113,10 @@
         <Compile Include="Helpers\DiscordWebhook\WebhookThumbnail.cs" />
         <Compile Include="Helpers\DiscordWebhook\WebhookUtil.cs" />
         <Compile Include="Helpers\DiscordWebhook\WebhookVideo.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\ActionContext.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\Entities\IAction.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\Entities\IResult.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\Entities\Rest\ActionClassified\IAvatarAction.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\Entities\Rest\ActionClassified\IDeleteAction.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\Entities\Rest\ActionClassified\IInfoAction.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\Entities\Rest\ActionClassified\IMessageAction.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\Entities\Rest\ActionClassified\IModifyAction.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\Entities\Rest\IRestAction.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\Entities\Rest\IRestResult.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\Entities\Rest\ResultClassified\IAvatarResult.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\Entities\Rest\ResultClassified\IInfoResult.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\Entities\Rest\ResultClassified\IModifyResult.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Action\IActionManager.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\ConstructorProvider.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Constructor\Embed\EmbedAuthorBuilder.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Constructor\Embed\EmbedBuilder.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Constructor\Embed\EmbedFieldBuilder.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Constructor\Embed\EmbedFooterBuilder.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Constructor\Embed\EmbedImageBuilder.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Constructor\Embed\EmbedProviderBuilder.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Constructor\Embed\EmbedThumbnailBuilder.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Constructor\Embed\EmbedVideoBuilder.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Constructor\MessageBuilder.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Constructor\MessageMentionBuilder.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Constructor\Meta\IBuilder.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Constructor\ModifyContentBuilder.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\Embed\IEmbed.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\Embed\IEmbedAuthor.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\Embed\IEmbedField.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\Embed\IEmbedFooter.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\Embed\IEmbedImage.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\Embed\IEmbedProvider.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\Embed\IEmbedThumbnail.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\Embed\IEmbedVideo.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\Embed\Subtypes\IIconable.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\Embed\Subtypes\IProxyable.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\Embed\Subtypes\IResizable.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\Embed\Subtypes\IUrlable.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\IMessage.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\IMessageMention.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\IModifyContent.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\IWebhook.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\IWebhookImage.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Entities\IWebhookInfo.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Enums\AllowedMention.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Enums\EmbedType.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Enums\WebhookStatus.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\Enums\WebhookType.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Core\WebhookProvider.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Exception\SizeOutOfRangeException.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Action\ActionManager.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Action\QueueActionContext.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Action\Rest\ActionClassified\AvatarAction.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Action\Rest\ActionClassified\DeleteAction.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Action\Rest\ActionClassified\InfoAction.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Action\Rest\ActionClassified\MessageAction.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Action\Rest\ActionClassified\ModifyAction.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Action\Rest\BaseRestAction.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Action\Rest\RestResult.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Action\Rest\ResultClassified\AvatarResult.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Action\Rest\ResultClassified\InfoResult.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Action\Rest\ResultClassified\ModifyResult.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Core\ModifyContent.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Core\Webhook.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Core\WebhookImage.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Core\WebhookInfo.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Message\Embed\Embed.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Message\Embed\EmbedAuthor.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Message\Embed\EmbedField.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Message\Embed\EmbedFooter.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Message\Embed\EmbedImage.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Message\Embed\EmbedProvider.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Message\Embed\EmbedThumbnail.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Message\Embed\EmbedVideo.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Message\Message.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Internal\Message\MessageMention.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Logging\LogContext.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Logging\LogSensitivity.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Rest\DefaultProvider.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Rest\Entities\RateLimitInfo.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Rest\Entities\RestResponse.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Rest\Entities\RestSettings.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Rest\Manipulation\BaseRestProvider.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Rest\RestProviderLoader.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Serialization\IWSerializable.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Serialization\SerializeContext.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Serialization\SerializeType.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Util\Checks.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Util\ColorUtil.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Util\DictionaryUtil.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Util\Extensions\CollectionUtil.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Util\Extensions\EventUtil.cs" />
-        <Compile Include="Helpers\DSharp4Webhook\Util\ImageUtil.cs" />
+        <Compile Include="Helpers\Discord\DiscordWebHook.cs" />
+        <Compile Include="Helpers\Discord\Structs.cs" />
+        <Compile Include="Helpers\Discord\Utils.cs" />
         <Compile Include="Helpers\ReflectionHelper.cs" />
-        <Compile Include="Helpers\RocketExtensions\Core\CoreSetup.cs" />
         <Compile Include="Helpers\RocketExtensions\Extensions.cs" />
         <Compile Include="Helpers\RocketExtensions\Interfaces\IStringParser.cs" />
         <Compile Include="Helpers\RocketExtensions\Models\ArgumentList.cs" />
@@ -220,14 +129,15 @@
         <Compile Include="Helpers\RocketExtensions\Models\Exceptions\PluginNotFoundException.cs" />
         <Compile Include="Helpers\RocketExtensions\Models\FastTaskDispatcher.cs" />
         <Compile Include="Helpers\RocketExtensions\Models\LDMPlayer.cs" />
+        <Compile Include="Helpers\RocketExtensions\Models\RunningCommand.cs" />
         <Compile Include="Helpers\RocketExtensions\Models\StringTypeConverter.cs" />
-        <Compile Include="Helpers\RocketExtensions\Plugins\CommandAliases.cs" />
-        <Compile Include="Helpers\RocketExtensions\Plugins\CommandActor.cs" />
-        <Compile Include="Helpers\RocketExtensions\Plugins\CommandInfo.cs" />
-        <Compile Include="Helpers\RocketExtensions\Plugins\CommandName.cs" />
+        <Compile Include="Helpers\RocketExtensions\Plugins\CommandAliasesAttribute.cs" />
+        <Compile Include="Helpers\RocketExtensions\Plugins\CommandActorAttribute.cs" />
+        <Compile Include="Helpers\RocketExtensions\Plugins\CommandInfoAttribute.cs" />
+        <Compile Include="Helpers\RocketExtensions\Plugins\CommandNameAttribute.cs" />
         <Compile Include="Helpers\RocketExtensions\Plugins\ExtendedRocketPlugin.cs" />
         <Compile Include="Helpers\RocketExtensions\Plugins\ExtendedRocketPluginBackup.cs" />
-        <Compile Include="Helpers\RocketExtensions\Plugins\CommandPermissions.cs" />
+        <Compile Include="Helpers\RocketExtensions\Plugins\CommandPermissionsAttribute.cs" />
         <Compile Include="Helpers\RocketExtensions\Plugins\PluginConfig.cs" />
         <Compile Include="Helpers\RocketExtensions\Plugins\RocketCommand.cs" />
         <Compile Include="Helpers\RocketExtensions\Utilities\ColorReformatter.cs" />
@@ -235,7 +145,10 @@
         <Compile Include="Hooks\RFPlayerLibraryHook.cs" />
         <Compile Include="Hooks\UconomyPremiumHook.cs" />
         <Compile Include="Library.cs" />
+        <Compile Include="Models\FaceWrapper.cs" />
         <Compile Include="Models\KeyListener.cs" />
+        <Compile Include="Models\PlaneWrapper.cs" />
+        <Compile Include="Models\RaycastLimb.cs" />
         <Compile Include="Models\SteamWebApi.cs" />
         <Compile Include="Models\QuaternionWrapper.cs" />
         <Compile Include="Models\RaycastInfo.cs" />
@@ -244,6 +157,8 @@
         <Compile Include="Helpers\ColorHelper.cs" />
         <Compile Include="Hooks\AviEconomyHook.cs" />
         <Compile Include="Hooks\UconomyHook.cs" />
+        <Compile Include="Models\Vector2Wrapper.cs" />
+        <Compile Include="Models\Vector3ProjectionWrapper.cs" />
         <Compile Include="Patches\UnturnedPatch.cs" />
         <Compile Include="Storages\JsonDataStore.cs" />
         <Compile Include="Helpers\ChatHelper.cs" />
@@ -263,6 +178,7 @@
         <Compile Include="Models\VehicleWrapper.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Storages\XmlDataStore.cs" />
+        <Compile Include="Utils\ActionUtil.cs" />
         <Compile Include="Utils\AssetExtensions.cs" />
         <Compile Include="Utils\AssetUtil.cs" />
         <Compile Include="Utils\BarricadeUtil.cs" />
@@ -270,6 +186,7 @@
         <Compile Include="Utils\DependencyUtil.cs" />
         <Compile Include="Utils\EnumerableExtensions.cs" />
         <Compile Include="Utils\InventoryUtil.cs" />
+        <Compile Include="Utils\MathUtils.cs" />
         <Compile Include="Utils\PlayerExtensions.cs" />
         <Compile Include="Utils\SteamUtil.cs" />
         <Compile Include="Utils\StringExtensions.cs" />
@@ -277,6 +194,7 @@
         <Compile Include="Utils\TaskExtensions.cs" />
         <Compile Include="Utils\UIUtil.cs" />
         <Compile Include="Utils\VehicleUtil.cs" />
+        <Compile Include="Utils\ZombieUtil.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Include="packages.config" />

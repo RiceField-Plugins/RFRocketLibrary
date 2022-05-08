@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using RFRocketLibrary.Constants;
 using RFRocketLibrary.Enum;
 
@@ -56,8 +57,11 @@ namespace RFRocketLibrary.Utils
             return File.Exists(cachePath);
         }
 
-        public static void Load(EDependency dependency)
+        public static void Load(EDependency dependency, bool mirror = false)
         {
+            if (!CanBeLoaded(dependency))
+                return;
+            
             using var wc = new WebClient();
             wc.Proxy = null;
             byte[] assembly;
@@ -66,20 +70,37 @@ namespace RFRocketLibrary.Utils
             {
                 try
                 {
-                    using var fs = File.Open(cachePath, FileMode.Open, FileAccess.ReadWrite);
+                    using var fs = File.OpenRead(cachePath);
                     assembly = StreamToByteArray(fs);
                     fs.Close();
                 }
-                catch (Exception)
+                catch
                 {
-                    assembly = wc.DownloadData(typeof(DependencyLink).GetField(dependency.ToString()).GetValue(null)
-                        .ToString());
+                    try
+                    {
+                        assembly = wc.DownloadData(typeof(DependencyLink).GetField(dependency + $"{(mirror ? "Mirror" : string.Empty)}").GetValue(null)
+                            .ToString());
+                    }
+                    catch
+                    {
+                        assembly = wc.DownloadData(typeof(DependencyLink).GetField(dependency + "Mirror").GetValue(null)
+                            .ToString());
+                    }
                 }
             }
             else
             {
-                assembly = wc.DownloadData(typeof(DependencyLink).GetField(dependency.ToString()).GetValue(null)
-                    .ToString());
+                try
+                {
+                    assembly = wc.DownloadData(typeof(DependencyLink).GetField(dependency + $"{(mirror ? "Mirror" : string.Empty)}").GetValue(null)
+                        .ToString());
+                }
+                catch
+                {
+                    assembly = wc.DownloadData(typeof(DependencyLink).GetField(dependency + "Mirror").GetValue(null)
+                        .ToString());
+                }
+                
                 try
                 {
                     File.WriteAllBytes(cachePath, assembly);
@@ -93,8 +114,11 @@ namespace RFRocketLibrary.Utils
             Assembly.Load(assembly);
         }
 
-        public static async void LoadAsync(EDependency dependency)
+        public static async Task LoadAsync(EDependency dependency, bool mirror = false)
         {
+            if (!CanBeLoaded(dependency))
+                return;
+
             using var wc = new WebClient();
             wc.Proxy = null;
             byte[] assembly;
@@ -103,20 +127,38 @@ namespace RFRocketLibrary.Utils
             {
                 try
                 {
-                    using var fs = File.Open(cachePath, FileMode.Open, FileAccess.ReadWrite);
+                    using var fs = File.OpenRead(cachePath);
                     assembly = StreamToByteArray(fs);
                     fs.Close();
                 }
                 catch (Exception)
                 {
-                    assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency.ToString()).GetValue(null)
-                        .ToString());
+                    try
+                    {
+                        assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency + $"{(mirror ? "Mirror" : string.Empty)}").GetValue(null)
+                            .ToString());
+                    }
+                    catch
+                    {
+                        assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency + "Mirror").GetValue(null)
+                            .ToString());
+                    }
+
                 }
             }
             else
             {
-                assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency.ToString())
-                    .GetValue(null).ToString());
+                try
+                {
+                    assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency + $"{(mirror ? "Mirror" : string.Empty)}").GetValue(null)
+                        .ToString());
+                }
+                catch
+                {
+                    assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency + "Mirror").GetValue(null)
+                        .ToString());
+                }
+                
                 try
                 {
                     File.WriteAllBytes(cachePath, assembly);

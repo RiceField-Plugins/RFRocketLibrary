@@ -32,27 +32,49 @@ namespace RFRocketLibrary.Events
             DamageTool.damageAnimalRequested += UnturnedEvent.OnPreAnimalDamagedInvoker;
             DamageTool.damagePlayerRequested += UnturnedEvent.OnPrePlayerDamagedInvoker;
             DamageTool.damageZombieRequested += UnturnedEvent.OnPreZombieDamagedInvoker;
+            DamageTool.onPlayerAllowedToDamagePlayer += UnturnedEvent.OnPrePlayerAllowedToDamagePlayerInvoker;
             EffectManager.onEffectButtonClicked += UnturnedEvent.OnPlayerEffectButtonClickedInvoker;
             EffectManager.onEffectTextCommitted += UnturnedEvent.OnPlayerEffectInputFieldChangedInvoker;
-            InteractableFarm.OnHarvestRequested_Global += UnturnedEvent.OnPrePlantHarvestedInvoker;
-            ItemManager.onItemDropAdded += UnturnedEvent.OnItemSpawnedInvoker;
+            InteractableFarm.OnHarvestRequested_Global += UnturnedEvent.OnPrePlayerInteractedFarmInvoker;
+            InteractableVehicle.OnBatteryLevelChanged_Global += UnturnedEvent.OnVehicleBatteryUpdatedInvoker;
+            InteractableVehicle.OnFuelChanged_Global += UnturnedEvent.OnVehicleFuelUpdatedInvoker;
+            InteractableVehicle.OnHealthChanged_Global += UnturnedEvent.OnVehicleHealthUpdatedInvoker;
+            InteractableVehicle.OnLockChanged_Global += UnturnedEvent.OnVehicleLockUpdatedInvoker;
+            InteractableVehicle.OnPassengerAdded_Global += UnturnedEvent.OnVehicleAddedPassengerInvoker;
+            InteractableVehicle.OnPassengerChangedSeats_Global += UnturnedEvent.OnVehiclePassengerChangedSeatInvoker;
+            InteractableVehicle.OnPassengerRemoved_Global += UnturnedEvent.OnVehicleRemovedPassengerInvoker;
             ItemManager.onServerSpawningItemDrop += UnturnedEvent.OnPreItemSpawnedInvoker;
-            ItemManager.onItemDropRemoved += UnturnedEvent.OnItemTakenInvoker;
             ItemManager.onTakeItemRequested += UnturnedEvent.OnPreItemTakenInvoker;
             Player.onPlayerStatIncremented += UnturnedEvent.OnPlayerStatIncrementedInvoker;
             PlayerAnimator.OnGestureChanged_Global += UnturnedEvent.OnPlayerChangedGestureInvoker;
+            PlayerAnimator.OnLeanChanged_Global += UnturnedEvent.OnPlayerChangedLeanInvoker;
             PlayerCrafting.onCraftBlueprintRequested += UnturnedEvent.OnPrePlayerItemCraftedInvoker;
+            PlayerClothing.OnBackpackChanged_Global += UnturnedEvent.OnPlayerChangedBackpackInvoker;
+            PlayerClothing.OnGlassesChanged_Global += UnturnedEvent.OnPlayerChangedGlassesInvoker;
+            PlayerClothing.OnHatChanged_Global += UnturnedEvent.OnPlayerChangedHatInvoker;
+            PlayerClothing.OnMaskChanged_Global += UnturnedEvent.OnPlayerChangedMaskInvoker;
+            PlayerClothing.OnPantsChanged_Global += UnturnedEvent.OnPlayerChangedPantsInvoker;
+            PlayerClothing.OnShirtChanged_Global += UnturnedEvent.OnPlayerChangedShirtInvoker;
+            PlayerClothing.OnVestChanged_Global += UnturnedEvent.OnPlayerChangedVestInvoker;
             PlayerEquipment.OnInspectingUseable_Global += UnturnedEvent.OnPlayerInspectedEquipmentInvoker;
             PlayerEquipment.OnPunch_Global += UnturnedEvent.OnPlayerPunchedInvoker;
             PlayerEquipment.OnUseableChanged_Global += UnturnedEvent.OnPlayerChangedEquipmentInvoker;
+            PlayerInput.onPluginKeyTick += UnturnedEvent.OnPlayerPluginKeyUpdatedInvoker;
             PlayerLife.OnPreDeath += UnturnedEvent.OnPrePlayerDiedInvoker;
             PlayerLife.onPlayerDied += UnturnedEvent.OnPlayerDiedInvoker;
             PlayerLife.OnSelectingRespawnPoint += UnturnedEvent.OnPrePlayerRespawnedInvoker;
+            PlayerLife.OnRevived_Global += UnturnedEvent.OnPlayerRevivedInvoker;
             PlayerLife.OnTellBleeding_Global += UnturnedEvent.OnPlayerBledInvoker;
+            PlayerLife.OnTellBroken_Global += UnturnedEvent.OnPlayerBrokeBoneInvoker;
+            PlayerLife.OnTellHealth_Global += UnturnedEvent.OnPlayerHealthUpdatedInvoker;
+            PlayerLife.OnTellFood_Global += UnturnedEvent.OnPlayerFoodUpdatedInvoker;
+            PlayerLife.OnTellWater_Global += UnturnedEvent.OnPlayerWaterUpdatedInvoker;
+            PlayerLife.OnTellVirus_Global += UnturnedEvent.OnPlayerVirusUpdatedInvoker;
             PlayerLife.OnTellBroken_Global += UnturnedEvent.OnPlayerBrokeBoneInvoker;
             PlayerSkills.OnExperienceChanged_Global += UnturnedEvent.OnPlayerExperienceChangedInvoker;
             PlayerSkills.OnReputationChanged_Global += UnturnedEvent.OnPlayerReputationChangedInvoker;
             PlayerSkills.OnSkillUpgraded_Global += UnturnedEvent.OnPlayerSkillUpgradedInvoker;
+            PlayerStance.OnStanceChanged_Global += UnturnedEvent.OnPlayerChangedStanceInvoker;
             Provider.onCheckValidWithExplanation += UnturnedEvent.OnPrePlayerJoinedInvoker;
             UseableConsumeable.onConsumePerformed += UnturnedEvent.OnPlayerItemConsumedInvoker;
             UseableConsumeable.onConsumeRequested += UnturnedEvent.OnPrePlayerItemConsumedInvoker;
@@ -72,7 +94,16 @@ namespace RFRocketLibrary.Events
             StructureManager.OnRepairRequested += UnturnedEvent.OnPreStructureRepairedInvoker;
             StructureManager.onStructureSpawned += UnturnedEvent.OnStructureSpawnedInvoker;
             StructureManager.onTransformRequested += UnturnedEvent.OnPreStructureTransformedInvoker;
+            UseableTire.onModifyTireRequested += UnturnedEvent.OnPrePlayerModifiedTireInvoker;
+            VehicleManager.onDamageVehicleRequested += UnturnedEvent.OnPreVehicleDamagedInvoker;
+            VehicleManager.onDamageTireRequested += UnturnedEvent.OnPreVehicleTireDamagedInvoker;
+            VehicleManager.onEnterVehicleRequested += UnturnedEvent.OnPrePlayerEnteredVehicleInvoker;
+            VehicleManager.onExitVehicleRequested += UnturnedEvent.OnPrePlayerExitedVehicleInvoker;
             VehicleManager.OnPreDestroyVehicle += UnturnedEvent.OnVehicleDestroyedInvoker;
+            VehicleManager.onRepairVehicleRequested += UnturnedEvent.OnPreVehicleRepairedInvoker;
+            VehicleManager.onSiphonVehicleRequested += UnturnedEvent.OnPrePlayerSiphonedVehicleInvoker;
+            VehicleManager.onSwapSeatRequested += UnturnedEvent.OnPrePlayerSwappedVehicleSeatInvoker;
+            VehicleManager.OnToggleVehicleLockRequested += UnturnedEvent.OnPreVehicleLockUpdatedInvoker;
             VehicleManager.onVehicleCarjacked += UnturnedEvent.OnPrePlayerCarjackedVehicleInvoker;
             VehicleManager.OnVehicleExploded += UnturnedEvent.OnVehicleExplodedInvoker;
             VehicleManager.onVehicleLockpicked += UnturnedEvent.OnPrePlayerLockpickedVehicleInvoker;
@@ -83,6 +114,8 @@ namespace RFRocketLibrary.Events
             R.Plugins.OnPluginsLoaded += RocketEvent.OnPluginLoadedInvoker;
             UnturnedPermissions.OnJoinRequested += RocketEvent.OnPrePlayerJoinedInvoker;
             R.Commands.OnExecuteCommand += RocketEvent.OnPreCommandExecutedInvoker;
+            U.Events.OnPlayerConnected += RocketEvent.OnPlayerConnectedInvoker;
+            U.Events.OnPlayerDisconnected += RocketEvent.OnPlayerDisconnectedInvoker;
             
             Initialized = true;
         }
@@ -97,7 +130,7 @@ namespace RFRocketLibrary.Events
                 var harmony = new HarmonyLib.Harmony(HarmonyId);
                 // harmony.PatchAll();
 
-                var processor = new HarmonyLib.PatchClassProcessor(harmony, typeof(UnturnedPatchEvent));
+                var processor = new HarmonyLib.PatchClassProcessor(harmony, typeof(UnturnedPatchEvent.InternalPatches));
                 processor.Patch();
                 
                 InitializedHarmony = true;
@@ -115,6 +148,7 @@ namespace RFRocketLibrary.Events
             if (!Initialized)
                 return;
 
+            
             // Unturned Events
             BarricadeDrop.OnSalvageRequested_Global -= UnturnedEvent.OnPreBarricadeSalvagedInvoker;
             BarricadeManager.onBarricadeSpawned -= UnturnedEvent.OnBarricadeSpawnedInvoker;
@@ -130,27 +164,49 @@ namespace RFRocketLibrary.Events
             DamageTool.damageAnimalRequested -= UnturnedEvent.OnPreAnimalDamagedInvoker;
             DamageTool.damagePlayerRequested -= UnturnedEvent.OnPrePlayerDamagedInvoker;
             DamageTool.damageZombieRequested -= UnturnedEvent.OnPreZombieDamagedInvoker;
+            DamageTool.onPlayerAllowedToDamagePlayer -= UnturnedEvent.OnPrePlayerAllowedToDamagePlayerInvoker;
             EffectManager.onEffectButtonClicked -= UnturnedEvent.OnPlayerEffectButtonClickedInvoker;
             EffectManager.onEffectTextCommitted -= UnturnedEvent.OnPlayerEffectInputFieldChangedInvoker;
-            InteractableFarm.OnHarvestRequested_Global -= UnturnedEvent.OnPrePlantHarvestedInvoker;
-            ItemManager.onItemDropAdded -= UnturnedEvent.OnItemSpawnedInvoker;
+            InteractableFarm.OnHarvestRequested_Global -= UnturnedEvent.OnPrePlayerInteractedFarmInvoker;
+            InteractableVehicle.OnBatteryLevelChanged_Global -= UnturnedEvent.OnVehicleBatteryUpdatedInvoker;
+            InteractableVehicle.OnFuelChanged_Global -= UnturnedEvent.OnVehicleFuelUpdatedInvoker;
+            InteractableVehicle.OnHealthChanged_Global -= UnturnedEvent.OnVehicleHealthUpdatedInvoker;
+            InteractableVehicle.OnLockChanged_Global -= UnturnedEvent.OnVehicleLockUpdatedInvoker;
+            InteractableVehicle.OnPassengerAdded_Global -= UnturnedEvent.OnVehicleAddedPassengerInvoker;
+            InteractableVehicle.OnPassengerChangedSeats_Global -= UnturnedEvent.OnVehiclePassengerChangedSeatInvoker;
+            InteractableVehicle.OnPassengerRemoved_Global -= UnturnedEvent.OnVehicleRemovedPassengerInvoker;
             ItemManager.onServerSpawningItemDrop -= UnturnedEvent.OnPreItemSpawnedInvoker;
-            ItemManager.onItemDropRemoved -= UnturnedEvent.OnItemTakenInvoker;
             ItemManager.onTakeItemRequested -= UnturnedEvent.OnPreItemTakenInvoker;
             Player.onPlayerStatIncremented -= UnturnedEvent.OnPlayerStatIncrementedInvoker;
             PlayerAnimator.OnGestureChanged_Global -= UnturnedEvent.OnPlayerChangedGestureInvoker;
+            PlayerAnimator.OnLeanChanged_Global -= UnturnedEvent.OnPlayerChangedLeanInvoker;
             PlayerCrafting.onCraftBlueprintRequested -= UnturnedEvent.OnPrePlayerItemCraftedInvoker;
+            PlayerClothing.OnBackpackChanged_Global -= UnturnedEvent.OnPlayerChangedBackpackInvoker;
+            PlayerClothing.OnGlassesChanged_Global -= UnturnedEvent.OnPlayerChangedGlassesInvoker;
+            PlayerClothing.OnHatChanged_Global -= UnturnedEvent.OnPlayerChangedHatInvoker;
+            PlayerClothing.OnMaskChanged_Global -= UnturnedEvent.OnPlayerChangedMaskInvoker;
+            PlayerClothing.OnPantsChanged_Global -= UnturnedEvent.OnPlayerChangedPantsInvoker;
+            PlayerClothing.OnShirtChanged_Global -= UnturnedEvent.OnPlayerChangedShirtInvoker;
+            PlayerClothing.OnVestChanged_Global -= UnturnedEvent.OnPlayerChangedVestInvoker;
             PlayerEquipment.OnInspectingUseable_Global -= UnturnedEvent.OnPlayerInspectedEquipmentInvoker;
             PlayerEquipment.OnPunch_Global -= UnturnedEvent.OnPlayerPunchedInvoker;
             PlayerEquipment.OnUseableChanged_Global -= UnturnedEvent.OnPlayerChangedEquipmentInvoker;
+            PlayerInput.onPluginKeyTick -= UnturnedEvent.OnPlayerPluginKeyUpdatedInvoker;
             PlayerLife.OnPreDeath -= UnturnedEvent.OnPrePlayerDiedInvoker;
             PlayerLife.onPlayerDied -= UnturnedEvent.OnPlayerDiedInvoker;
             PlayerLife.OnSelectingRespawnPoint -= UnturnedEvent.OnPrePlayerRespawnedInvoker;
+            PlayerLife.OnRevived_Global -= UnturnedEvent.OnPlayerRevivedInvoker;
             PlayerLife.OnTellBleeding_Global -= UnturnedEvent.OnPlayerBledInvoker;
+            PlayerLife.OnTellBroken_Global -= UnturnedEvent.OnPlayerBrokeBoneInvoker;
+            PlayerLife.OnTellHealth_Global -= UnturnedEvent.OnPlayerHealthUpdatedInvoker;
+            PlayerLife.OnTellFood_Global -= UnturnedEvent.OnPlayerFoodUpdatedInvoker;
+            PlayerLife.OnTellWater_Global -= UnturnedEvent.OnPlayerWaterUpdatedInvoker;
+            PlayerLife.OnTellVirus_Global -= UnturnedEvent.OnPlayerVirusUpdatedInvoker;
             PlayerLife.OnTellBroken_Global -= UnturnedEvent.OnPlayerBrokeBoneInvoker;
             PlayerSkills.OnExperienceChanged_Global -= UnturnedEvent.OnPlayerExperienceChangedInvoker;
             PlayerSkills.OnReputationChanged_Global -= UnturnedEvent.OnPlayerReputationChangedInvoker;
             PlayerSkills.OnSkillUpgraded_Global -= UnturnedEvent.OnPlayerSkillUpgradedInvoker;
+            PlayerStance.OnStanceChanged_Global -= UnturnedEvent.OnPlayerChangedStanceInvoker;
             Provider.onCheckValidWithExplanation -= UnturnedEvent.OnPrePlayerJoinedInvoker;
             UseableConsumeable.onConsumePerformed -= UnturnedEvent.OnPlayerItemConsumedInvoker;
             UseableConsumeable.onConsumeRequested -= UnturnedEvent.OnPrePlayerItemConsumedInvoker;
@@ -170,7 +226,16 @@ namespace RFRocketLibrary.Events
             StructureManager.OnRepairRequested -= UnturnedEvent.OnPreStructureRepairedInvoker;
             StructureManager.onStructureSpawned -= UnturnedEvent.OnStructureSpawnedInvoker;
             StructureManager.onTransformRequested -= UnturnedEvent.OnPreStructureTransformedInvoker;
+            UseableTire.onModifyTireRequested -= UnturnedEvent.OnPrePlayerModifiedTireInvoker;
+            VehicleManager.onDamageVehicleRequested -= UnturnedEvent.OnPreVehicleDamagedInvoker;
+            VehicleManager.onDamageTireRequested -= UnturnedEvent.OnPreVehicleTireDamagedInvoker;
+            VehicleManager.onEnterVehicleRequested -= UnturnedEvent.OnPrePlayerEnteredVehicleInvoker;
+            VehicleManager.onExitVehicleRequested -= UnturnedEvent.OnPrePlayerExitedVehicleInvoker;
             VehicleManager.OnPreDestroyVehicle -= UnturnedEvent.OnVehicleDestroyedInvoker;
+            VehicleManager.onRepairVehicleRequested -= UnturnedEvent.OnPreVehicleRepairedInvoker;
+            VehicleManager.onSiphonVehicleRequested -= UnturnedEvent.OnPrePlayerSiphonedVehicleInvoker;
+            VehicleManager.onSwapSeatRequested -= UnturnedEvent.OnPrePlayerSwappedVehicleSeatInvoker;
+            VehicleManager.OnToggleVehicleLockRequested -= UnturnedEvent.OnPreVehicleLockUpdatedInvoker;
             VehicleManager.onVehicleCarjacked -= UnturnedEvent.OnPrePlayerCarjackedVehicleInvoker;
             VehicleManager.OnVehicleExploded -= UnturnedEvent.OnVehicleExplodedInvoker;
             VehicleManager.onVehicleLockpicked -= UnturnedEvent.OnPrePlayerLockpickedVehicleInvoker;
@@ -181,6 +246,8 @@ namespace RFRocketLibrary.Events
             R.Plugins.OnPluginsLoaded -= RocketEvent.OnPluginLoadedInvoker;
             UnturnedPermissions.OnJoinRequested -= RocketEvent.OnPrePlayerJoinedInvoker;
             R.Commands.OnExecuteCommand -= RocketEvent.OnPreCommandExecutedInvoker;
+            U.Events.OnPlayerConnected -= RocketEvent.OnPlayerConnectedInvoker;
+            U.Events.OnPlayerDisconnected -= RocketEvent.OnPlayerDisconnectedInvoker;
             
             Initialized = false;
         }

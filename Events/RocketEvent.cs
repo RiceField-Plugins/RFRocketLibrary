@@ -2,7 +2,9 @@
 using Rocket.Core;
 using Rocket.Core.Commands;
 using Rocket.Core.Plugins;
+using Rocket.Unturned.Events;
 using Rocket.Unturned.Permissions;
+using Rocket.Unturned.Player;
 using SDG.Unturned;
 using Steamworks;
 
@@ -18,6 +20,8 @@ namespace RFRocketLibrary.Events
         public static event UnturnedPermissions.JoinRequested? OnPrePlayerJoined;
         public static event RocketPlugin.PluginLoading? OnPrePluginLoaded;
         public static event ImplementationShutdown? OnShutdown;
+        public static event UnturnedEvents.PlayerConnected? OnPlayerConnected;
+        public static event UnturnedEvents.PlayerDisconnected? OnPlayerDisconnected;
 
         #endregion
 
@@ -41,6 +45,16 @@ namespace RFRocketLibrary.Events
         public static void OnPrePluginLoadedInvoker(IRocketPlugin rocketPlugin, ref bool cancelLoading)
         {
             OnPrePluginLoaded?.Invoke(rocketPlugin, ref cancelLoading);
+        }
+
+        public static void OnPlayerConnectedInvoker(UnturnedPlayer player)
+        {
+            OnPlayerConnected?.Invoke(player);
+        }
+
+        public static void OnPlayerDisconnectedInvoker(UnturnedPlayer player)
+        {
+            OnPlayerDisconnected?.Invoke(player);
         }
 
         public static void OnShutdownInvoker()

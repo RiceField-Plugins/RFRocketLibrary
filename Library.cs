@@ -1,4 +1,5 @@
-﻿using RFRocketLibrary.Events;
+﻿using System;
+using RFRocketLibrary.Events;
 using RFRocketLibrary.Patches;
 
 namespace RFRocketLibrary
@@ -11,21 +12,20 @@ namespace RFRocketLibrary
         private static uint Event_AttachedAssembly { get; set; }
         private static uint Event_AttachedAssemblyWithHarmony { get; set; }
 
-        private static void Initialize()
+        public static void Initialize()
         {
             AttachedAssembly++;
             if (Initialized)
                 return;
 
-            var harmony = new HarmonyLib.Harmony(HarmonyId);
-
-            var processor = new HarmonyLib.PatchClassProcessor(harmony, typeof(UnturnedPatch));
-            processor.Patch();
-
+            // var harmony = new HarmonyLib.Harmony(HarmonyId);
+            // var processor = new HarmonyLib.PatchClassProcessor(harmony, typeof(UnturnedPatch));
+            // processor.Patch();
+            PrintRFArt();
             Initialized = true;
         }
 
-        private static void Uninitialize()
+        public static void Uninitialize()
         {
             AttachedAssembly--;
             if (!Initialized)
@@ -34,9 +34,8 @@ namespace RFRocketLibrary
             if (AttachedAssembly > 0)
                 return;
 
-            var harmony = new HarmonyLib.Harmony(HarmonyId);
-            harmony.UnpatchAll();
-
+            // var harmony = new HarmonyLib.Harmony(HarmonyId);
+            // harmony.UnpatchAll();
             Initialized = false;
         }
 
@@ -63,6 +62,39 @@ namespace RFRocketLibrary
                 if (Event_AttachedAssemblyWithHarmony == 0)
                     EventBus.UnloadHarmony();
             }
+        }
+        
+        public static void PrintRFArt()
+        {
+            Console.WriteLine("                                        ...");
+            Console.WriteLine("                                        ...");
+            Console.WriteLine("                                       .:.      ..");
+            Console.WriteLine("                                      .:.     .:..");
+            Console.WriteLine("                                     .:.     .:.");
+            Console.WriteLine("                                    .:.     .:.");
+            Console.WriteLine("                                   ...    ....");
+            Console.WriteLine("                                  ..:.   .:..");
+            Console.WriteLine("                     ..........  ....   .:.");
+            Console.WriteLine("               ...:::::----=-:.:::......:.");
+            Console.WriteLine("           ..:::-=***#%@@@@@@%*=:.:::....");
+            Console.WriteLine("       ..:.:-+#%%%@@@@@@@@@@@@#=::++:.::::...");
+            Console.WriteLine("     ..:-+*#%@@@@@@@@@@@@@@@@@%##*=::+%%#*+:...");
+            Console.WriteLine("   ...:-+%%%%%%%%%%%%%%%%%%%%%%%@%*++#%%%@%+-::..");
+            Console.WriteLine("......::-:::--------------------:------:::--::......");
+            Console.WriteLine(".::------------------------------------------===-::.");
+            Console.WriteLine(".::=++++++++++++++++++++++++++++++++++++++++*%@%+:..");
+            Console.WriteLine("..:-=+========+++++++++++++++++++++++++++++++**+-...");
+            Console.WriteLine("...:===========++++++++++++++++++++++++++++*%@#=:..");
+            Console.WriteLine("  .:-===========++++++++++++++++++++++++++*%@@*:..");
+            Console.WriteLine("  ...-==========+++++++++++++++++++++++++#@@%+-..");
+            Console.WriteLine("   ..::===========+++++++++++++++++++++*%@@%+:..");
+            Console.WriteLine("     .::-==========++++++++++++++++++*%@@%*-...");
+            Console.WriteLine("      ..::-==++=====++++++++++++++*#@@@%*-....");
+            Console.WriteLine("       ...::--====================+*#*+-:::..");
+            Console.WriteLine("    .... ............................. .... ....");
+            Console.WriteLine("   .:.:+*******#############################+:..");
+            Console.WriteLine("     .::=+**++****************************+=::.");
+            Console.WriteLine("       ..:::::::::::::::::::::::::::::::::...");
         }
     }
 }

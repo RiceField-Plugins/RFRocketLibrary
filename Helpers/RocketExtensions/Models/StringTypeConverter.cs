@@ -208,7 +208,7 @@ namespace RocketExtensions.Models
                 {
                     var assets = Assets.find(EAssetType.ITEM)
                         .Where(x => x is ItemAsset {itemName: { }} itemAsset &&
-                                    itemAsset.itemName.IndexOf(input, StringComparison.InvariantCultureIgnoreCase) !=
+                                    itemAsset.itemName.IndexOf(input, StringComparison.OrdinalIgnoreCase) !=
                                     -1).ToList();
                     if (assets.Any())
                     {
@@ -235,7 +235,7 @@ namespace RocketExtensions.Models
                 {
                     var byName = Assets.find(EAssetType.ITEM)
                         .Where(x => x is VehicleAsset {vehicleName: { }} vehicleAsset && vehicleAsset.vehicleName.IndexOf(input,
-                            StringComparison.InvariantCultureIgnoreCase) != -1).ToList();
+                            StringComparison.OrdinalIgnoreCase) != -1).ToList();
                     if (byName.Any())
                     {
                         result = (T) (object) byName.First();
@@ -261,7 +261,7 @@ namespace RocketExtensions.Models
                 {
                     var byName = Assets.find(EAssetType.ANIMAL)
                         .Where(x => x is AnimalAsset {animalName: { }} animalAsset && animalAsset.animalName.IndexOf(input,
-                            StringComparison.InvariantCultureIgnoreCase) != -1).ToList();
+                            StringComparison.OrdinalIgnoreCase) != -1).ToList();
                     if (byName.Any())
                     {
                         result = (T) (object) byName.First();
@@ -276,7 +276,7 @@ namespace RocketExtensions.Models
             {
                 var match = LevelNodes.nodes.FirstOrDefault(x =>
                     x is LocationNode ln && !string.IsNullOrEmpty(input) &&
-                    ln.name.IndexOf(input, StringComparison.InvariantCultureIgnoreCase) != -1);
+                    ln.name.IndexOf(input, StringComparison.OrdinalIgnoreCase) != -1);
                 if (match != null)
                 {
                     result = (T) (object) match;

@@ -20,11 +20,8 @@ namespace RFRocketLibrary.Storages
             {
                 if (!string.IsNullOrEmpty(DataPath) && File.Exists(DataPath))
                 {
-                    using var stream = new FileStream(DataPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
-                    using var streamReader = new StreamReader(stream);
-                    instance = (T) Serializer.Deserialize(streamReader);
-                    streamReader.Close();
-                    stream.Close();
+                    using var stream = File.OpenText(DataPath);
+                    instance = (T) Serializer.Deserialize(stream);
                 }
                 
                 if (callback == null)
@@ -66,7 +63,7 @@ namespace RFRocketLibrary.Storages
                 if (!string.IsNullOrEmpty(directoryName) && !Directory.Exists(directoryName))
                     Directory.CreateDirectory(directoryName);
 
-                using var stream = new FileStream(DataPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+                using var stream = new FileStream(DataPath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
                 using var streamWriter = new StreamWriter(stream);
                 if (instance == null)
                 {

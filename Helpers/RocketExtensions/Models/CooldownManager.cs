@@ -7,7 +7,7 @@ using Rocket.API;
 using Rocket.API.Serialisation;
 using Rocket.Core;
 using Rocket.Core.Commands;
-using RocketExtensions.Utilities.ShimmyMySherbet.Extensions;
+using RocketExtensions.Utilities;
 
 namespace RocketExtensions.Models
 {
@@ -51,8 +51,8 @@ namespace RocketExtensions.Models
                         if (cmd == null || rocketPlayer == null)
                             continue;
                         
-                        if (cmd.Name.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase) &&
-                            rocketPlayer.Id.Equals(player.Id, StringComparison.InvariantCultureIgnoreCase))
+                        if (cmd.Name.Equals(command.Name, StringComparison.OrdinalIgnoreCase) &&
+                            rocketPlayer.Id.Equals(player.Id, StringComparison.OrdinalIgnoreCase))
                         {
                             cooldown = cd;
                             break;
@@ -110,8 +110,8 @@ namespace RocketExtensions.Models
                         if (cmd == null || rocketPlayer == null)
                             continue;
                         
-                        if (cmd.Name.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase) &&
-                            rocketPlayer.Id.Equals(player.Id, StringComparison.InvariantCultureIgnoreCase))
+                        if (cmd.Name.Equals(command.Name, StringComparison.OrdinalIgnoreCase) &&
+                            rocketPlayer.Id.Equals(player.Id, StringComparison.OrdinalIgnoreCase))
                         {
                             // Found existing cooldown
                             SetPermission(cd, perm);

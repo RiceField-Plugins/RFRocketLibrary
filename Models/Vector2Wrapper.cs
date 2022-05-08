@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -7,57 +6,52 @@ using UnityEngine;
 namespace RFRocketLibrary.Models
 {
     [Serializable]
-    public struct Vector3Wrapper
+    public struct Vector2Wrapper
     {
         public float X { get; set; }
         public float Y { get; set; }
-        public float Z { get; set; }
-
-        public Vector3Wrapper(float x, float y, float z)
+        public Vector2Wrapper(float x, float y)
         {
             X = x;
             Y = y;
-            Z = z;
         }
-
-        public Vector3Wrapper(Vector3 vector)
+        public Vector2Wrapper(Vector2 vector)
         {
             X = vector.x;
             Y = vector.y;
-            Z = vector.z;
         }
 
-        public static implicit operator Vector3Wrapper(Vector3 vector)
+        public static implicit operator Vector2Wrapper(Vector2 vector)
         {
-            return new Vector3Wrapper(vector.x, vector.y, vector.z);
+            return new Vector2Wrapper(vector.x, vector.y);
         }
 
-        public static implicit operator Vector3(Vector3Wrapper vector)
+        public static implicit operator Vector2(Vector2Wrapper vector)
         {
-            return new Vector3(vector.X, vector.Y, vector.Z);
+            return new Vector2(vector.X, vector.Y);
         }
 
-        public static Vector3Wrapper operator +(Vector3Wrapper vector1, Vector3Wrapper vector2)
+        public static Vector2Wrapper operator +(Vector2Wrapper vector1, Vector2Wrapper vector2)
         {
-            return new Vector3Wrapper(vector1.X + vector2.X, vector1.Y + vector2.Y, vector1.Z + vector2.Z);
+            return new Vector2Wrapper(vector1.X + vector2.X, vector1.Y + vector2.Y);
         }
 
-        public static Vector3Wrapper Create(Vector3 vector)
+        public static Vector2Wrapper Create(Vector2 vector)
         {
-            return new Vector3Wrapper(vector);
+            return new Vector2Wrapper(vector);
         }
 
-        public Vector3 ToVector3() => new(X, Y, Z);
-
+        public Vector2 ToVector2() => new(X, Y);
+        
         public override string ToString()
         {
-            return string.Format("{0:F1}, {1:F1}, {2:F1}", new object[]
+            return string.Format("{0:F3}, {1:F3}", new object[]
             {
-                X, Y, Z
+                X, Y
             });
         }
 
-        public static bool TryParse(string? s, out Vector3Wrapper result)
+        public static bool TryParse(string? s, out Vector2Wrapper result)
         {
             result = default;
             if (string.IsNullOrWhiteSpace(s))
@@ -70,16 +64,14 @@ namespace RFRocketLibrary.Models
             
             if (!float.TryParse(split.ElementAtOrDefault(1), out var y))
                 return false;
-            
-            if (!float.TryParse(split.ElementAtOrDefault(2), out var z))
-                return false;
 
-            result = new Vector3Wrapper(x, y, z);
+            result = new Vector2Wrapper(x, y);
             return true;
         }
     }
     
-    public class Vector3WrapperConverter : JsonConverter
+    
+    public class Vector2WrapperConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
@@ -88,13 +80,13 @@ namespace RFRocketLibrary.Models
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            Vector3Wrapper.TryParse(reader.Value?.ToString(), out var result);
+            Vector2Wrapper.TryParse(reader.Value?.ToString(), out var result);
             return result;
         }
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(Vector3Wrapper).IsAssignableFrom(objectType);
+            return typeof(Vector2Wrapper).IsAssignableFrom(objectType);
         }
     }
 }

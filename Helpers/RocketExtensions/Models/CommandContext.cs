@@ -5,12 +5,10 @@ using RFRocketLibrary.Helpers;
 using Rocket.API;
 using Rocket.API.Serialisation;
 using Rocket.Core;
-using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
 using RocketExtensions.Models.Exceptions;
 using RocketExtensions.Plugins;
 using RocketExtensions.Utilities;
-using RocketExtensions.Utilities.ShimmyMySherbet.Extensions;
 using UnityEngine;
 
 namespace RocketExtensions.Models

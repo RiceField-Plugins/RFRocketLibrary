@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
-using HarmonyLib;
 using RFRocketLibrary.Utils;
 using SDG.Unturned;
 using Steamworks;
 using UnityEngine;
-using Logger = Rocket.Core.Logging.Logger;
+using Action = SDG.Unturned.Action;
 
 // ReSharper disable InconsistentNaming
 
@@ -73,8 +71,6 @@ namespace RFRocketLibrary.Events
 
         public static event RepairedBarricadeHandler? OnBarricadeRepaired;
         public static event BarricadeSpawnedHandler? OnBarricadeSpawned;
-        public static event ItemDropAdded? OnItemSpawned;
-        public static event ItemDropRemoved? OnItemTaken;
         public static event UseableConsumeable.PerformedAidHandler? OnPlayerAided;
         public static event PlayerBled? OnPlayerBled;
         public static event PlayerBrokeBone? OnPlayerBrokeBone;
@@ -107,7 +103,7 @@ namespace RFRocketLibrary.Events
         public static event TransformBarricadeRequestHandler? OnPreBarricadeTransformed;
         public static event ServerSpawningItemDropHandler? OnPreItemSpawned;
         public static event DamageObjectRequestHandler? OnPreObjectDamaged;
-        public static event InteractableFarm.HarvestRequestHandler? OnPrePlantHarvested;
+        public static event InteractableFarm.HarvestRequestHandler? OnPrePlayerInteractedFarm;
         public static event UseableConsumeable.PerformingAidHandler? OnPrePlayerAided;
         public static event VehicleCarjackedSignature? OnPrePlayerCarjackedVehicle;
         public static event PrePlayerChoppedResource? OnPrePlayerChoppedResource;
@@ -137,9 +133,46 @@ namespace RFRocketLibrary.Events
         public static event StructureSpawnedHandler? OnStructureSpawned;
         public static event VehicleDestroyed? OnVehicleDestroyed;
         public static event VehicleExploded? OnVehicleExploded;
+        public static event VehicleManager.EnterVehicleRequestHandler? OnPrePlayerEnteredVehicle;
+        public static event VehicleManager.ExitVehicleRequestHandler? OnPrePlayerExitedVehicle;
+        public static event DamageVehicleRequestHandler? OnPreVehicleDamaged;
+        public static event DamageTireRequestHandler? OnPreVehicleTireDamaged;
+        public static event Action<PlayerStance>? OnPlayerChangedStance;
+        public static event Action<PlayerAnimator>? OnPlayerChangedLean;
+        public static event Action<PlayerLife>? OnPlayerRevived;
+        public static event Action<InteractableVehicle>? OnVehicleFuelUpdated;
+        public static event Action<InteractableVehicle>? OnVehicleHealthUpdated;
+        public static event Action<InteractableVehicle>? OnVehicleBatteryUpdated;
+        public static event Action<InteractableVehicle>? OnVehicleLockUpdated;
+        public static event Action<InteractableVehicle, int>? OnVehicleAddedPassenger;
+        public static event Action<InteractableVehicle, int, int>? OnVehiclePassengerChangedSeat;
+        public static event Action<InteractableVehicle, int, Player>? OnVehicleRemovedPassenger;
+        public static event Action<PlayerLife>? OnPlayerHealthUpdated;
+        public static event Action<PlayerLife>? OnPlayerFoodUpdated;
+        public static event Action<PlayerLife>? OnPlayerWaterUpdated;
+        public static event Action<PlayerLife>? OnPlayerVirusUpdated;
+        public static event DamageTool.PlayerAllowedToDamagePlayerHandler? OnPrePlayerAllowedToDamagePlayer;
+        public static event RepairVehicleRequestHandler? OnPreVehicleRepaired;
+        public static event SiphonVehicleRequestHandler? OnPrePlayerSiphonedVehicle;
+        public static event VehicleManager.SwapSeatRequestHandler? OnPrePlayerSwappedVehicleSeat;
+        public static event VehicleManager.ToggleVehicleLockRequested? OnPreVehicleLockUpdated;
+        public static event Action<PlayerClothing>? OnPlayerChangedBackpack;
+        public static event Action<PlayerClothing>? OnPlayerChangedGlasses;
+        public static event Action<PlayerClothing>? OnPlayerChangedHat;
+        public static event Action<PlayerClothing>? OnPlayerChangedMask;
+        public static event Action<PlayerClothing>? OnPlayerChangedPants;
+        public static event Action<PlayerClothing>? OnPlayerChangedShirt;
+        public static event Action<PlayerClothing>? OnPlayerChangedVest;
+        public static event PluginKeyTickHandler? OnPlayerPluginKeyUpdated;
+        public static event UseableTire.ModifyTireRequestHandler? OnPrePlayerModifiedTire;
 
         #endregion
 
+        internal static void OnPrePlayerAllowedToDamagePlayerInvoker(Player instigator, Player victim, ref bool isallowed)
+        {
+            OnPrePlayerAllowedToDamagePlayer?.Invoke(instigator, victim, ref isallowed);
+        }
+        
         internal static void OnBarricadeRepairedInvoker(CSteamID instigatorSteamId, Transform barricadeTransform,
             float totalHealing)
         {
@@ -274,19 +307,9 @@ namespace RFRocketLibrary.Events
             OnPrePlayerCraftedItem?.Invoke(crafting, ref itemId, ref blueprintIndex, ref shouldAllow);
         }
 
-        internal static void OnItemSpawnedInvoker(Transform model, InteractableItem interactableItem)
-        {
-            OnItemSpawned?.Invoke(model, interactableItem);
-        }
-
         internal static void OnPreItemSpawnedInvoker(Item item, ref Vector3 location, ref bool shouldAllow)
         {
             OnPreItemSpawned?.Invoke(item, ref location, ref shouldAllow);
-        }
-
-        internal static void OnItemTakenInvoker(Transform model, InteractableItem interactableItem)
-        {
-            OnItemTaken?.Invoke(model, interactableItem);
         }
 
         internal static void OnPreItemTakenInvoker(Player player, byte x, byte y, uint instanceId, byte to_x, byte to_y,
@@ -296,10 +319,13 @@ namespace RFRocketLibrary.Events
                 ref shouldAllow);
         }
 
-        internal static void OnPrePlantHarvestedInvoker(InteractableFarm harvestable, SteamPlayer instigatorPlayer,
+        internal static void OnPrePlayerInteractedFarmInvoker(InteractableFarm harvestable, SteamPlayer instigatorPlayer,
             ref bool shouldAllow)
         {
-            OnPrePlantHarvested?.Invoke(harvestable, instigatorPlayer, ref shouldAllow);
+            if (instigatorPlayer == null)
+                return;
+            
+            OnPrePlayerInteractedFarm?.Invoke(harvestable, instigatorPlayer, ref shouldAllow);
         }
 
         internal static void OnPlayerAidedInvoker(Player instigator, Player target)
@@ -395,11 +421,13 @@ namespace RFRocketLibrary.Events
                 damageOrigin);
             if (!shouldAllow)
                 return;
+                
             Regions.tryGetCoordinate(transform.position, out var x, out var y);
             var resource = LevelGround.trees[x, y]
                 .FirstOrDefault(resourceSpawnpoint => resourceSpawnpoint.model == transform);
             if (resource == null)
                 return;
+                
             if (resource.health <= pendingTotalDamage)
             {
                 var player = PlayerTool.getPlayer(instigatorSteamId);
@@ -521,6 +549,161 @@ namespace RFRocketLibrary.Events
         internal static void OnVehicleExplodedInvoker(InteractableVehicle vehicle)
         {
             OnVehicleExploded?.Invoke(vehicle);
+        }
+
+        internal static void OnPrePlayerEnteredVehicleInvoker(Player player, InteractableVehicle vehicle, ref bool shouldallow)
+        {
+            OnPrePlayerEnteredVehicle?.Invoke(player, vehicle, ref shouldallow);
+        }
+
+        internal static void OnPrePlayerExitedVehicleInvoker(Player player, InteractableVehicle vehicle, ref bool shouldallow, ref Vector3 pendinglocation, ref float pendingyaw)
+        {
+            OnPrePlayerExitedVehicle?.Invoke(player, vehicle, ref shouldallow, ref pendinglocation, ref pendingyaw);
+        }
+
+        internal static void OnPreVehicleDamagedInvoker(CSteamID instigatorsteamid, InteractableVehicle vehicle, ref ushort pendingtotaldamage, ref bool canrepair, ref bool shouldallow, EDamageOrigin damageorigin)
+        {
+            OnPreVehicleDamaged?.Invoke(instigatorsteamid, vehicle, ref pendingtotaldamage, ref canrepair, ref shouldallow, damageorigin);
+        }
+
+        internal static void OnPreVehicleTireDamagedInvoker(CSteamID instigatorsteamid, InteractableVehicle vehicle, int tireindex, ref bool shouldallow, EDamageOrigin damageorigin)
+        {
+            OnPreVehicleTireDamaged?.Invoke(instigatorsteamid, vehicle, tireindex, ref shouldallow, damageorigin);
+        }
+
+        internal static void OnPlayerChangedStanceInvoker(PlayerStance obj)
+        {
+            OnPlayerChangedStance?.Invoke(obj);
+        }
+
+        internal static void OnPlayerChangedLeanInvoker(PlayerAnimator obj)
+        {
+            OnPlayerChangedLean?.Invoke(obj);
+        }
+
+        internal static void OnPlayerRevivedInvoker(PlayerLife obj)
+        {
+            OnPlayerRevived?.Invoke(obj);
+        }
+
+        internal static void OnVehicleFuelUpdatedInvoker(InteractableVehicle obj)
+        {
+            OnVehicleFuelUpdated?.Invoke(obj);
+        }
+
+        internal static void OnVehicleHealthUpdatedInvoker(InteractableVehicle obj)
+        {
+            OnVehicleHealthUpdated?.Invoke(obj);
+        }
+
+        internal static void OnVehicleLockUpdatedInvoker(InteractableVehicle obj)
+        {
+            OnVehicleLockUpdated?.Invoke(obj);
+        }
+
+        internal static void OnVehicleAddedPassengerInvoker(InteractableVehicle arg1, int arg2)
+        {
+            OnVehicleAddedPassenger?.Invoke(arg1, arg2);
+        }
+
+        internal static void OnVehicleRemovedPassengerInvoker(InteractableVehicle arg1, int arg2, Player arg3)
+        {
+            OnVehicleRemovedPassenger?.Invoke(arg1, arg2, arg3);
+        }
+
+        internal static void OnVehicleBatteryUpdatedInvoker(InteractableVehicle obj)
+        {
+            OnVehicleBatteryUpdated?.Invoke(obj);
+        }
+
+        internal static void OnVehiclePassengerChangedSeatInvoker(InteractableVehicle arg1, int arg2, int arg3)
+        {
+            OnVehiclePassengerChangedSeat?.Invoke(arg1, arg2, arg3);
+        }
+
+        internal static void OnPlayerHealthUpdatedInvoker(PlayerLife obj)
+        {
+            OnPlayerHealthUpdated?.Invoke(obj);
+        }
+
+        internal static void OnPlayerFoodUpdatedInvoker(PlayerLife obj)
+        {
+            OnPlayerFoodUpdated?.Invoke(obj);
+        }
+
+        internal static void OnPlayerWaterUpdatedInvoker(PlayerLife obj)
+        {
+            OnPlayerWaterUpdated?.Invoke(obj);
+        }
+
+        internal static void OnPlayerVirusUpdatedInvoker(PlayerLife obj)
+        {
+            OnPlayerVirusUpdated?.Invoke(obj);
+        }
+
+        internal static void OnPreVehicleRepairedInvoker(CSteamID instigatorsteamid, InteractableVehicle vehicle, ref ushort pendingtotalhealing, ref bool shouldallow)
+        {
+            OnPreVehicleRepaired?.Invoke(instigatorsteamid, vehicle, ref pendingtotalhealing, ref shouldallow);
+        }
+
+        internal static void OnPrePlayerSiphonedVehicleInvoker(InteractableVehicle vehicle, Player instigatingplayer, ref bool shouldallow, ref ushort desiredamount)
+        {
+            OnPrePlayerSiphonedVehicle?.Invoke(vehicle, instigatingplayer, ref shouldallow, ref desiredamount);
+        }
+
+        internal static void OnPrePlayerSwappedVehicleSeatInvoker(Player player, InteractableVehicle vehicle, ref bool shouldallow, byte fromseatindex, ref byte toseatindex)
+        {
+            OnPrePlayerSwappedVehicleSeat?.Invoke(player, vehicle, ref shouldallow, fromseatindex, ref toseatindex);
+        }
+
+        internal static void OnPreVehicleLockUpdatedInvoker(InteractableVehicle vehicle, ref bool shouldallow)
+        {
+            OnPreVehicleLockUpdated?.Invoke(vehicle, ref shouldallow);
+        }
+
+        internal static void OnPlayerChangedBackpackInvoker(PlayerClothing obj)
+        {
+            OnPlayerChangedBackpack?.Invoke(obj);
+        }
+
+        internal static void OnPlayerChangedGlassesInvoker(PlayerClothing obj)
+        {
+            OnPlayerChangedGlasses?.Invoke(obj);
+        }
+
+        internal static void OnPlayerChangedHatInvoker(PlayerClothing obj)
+        {
+            OnPlayerChangedHat?.Invoke(obj);
+        }
+
+        internal static void OnPlayerChangedMaskInvoker(PlayerClothing obj)
+        {
+            OnPlayerChangedMask?.Invoke(obj);
+        }
+
+        internal static void OnPlayerChangedPantsInvoker(PlayerClothing obj)
+        {
+            OnPlayerChangedPants?.Invoke(obj);
+        }
+
+        internal static void OnPlayerChangedShirtInvoker(PlayerClothing obj)
+        {
+            OnPlayerChangedShirt?.Invoke(obj);
+        }
+
+        internal static void OnPlayerChangedVestInvoker(PlayerClothing obj)
+        {
+            OnPlayerChangedVest?.Invoke(obj);
+        }
+
+        internal static void OnPlayerPluginKeyUpdatedInvoker(Player player, uint simulation, byte key, bool state)
+        {
+            OnPlayerPluginKeyUpdated?.Invoke(player, simulation, key, state);
+        }
+
+        public static void OnPrePlayerModifiedTireInvoker(UseableTire useable, InteractableVehicle vehicle, int wheelindex, ref bool shouldallow)
+        {
+            OnPrePlayerModifiedTire?.Invoke(useable, vehicle, wheelindex, ref shouldallow);
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
-using Cysharp.Threading.Tasks;
+// using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using RFRocketLibrary.Enum;
 using RFRocketLibrary.Models;
@@ -249,27 +249,6 @@ namespace RFRocketLibrary.Utils
             }
         }
 
-        public static async UniTask<SteamGroup?> GetSteamGroupUniTaskAsync(ulong groupId)
-        {
-            var url = $"https://steamcommunity.com/gid/{groupId}/memberslistxml/?xml=1&p=1";
-            var wc = new WebClient();
-            wc.Proxy = null;
-            try
-            {
-                var doc = await wc.DownloadStringTaskAsync(url);
-                var serializer = new XmlSerializer(typeof(SteamProfile));
-                using var reader = new StringReader(doc);
-                return (SteamGroup) serializer.Deserialize(reader);
-            }
-            catch (Exception e)
-            {
-                var caller = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly.GetName().Name;
-                Logger.LogError($"[{caller}] [ERROR] SteamUtil GetSteamGroupUniTaskAsync: {e.Message}");
-                Logger.LogError($"[{caller}] [ERROR] Details: {e}");
-                return null;
-            }
-        }
-
         public static string GetSteamName(ulong steamId)
         {
             try
@@ -349,27 +328,6 @@ namespace RFRocketLibrary.Utils
             {
                 var caller = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly.GetName().Name;
                 Logger.LogError($"[{caller}] [ERROR] SteamUtil GetSteamProfileAsync: {e.Message}");
-                Logger.LogError($"[{caller}] [ERROR] Details: {e}");
-                return null;
-            }
-        }
-
-        public static async UniTask<SteamProfile?> GetSteamProfileUniTaskAsync(ulong steamId)
-        {
-            var url = $"https://steamcommunity.com/profiles/{steamId}?xml=1";
-            var wc = new WebClient();
-            wc.Proxy = null;
-            try
-            {
-                var doc = await wc.DownloadStringTaskAsync(url);
-                var serializer = new XmlSerializer(typeof(SteamProfile));
-                using var reader = new StringReader(doc);
-                return (SteamProfile) serializer.Deserialize(reader);
-            }
-            catch (Exception e)
-            {
-                var caller = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly.GetName().Name;
-                Logger.LogError($"[{caller}] [ERROR] SteamUtil GetSteamProfileUniTaskAsync: {e.Message}");
                 Logger.LogError($"[{caller}] [ERROR] Details: {e}");
                 return null;
             }

@@ -1,18 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using RFRocketLibrary.Utils;
+using SDG.Framework.Landscapes;
+using SDG.Framework.Water;
+using SDG.NetTransport;
 using SDG.Unturned;
 using Steamworks;
 using UnityEngine;
 using Logger = Rocket.Core.Logging.Logger;
+using Object = UnityEngine.Object;
 
 // ReSharper disable InconsistentNaming
 
 namespace RFRocketLibrary.Events
 {
-    internal static class UnturnedPatchEvent
+    public static class UnturnedPatchEvent
     {
         #region Delegates
 
@@ -21,11 +26,141 @@ namespace RFRocketLibrary.Events
         public delegate void AnimalKilled(Animal? animal, ref Vector3 ragdoll, ref ERagdollEffect ragdollEffect);
 
         public delegate void AnimalMovementChanged(Animal animal, Vector3 lastPosition);
+
+        public delegate void PreRainBarrelUpdated(BarricadeDrop drop, ref bool isFull, ref bool shouldSend,
+            ref bool shouldAllow);
+
+        public delegate void RainBarrelUpdated(BarricadeDrop drop, bool isFull, bool shouldSend);
+
+        public delegate void PreObjectResourceUpdated(LevelObject levelObject, ref ushort amount, ref bool shouldAllow);
+
+        public delegate void ObjectResourceUpdated(LevelObject levelObject, ushort amount);
+
+        public delegate void PreTankUpdated(BarricadeDrop drop, ref ushort amount, ref bool shouldAllow);
+
+        public delegate void TankUpdated(BarricadeDrop drop, ushort amount);
+
+        public delegate void PreOilTankBurned(BarricadeDrop drop, ref ushort fuel, ref bool shouldAllow);
+
+        public delegate void OilTankBurned(BarricadeDrop drop, ushort fuel);
+
+        public delegate void PrePlayerStealVehicleBattery(Player player, InteractableVehicle vehicle,
+            ref bool shouldAllow);
+
+        public delegate void PlayerStealVehicleBattery(Player player, InteractableVehicle vehicle);
+
+        public delegate void PreGeneratorBurned(InteractableGenerator generator, ushort amount, ref bool shouldAllow);
+
+        public delegate void PrePlayerConnected(SteamPlayerID playerID, ref Vector3 point, ref byte angle, bool isPro,
+            bool isAdmin, ref byte face, ref byte hair, ref byte beard, ref Color skin, ref Color color, bool hand,
+            ref int shirtItem, ref int pantsItem, ref int hatItem, ref int backpackItem, ref int vestItem,
+            ref int maskItem,
+            ref int glassesItem, ref int[] skinItems, ref string[] skinTags, ref string[] skinDynamicProps,
+            EPlayerSkillset skillset, string language);
+
         public delegate void PreAnimalMovementChanged(Animal animal, Vector3 lastPosition, ref bool shouldAllow);
 
         public delegate void BarricadeDestroyed(BarricadeDrop drop, byte x, byte y, ushort plant);
 
         public delegate void PlayerAttack(Player player);
+        public delegate void PrePlayerStarved(Player player, ref byte amount, ref bool shouldAllow);
+        public delegate void PrePlayerDehydrated(Player player, ref byte amount, ref bool shouldAllow);
+        public delegate void PrePlayerInfected(Player player, ref byte amount, ref bool shouldAllow);
+        public delegate void PrePlayerRadiated(Player player, ref byte amount, ref bool shouldAllow);
+        public delegate void PrePlayerTired(Player player, ref byte amount, ref bool shouldAllow);
+        public delegate void PrePlayerSuffocated(Player player, ref byte amount, ref bool shouldAllow);
+        public delegate void PrePlayerHallucinationBlinded(Player player, ref byte amount, ref bool shouldAllow);
+        public delegate void PrePlayerWarmUpdated(Player player, ref short delta, ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedBed(Player player, InteractableBed bed, bool claim,
+            ref bool shouldAllow);
+
+        public delegate void PlayerInteractedBed(Player player, InteractableBed bed, bool claim);
+
+        public delegate void PrePlayerInteractedMannequinUpdate(Player player, InteractableMannequin mannequin,
+            EMannequinUpdateMode updateMode, ref bool shouldAllow);
+
+        public delegate void PlayerInteractedMannequinUpdate(Player player, InteractableMannequin mannequin,
+            EMannequinUpdateMode updateMode);
+
+        public delegate void PrePlayerInteractedMannequinPose(Player player, InteractableMannequin mannequin, byte pose,
+            ref bool shouldAllow);
+
+        public delegate void PlayerInteractedMannequinPose(Player player, InteractableMannequin mannequin, byte pose);
+
+        public delegate void PrePlayerInteractedStorage(Player player, InteractableStorage storage, bool quickGrab,
+            ref bool shouldAllow);
+
+        public delegate void PlayerInteractedStorage(Player player, InteractableStorage storage, bool quickGrab);
+
+        public delegate void PrePlayerInteractedDisplay(Player player, InteractableStorage display, byte rot,
+            ref bool shouldAllow);
+
+        public delegate void PlayerInteractedDisplay(Player player, InteractableStorage display, byte rot);
+
+        public delegate void PrePlayerInteractedDoor(Player player, InteractableDoor door, bool open,
+            ref bool shouldAllow);
+
+        public delegate void PlayerInteractedDoor(Player player, InteractableDoor door, bool open);
+
+        public delegate void PrePlayerInteractedFire(Player player, InteractableFire fire, bool lit,
+            ref bool shouldAllow);
+
+        public delegate void PlayerInteractedFire(Player player, InteractableFire fire, bool lit);
+
+        public delegate void PrePlayerInteractedGenerator(Player player, InteractableGenerator generator, bool powered,
+            ref bool shouldAllow);
+
+        public delegate void PlayerInteractedGenerator(Player player, InteractableGenerator generator, bool powered);
+
+        public delegate void PrePlayerInteractedOven(Player player, InteractableOven oven, bool lit,
+            ref bool shouldAllow);
+
+        public delegate void PlayerInteractedOven(Player player, InteractableOven oven, bool lit);
+
+        public delegate void PrePlayerInteractedOxygenator(Player player, InteractableOxygenator oxygenator,
+            bool powered, ref bool shouldAllow);
+
+        public delegate void PlayerInteractedOxygenator(Player player, InteractableOxygenator oxygenator, bool powered);
+
+        public delegate void PrePlayerInteractedSafezone(Player player, InteractableSafezone safezone, bool powered,
+            ref bool shouldAllow);
+
+        public delegate void PlayerInteractedSafezone(Player player, InteractableSafezone safezone, bool powered);
+
+        public delegate void PrePlayerInteractedSign(Player player, InteractableSign sign, string text,
+            ref bool shouldAllow);
+
+        public delegate void PlayerInteractedSign(Player player, InteractableSign sign, string text);
+
+        public delegate void PrePlayerInteractedSpot(Player player, InteractableSpot spot, bool powered,
+            ref bool shouldAllow);
+
+        public delegate void PlayerInteractedSpot(Player player, InteractableSpot spot, bool powered);
+
+        public delegate void PrePlayerInteractedStereoTrack(Player player, InteractableStereo stereo, Guid track,
+            ref bool shouldAllow);
+
+        public delegate void PlayerInteractedStereoTrack(Player player, InteractableStereo stereo, Guid track);
+
+        public delegate void PrePlayerInteractedStereoVolume(Player player, InteractableStereo stereo, byte volume,
+            ref bool shouldAllow);
+
+        public delegate void PlayerInteractedStereoVolume(Player player, InteractableStereo stereo, byte volume);
+
+        public delegate void PrePlayerInteractedLibrary(Player player, InteractableLibrary library, byte transaction,
+            uint delta, ref bool shouldAllow);
+
+        public delegate void PlayerInteractedLibrary(Player player, InteractableLibrary library, byte transaction,
+            uint delta);
+
+        public delegate void PrePlayerClimbed(Player player, Vector3 direction, ref bool shouldAllow);
+
+        public delegate void PlayerClimbed(Player player, Vector3 direction);
+
+        public delegate void PlayerSuicided(Player player);
+
+        public delegate void PrePlayerSuicided(Player player, ref bool shouldAllow);
 
         public delegate void PlayerDamaged(Player player, byte amount, EDeathCause newCause, ELimb newLimb,
             CSteamID newKiller, EPlayerKill kill);
@@ -35,14 +170,26 @@ namespace RFRocketLibrary.Events
         public delegate void PlayerForagedResource(Player player, ResourceSpawnpoint resourceSpawnpoint);
 
         public delegate void PlayerMovementChanged(Player player, Vector3 lastPosition);
-        public delegate void PrePlayerMovementChanged(Player player, Vector3 lastPosition, ref bool shouldAllow);
+
+        public delegate void PrePlayerTeleported(Player player, ref Vector3 teleportPosition, ref float rotation,
+            ref bool shouldAllow);
+
+        public delegate void PlayerTeleported(Player player, Vector3 lastPosition, Vector3 teleportPosition,
+            float rotation);
+
+        public delegate void PrePlayerMovementChanged(Player player, Vector3 lastPosition, Vector3 newPosition,
+            ref bool shouldAllow);
 
         public delegate void PreAnimalKilled(Animal animal, ref Vector3 newRagdoll, ref EPlayerKill kill, ref uint xp,
             ref bool trackKill, ref bool dropLoot, ref ERagdollEffect ragdollEffect, ref bool shouldAllow);
 
         public delegate void PreAnimalSpawned(Animal animal, ref Vector3 position, ref byte angle,
             ref bool shouldAllow);
+
         public delegate void AnimalSpawned(Animal animal, Vector3 position, byte angle);
+
+        public delegate void BarricadeTransformed(byte x, byte y, ushort plant, BarricadeDrop barricade, Vector3 point,
+            byte angle_x, byte angle_y, byte angle_z);
 
         public delegate void PreBarricadeDestroyed(BarricadeDrop drop, byte x, byte y, ushort plant,
             ref bool shouldAllow);
@@ -59,6 +206,9 @@ namespace RFRocketLibrary.Events
             ref byte newQuality, ref byte[] newState, ref NetId useableNetId, ref bool shouldAllow);
 
         public delegate void PrePlayerChangedGesture(Player player, ref EPlayerGesture gesture, ref bool shouldAllow);
+
+        public delegate void PrePlayerChangedStance(Player player, EPlayerStance lastStance,
+            ref EPlayerStance newStance, ref bool all, ref bool shouldAllow);
 
         public delegate void PrePlayerChatted(Player player, ref EChatMode chatMode, ref string text,
             ref bool shouldAllow);
@@ -93,12 +243,25 @@ namespace RFRocketLibrary.Events
             ref SteamPlayer toPlayer, ref EChatMode mode, ref string iconURL, ref bool useRichTextFormatting,
             ref bool shouldAllow);
 
+        public delegate void StructureTransformed(byte x, byte y, StructureDrop drop, Vector3 point, byte angle_x,
+            byte angle_y, byte angle_z);
+
         public delegate void PreStructureDestroyed(StructureDrop drop, byte x, byte y, ref Vector3 ragdoll,
             ref bool shouldAllow);
 
-        public delegate void PreVehicleSpawned(VehicleSpawnpoint vehicleSpawnpoint, ref bool shouldAllow);
+        public delegate void PreVehicleSpawnedFromSpawnpoint(VehicleSpawnpoint vehicleSpawnpoint, ref bool shouldAllow);
 
-        public delegate void VehicleSpawned(VehicleSpawnpoint vehicleSpawnpoint, ref InteractableVehicle vehicle);
+        public delegate void VehicleSpawnedFromSpawnpoint(VehicleSpawnpoint vehicleSpawnpoint,
+            InteractableVehicle vehicle);
+
+        public delegate void PreVehicleSpawned(ref VehicleAsset asset, ref ushort skinID,
+            ref ushort mythicID, ref float roadPosition, ref Vector3 point, ref Quaternion angle, ref bool sirens,
+            ref bool blimp,
+            ref bool headlights, ref bool taillights, ref ushort fuel, ref ushort health, ref ushort batteryCharge,
+            ref CSteamID owner,
+            ref CSteamID group, ref bool locked, ref byte[][] turrets, ref byte tireAliveMask, ref bool shouldAllow);
+
+        public delegate void VehicleSpawned(InteractableVehicle vehicle);
 
         public delegate void PreZombieKilled(Zombie zombie, ref Vector3 newRagdoll, ref EPlayerKill kill, ref uint xp,
             ref bool trackKill, ref bool dropLoot, ref EZombieStunOverride zombieStunOverride,
@@ -113,6 +276,10 @@ namespace RFRocketLibrary.Events
             byte newAngle);
 
         public delegate void ResourceDead(ResourceSpawnpoint resourceSpawnpoint, ref Vector3 ragdoll);
+
+        public delegate void ObjectSpawned(LevelObject levelObject, byte section);
+
+        public delegate void ObjectDestroyed(LevelObject levelObject, byte section);
 
         public delegate void StructureDestroyed(StructureDrop drop, byte x, byte y, Vector3 ragdoll);
 
@@ -140,22 +307,84 @@ namespace RFRocketLibrary.Events
 
         #region Events
 
-        // Events
         public static event AnimalDamaged? OnAnimalDamaged;
         public static event AnimalKilled? OnAnimalKilled;
+
         public static event AnimalMovementChanged? OnAnimalMovementChanged;
-        public static event PreAnimalMovementChanged? OnPreAnimalMovementChanged;
+        public static event PreRainBarrelUpdated? OnPreRainBarrelUpdated;
+        public static event RainBarrelUpdated? OnRainBarrelUpdated;
+        public static event PreObjectResourceUpdated? OnPreObjectResourceUpdated;
+        public static event ObjectResourceUpdated? OnObjectResourceUpdated;
+        public static event PreTankUpdated? OnPreTankUpdated;
+        public static event TankUpdated? OnTankUpdated;
+        public static event PreOilTankBurned? OnPreOilTankBurned;
+        public static event OilTankBurned? OnOilTankBurned;
+        public static event PrePlayerStealVehicleBattery? OnPrePlayerStealVehicleBattery;
+        public static event PlayerStealVehicleBattery? OnPlayerStealVehicleBattery;
+        public static event PrePlayerConnected? OnPrePlayerConnected;
+        public static event PrePlayerClimbed? OnPrePlayerClimbed;
+        public static event PlayerClimbed? OnPlayerClimbed;
+        public static event PreGeneratorBurned? OnPreGeneratorBurned;
+        public static event PrePlayerSuicided? OnPrePlayerSuicided;
+        public static event PlayerSuicided? OnPlayerSuicided;
+        public static event PrePlayerStarved? OnPrePlayerStarved;
+        public static event PrePlayerDehydrated? OnPrePlayerDehydrated;
+        public static event PrePlayerInfected? OnPrePlayerInfected;
+        public static event PrePlayerRadiated? OnPrePlayerRadiated;
+        public static event PrePlayerTired? OnPrePlayerTired;
+        public static event PrePlayerSuffocated? OnPrePlayerSuffocated;
+        public static event PrePlayerHallucinationBlinded? OnPrePlayerHallucinationBlinded;
+        public static event PrePlayerWarmUpdated? OnPrePlayerWarmUpdated;
+        public static event PrePlayerInteractedBed? OnPrePlayerInteractedBed;
+        public static event PlayerInteractedBed? OnPlayerInteractedBed;
+        public static event PrePlayerInteractedMannequinUpdate? OnPrePlayerInteractedMannequinUpdate;
+        public static event PlayerInteractedMannequinUpdate? OnPlayerInteractedMannequinUpdate;
+        public static event PrePlayerInteractedMannequinPose? OnPrePlayerInteractedMannequinPose;
+        public static event PlayerInteractedMannequinPose? OnPlayerInteractedMannequinPose;
+        public static event PrePlayerInteractedStorage? OnPrePlayerInteractedStorage;
+        public static event PlayerInteractedStorage? OnPlayerInteractedStorage;
+        public static event PrePlayerInteractedDisplay? OnPrePlayerInteractedDisplay;
+        public static event PlayerInteractedDisplay? OnPlayerInteractedDisplay;
+        public static event PrePlayerInteractedDoor? OnPrePlayerInteractedDoor;
+        public static event PlayerInteractedDoor? OnPlayerInteractedDoor;
+        public static event PrePlayerInteractedFire? OnPrePlayerInteractedFire;
+        public static event PlayerInteractedFire? OnPlayerInteractedFire;
+        public static event PrePlayerInteractedGenerator? OnPrePlayerInteractedGenerator;
+        public static event PlayerInteractedGenerator? OnPlayerInteractedGenerator;
+        public static event PrePlayerInteractedOxygenator? OnPrePlayerInteractedOxygenator;
+        public static event PlayerInteractedOxygenator? OnPlayerInteractedOxygenator;
+        public static event PrePlayerInteractedOven? OnPrePlayerInteractedOven;
+        public static event PlayerInteractedOven? OnPlayerInteractedOven;
+        public static event PrePlayerInteractedSafezone? OnPrePlayerInteractedSafezone;
+        public static event PlayerInteractedSafezone? OnPlayerInteractedSafezone;
+        public static event PrePlayerInteractedSign? OnPrePlayerInteractedSign;
+        public static event PlayerInteractedSign? OnPlayerInteractedSign;
+        public static event PrePlayerInteractedSpot? OnPrePlayerInteractedSpot;
+        public static event PlayerInteractedSpot? OnPlayerInteractedSpot;
+        public static event PrePlayerInteractedStereoTrack? OnPrePlayerInteractedStereoTrack;
+        public static event PlayerInteractedStereoTrack? OnPlayerInteractedStereoTrack;
+        public static event PrePlayerInteractedStereoVolume? OnPrePlayerInteractedStereoVolume;
+        public static event PlayerInteractedStereoVolume? OnPlayerInteractedStereoVolume;
+        public static event PrePlayerInteractedLibrary? OnPrePlayerInteractedLibrary;
+        public static event PlayerInteractedLibrary? OnPlayerInteractedLibrary;
+
+        // public static event PreAnimalMovementChanged? OnPreAnimalMovementChanged;
         public static event BarricadeDestroyed? OnBarricadeDestroyed;
 
         public static event PlayerAttack? OnPlayerAttack;
         public static event PlayerDamaged? OnPlayerDamaged;
         public static event PlayerFiremodeChanged? OnPlayerFiremodeChanged;
         public static event PlayerForagedResource? OnPlayerForagedResource;
+
         public static event PlayerMovementChanged? OnPlayerMovementChanged;
-        public static event PrePlayerMovementChanged? OnPrePlayerMovementChanged;
+        public static event PrePlayerTeleported? OnPrePlayerTeleported;
+        public static event PlayerTeleported? OnPlayerTeleported;
+
+        // public static event PrePlayerMovementChanged? OnPrePlayerMovementChanged;
         public static event PreAnimalKilled? OnPreAnimalKilled;
         public static event PreAnimalSpawned? OnPreAnimalSpawned;
         public static event AnimalSpawned? OnAnimalSpawned;
+        public static event BarricadeTransformed? OnBarricadeTransformed;
         public static event PreBarricadeDestroyed? OnPreBarricadeDestroyed;
         public static event PreItemSpawned? OnPreItemSpawned;
         public static event ItemSpawned? OnItemSpawned;
@@ -163,6 +392,7 @@ namespace RFRocketLibrary.Events
         public static event PrePlayerCaughtFish? OnPrePlayerCaughtFish;
         public static event PrePlayerChangedEquipment? OnPrePlayerChangedEquipment;
         public static event PrePlayerChangedGesture? OnPrePlayerChangedGesture;
+        public static event PrePlayerChangedStance? OnPrePlayerChangedStance;
         public static event PrePlayerChatted? OnPrePlayerChatted;
         public static event PrePlayerDraggedItem? OnPrePlayerDraggedItem;
         public static event PrePlayerDroppedItem? OnPrePlayerDroppedItem;
@@ -175,17 +405,25 @@ namespace RFRocketLibrary.Events
         public static event PreResourceSpawned? OnPreResourceSpawned;
         public static event ResourceSpawned? OnResourceSpawned;
         public static event PreServerSentMessage? OnPreServerMessageSent;
+        public static event StructureTransformed? OnStructureTransformed;
         public static event PreStructureDestroyed? OnPreStructureDestroyed;
+        public static event PreVehicleSpawnedFromSpawnpoint? OnPreVehicleSpawnedFromSpawnpoint;
+        public static event VehicleSpawnedFromSpawnpoint? OnVehicleSpawnedFromSpawnpoint;
         public static event PreVehicleSpawned? OnPreVehicleSpawned;
         public static event VehicleSpawned? OnVehicleSpawned;
         public static event PreZombieKilled? OnPreZombieKilled;
         public static event PreZombieSpawned? OnPreZombieSpawned;
         public static event ZombieSpawned? OnZombieSpawned;
+        public static event ResourceDead? OnResourceDestroyed;
         public static event ResourceDead? OnResourceChopped;
         public static event ResourceDead? OnResourceForaged;
         public static event ResourceDead? OnResourceMined;
+        public static event ObjectSpawned? OnObjectSpawned;
+        public static event ObjectDestroyed? OnObjectDestroyed;
+
         public static event StructureDestroyed? OnStructureDestroyed;
-        public static event PreVehicleMovementChanged? OnPreVehicleMovementChanged;
+
+        // public static event PreVehicleMovementChanged? OnPreVehicleMovementChanged;
         public static event VehicleMovementChanged? OnVehicleMovementChanged;
         public static event PreVehicleMovementChangedByPlayer? OnPreVehicleMovementChangedByPlayer;
         public static event VehicleMovementChangedByPlayer? OnVehicleMovementChangedByPlayer;
@@ -213,42 +451,883 @@ namespace RFRocketLibrary.Events
                 return null;
             }
 
-            [HarmonyPatch(typeof(Animal), "tick")]
+            [HarmonyPatch(typeof(Provider), "addPlayer")]
             [HarmonyPrefix]
-            internal static bool OnAnimalMovementChangedInvoker(Animal __instance, Vector3 ___lastUpdatePos)
+            internal static void AddPlayer(ITransportConnection transportConnection, NetId netId,
+                SteamPlayerID playerID, ref Vector3 point, ref byte angle, bool isPro, bool isAdmin, int channel,
+                ref byte face, ref byte hair, ref byte beard, ref Color skin, ref Color color, Color markerColor,
+                bool hand, ref int shirtItem,
+                ref int pantsItem, ref int hatItem, ref int backpackItem, ref int vestItem, ref int maskItem,
+                ref int glassesItem, ref int[] skinItems, ref string[] skinTags, ref string[] skinDynamicProps,
+                EPlayerSkillset skillset, string language, CSteamID lobbyID)
             {
+                OnPrePlayerConnected?.Invoke(playerID, ref point, ref angle, isPro, isAdmin, ref face, ref hair,
+                    ref beard, ref skin, ref color, hand, ref shirtItem, ref pantsItem, ref hatItem, ref backpackItem,
+                    ref vestItem, ref maskItem, ref glassesItem, ref skinItems, ref skinTags, ref skinDynamicProps,
+                    skillset, language);
+            }
+
+            [HarmonyPatch(typeof(VehicleManager), "ReceiveStealVehicleBattery")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerStealVehicleBatteryInvoker(in ServerInvocationContext context)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var vehicle = player.movement.getVehicle();
+                if (vehicle == null)
+                    return true;
+
                 var shouldAllow = true;
-                OnPreAnimalMovementChanged?.Invoke(__instance, ___lastUpdatePos, ref shouldAllow);
+                OnPrePlayerStealVehicleBattery?.Invoke(player, vehicle, ref shouldAllow);
                 return shouldAllow;
             }
 
-            [HarmonyPatch(typeof(Animal), "tick")]
+            [HarmonyPatch(typeof(VehicleManager), "ReceiveStealVehicleBattery")]
             [HarmonyPostfix]
-            internal static void OnAnimalMovementChangedInvoker(bool __runOriginal, Animal __instance, Vector3 ___lastUpdatePos)
+            internal static void OnPlayerStealVehicleBatteryInvoker(bool __runOriginal,
+                in ServerInvocationContext context)
             {
                 if (!__runOriginal)
                     return;
 
-                OnAnimalMovementChanged?.Invoke(__instance, ___lastUpdatePos);
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                var vehicle = player.movement.getVehicle();
+                if (vehicle == null)
+                    return;
+
+                OnPlayerStealVehicleBattery?.Invoke(player, vehicle);
             }
 
-            [HarmonyPatch(typeof(PlayerMovement), "simulate", new Type[0])]
+            [HarmonyPatch(typeof(PlayerStance), "ReceiveClimbRequest")]
             [HarmonyPrefix]
-            internal static bool OnPlayerMovementChangedInvoker(PlayerMovement __instance, Vector3 ___lastUpdatePos)
+            internal static bool OnPlayerClimbedInvoker(PlayerStance __instance, Vector3 direction)
             {
                 var shouldAllow = true;
-                OnPrePlayerMovementChanged?.Invoke(__instance.player, ___lastUpdatePos, ref shouldAllow);
+                OnPrePlayerClimbed?.Invoke(__instance.player, direction, ref shouldAllow);
                 return shouldAllow;
             }
 
-            [HarmonyPatch(typeof(PlayerMovement), "simulate", new Type[0])]
+            [HarmonyPatch(typeof(PlayerStance), "ReceiveClimbRequest")]
             [HarmonyPostfix]
-            internal static void OnPlayerMovementChangedInvoker(bool __runOriginal, PlayerMovement __instance, Vector3 ___lastUpdatePos)
+            internal static void OnPlayerClimbedInvoker(bool __runOriginal, PlayerStance __instance, Vector3 direction)
             {
                 if (!__runOriginal)
                     return;
 
-                OnPlayerMovementChanged?.Invoke(__instance.player, ___lastUpdatePos);
+                OnPlayerClimbed?.Invoke(__instance.player, direction);
+            }
+
+            [HarmonyPatch(typeof(InteractableGenerator), "askBurn")]
+            [HarmonyPrefix]
+            internal static bool OnGeneratorBurnedInvoker(InteractableGenerator __instance, ushort amount)
+            {
+                var shouldAllow = true;
+                OnPreGeneratorBurned?.Invoke(__instance, amount, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(PlayerLife), "ReceiveSuicideRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerSuicideInvoker(PlayerLife __instance)
+            {
+                if (__instance.health > 100)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerSuicided?.Invoke(__instance.player, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(PlayerLife), "ReceiveSuicideRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerSuicideInvoker(bool __runOriginal, PlayerLife __instance)
+            {
+                if (!__instance.isDead)
+                    return;
+
+                OnPlayerSuicided?.Invoke(__instance.player);
+            }
+
+            [HarmonyPatch(typeof(InteractableBed), "ReceiveClaimRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedBedInvoker(InteractableBed __instance,
+                in ServerInvocationContext context)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var claim = !__instance.isClaimed;
+                var shouldAllow = true;
+                OnPrePlayerInteractedBed?.Invoke(player, __instance, claim, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableBed), "ReceiveClaimRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedBedInvoker(bool __runOriginal, InteractableBed __instance,
+                in ServerInvocationContext context)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                var claim = !__instance.isClaimed;
+                OnPlayerInteractedBed?.Invoke(player, __instance, claim);
+            }
+
+            [HarmonyPatch(typeof(InteractableMannequin), "ReceivePoseRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedMannequinInvoker(InteractableMannequin __instance,
+                in ServerInvocationContext context, byte poseComp)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedMannequinPose?.Invoke(player, __instance, poseComp, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableMannequin), "ReceivePoseRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedMannequinInvoker(bool __runOriginal,
+                InteractableMannequin __instance,
+                in ServerInvocationContext context, byte poseComp)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedMannequinPose?.Invoke(player, __instance, poseComp);
+            }
+
+            [HarmonyPatch(typeof(InteractableMannequin), "ReceiveUpdateRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedMannequinInvoker(InteractableMannequin __instance,
+                in ServerInvocationContext context, EMannequinUpdateMode updateMode)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedMannequinUpdate?.Invoke(player, __instance, updateMode, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableMannequin), "ReceiveUpdateRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedMannequinInvoker(bool __runOriginal,
+                InteractableMannequin __instance,
+                in ServerInvocationContext context, EMannequinUpdateMode updateMode)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedMannequinUpdate?.Invoke(player, __instance, updateMode);
+            }
+
+            [HarmonyPatch(typeof(InteractableStorage), "ReceiveRotDisplayRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedDisplayInvoker(InteractableStorage __instance,
+                in ServerInvocationContext context, byte rotComp)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedDisplay?.Invoke(player, __instance, rotComp, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableStorage), "ReceiveRotDisplayRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedDisplayInvoker(bool __runOriginal, InteractableStorage __instance,
+                in ServerInvocationContext context, byte rotComp)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedDisplay?.Invoke(player, __instance, rotComp);
+            }
+
+            [HarmonyPatch(typeof(InteractableStorage), "ReceiveInteractRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedStorageInvoker(InteractableStorage __instance,
+                in ServerInvocationContext context, bool quickGrab)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedStorage?.Invoke(player, __instance, quickGrab, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableStorage), "ReceiveInteractRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedStorageInvoker(bool __runOriginal, InteractableStorage __instance,
+                in ServerInvocationContext context, bool quickGrab)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedStorage?.Invoke(player, __instance, quickGrab);
+            }
+
+            [HarmonyPatch(typeof(InteractableDoor), "ReceiveToggleRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedDoorInvoker(InteractableDoor __instance,
+                in ServerInvocationContext context, bool desiredOpen)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedDoor?.Invoke(player, __instance, desiredOpen, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableDoor), "ReceiveToggleRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedDoorInvoker(bool __runOriginal, InteractableDoor __instance,
+                in ServerInvocationContext context, bool desiredOpen)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedDoor?.Invoke(player, __instance, desiredOpen);
+            }
+
+            [HarmonyPatch(typeof(InteractableFire), "ReceiveToggleRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedFireInvoker(InteractableFire __instance,
+                in ServerInvocationContext context, bool desiredLit)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedFire?.Invoke(player, __instance, desiredLit, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableFire), "ReceiveToggleRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedFireInvoker(bool __runOriginal, InteractableFire __instance,
+                in ServerInvocationContext context, bool desiredLit)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedFire?.Invoke(player, __instance, desiredLit);
+            }
+
+            [HarmonyPatch(typeof(InteractableGenerator), "ReceiveToggleRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedGeneratorInvoker(InteractableGenerator __instance,
+                in ServerInvocationContext context, bool desiredPowered)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedGenerator?.Invoke(player, __instance, desiredPowered, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableGenerator), "ReceiveToggleRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedGeneratorInvoker(bool __runOriginal,
+                InteractableGenerator __instance,
+                in ServerInvocationContext context, bool desiredPowered)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedGenerator?.Invoke(player, __instance, desiredPowered);
+            }
+
+            [HarmonyPatch(typeof(InteractableOven), "ReceiveToggleRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedOvenInvoker(InteractableOven __instance,
+                in ServerInvocationContext context, bool desiredLit)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedOven?.Invoke(player, __instance, desiredLit, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableOven), "ReceiveToggleRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedOvenInvoker(bool __runOriginal, InteractableOven __instance,
+                in ServerInvocationContext context, bool desiredLit)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedOven?.Invoke(player, __instance, desiredLit);
+            }
+
+            [HarmonyPatch(typeof(InteractableOxygenator), "ReceiveToggleRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedOxygenatorInvoker(InteractableOxygenator __instance,
+                in ServerInvocationContext context, bool desiredPowered)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedOxygenator?.Invoke(player, __instance, desiredPowered, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableOxygenator), "ReceiveToggleRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedOxygenatorInvoker(bool __runOriginal,
+                InteractableOxygenator __instance, in ServerInvocationContext context, bool desiredPowered)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedOxygenator?.Invoke(player, __instance, desiredPowered);
+            }
+
+            [HarmonyPatch(typeof(InteractableSafezone), "ReceiveToggleRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedSafezoneInvoker(InteractableSafezone __instance,
+                in ServerInvocationContext context, bool desiredPowered)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedSafezone?.Invoke(player, __instance, desiredPowered, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableSafezone), "ReceiveToggleRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedSafezoneInvoker(bool __runOriginal, InteractableSafezone __instance,
+                in ServerInvocationContext context, bool desiredPowered)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedSafezone?.Invoke(player, __instance, desiredPowered);
+            }
+
+            [HarmonyPatch(typeof(InteractableSign), "ReceiveChangeTextRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedSignInvoker(InteractableSign __instance,
+                in ServerInvocationContext context, string newText)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedSign?.Invoke(player, __instance, newText, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableSign), "ReceiveChangeTextRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedSignInvoker(bool __runOriginal, InteractableSign __instance,
+                in ServerInvocationContext context, string newText)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedSign?.Invoke(player, __instance, newText);
+            }
+
+            [HarmonyPatch(typeof(InteractableSpot), "ReceiveToggleRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedSpotInvoker(InteractableSpot __instance,
+                in ServerInvocationContext context, bool desiredPowered)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedSpot?.Invoke(player, __instance, desiredPowered, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableSpot), "ReceiveToggleRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedSpotInvoker(bool __runOriginal, InteractableSpot __instance,
+                in ServerInvocationContext context, bool desiredPowered)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedSpot?.Invoke(player, __instance, desiredPowered);
+            }
+
+            [HarmonyPatch(typeof(InteractableStereo), "ReceiveTrackRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedStereoInvoker(InteractableStereo __instance,
+                in ServerInvocationContext context, Guid newTrack)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedStereoTrack?.Invoke(player, __instance, newTrack, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableStereo), "ReceiveTrackRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedStereoInvoker(bool __runOriginal, InteractableStereo __instance,
+                in ServerInvocationContext context, Guid newTrack)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedStereoTrack?.Invoke(player, __instance, newTrack);
+            }
+
+            [HarmonyPatch(typeof(InteractableStereo), "ReceiveChangeVolumeRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedStereoInvoker(InteractableStereo __instance,
+                in ServerInvocationContext context, byte newVolume)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedStereoVolume?.Invoke(player, __instance, newVolume, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableStereo), "ReceiveChangeVolumeRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedStereoInvoker(bool __runOriginal, InteractableStereo __instance,
+                in ServerInvocationContext context, byte newVolume)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedStereoVolume?.Invoke(player, __instance, newVolume);
+            }
+
+            [HarmonyPatch(typeof(InteractableLibrary), "ReceiveTransferLibraryRequest")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerInteractedLibraryInvoker(InteractableLibrary __instance,
+                in ServerInvocationContext context, byte transaction, uint delta)
+            {
+                var player = context.GetPlayer();
+                if (player == null)
+                    return true;
+
+                var shouldAllow = true;
+                OnPrePlayerInteractedLibrary?.Invoke(player, __instance, transaction, delta, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableLibrary), "ReceiveTransferLibraryRequest")]
+            [HarmonyPostfix]
+            internal static void OnPlayerInteractedLibraryInvoker(bool __runOriginal, InteractableLibrary __instance,
+                in ServerInvocationContext context, byte transaction, uint delta)
+            {
+                if (!__runOriginal)
+                    return;
+
+                var player = context.GetPlayer();
+                if (player == null)
+                    return;
+
+                OnPlayerInteractedLibrary?.Invoke(player, __instance, transaction, delta);
+            }
+
+            [HarmonyPatch(typeof(InteractableTank), "ServerSetAmount")]
+            [HarmonyPrefix]
+            internal static bool OnTankUpdatedInvoker(InteractableTank __instance, ref ushort newAmount)
+            {
+                var shouldAllow = true;
+                OnPreTankUpdated?.Invoke(BarricadeUtil.FindDropFast(__instance.transform), ref newAmount,
+                    ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableTank), "ServerSetAmount")]
+            [HarmonyPostfix]
+            internal static void OnTankUpdatedInvoker(bool __runOriginal, InteractableTank __instance,
+                ref ushort newAmount)
+            {
+                if (!__runOriginal)
+                    return;
+
+                OnTankUpdated?.Invoke(BarricadeUtil.FindDropFast(__instance.transform), newAmount);
+            }
+
+            [HarmonyPatch(typeof(ObjectManager), "ReceiveObjectResourceState")]
+            [HarmonyPrefix]
+            internal static bool ReceiveObjectResourceState(byte x, byte y, ushort index, ref ushort amount)
+            {
+                var shouldAllow = true;
+                OnPreObjectResourceUpdated?.Invoke(LevelObjects.objects[x, y][index], ref amount, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(ObjectManager), "ReceiveObjectResourceState")]
+            [HarmonyPostfix]
+            internal static void ReceiveObjectResourceState(bool __runOriginal, byte x, byte y, ushort index,
+                ushort amount)
+            {
+                if (!__runOriginal)
+                    return;
+
+                OnObjectResourceUpdated?.Invoke(LevelObjects.objects[x, y][index], amount);
+            }
+
+            [HarmonyPatch(typeof(Animal), "tick")]
+            [HarmonyPrefix]
+            internal static void OnAnimalMovementChangedInvoker(out Vector3 __state, Animal __instance,
+                Vector3 ___lastUpdatePos)
+            {
+                // var shouldAllow = true;
+                // OnPreAnimalMovementChanged?.Invoke(__instance, ___lastUpdatePos, ref shouldAllow);
+                // return shouldAllow;
+                __state = ___lastUpdatePos;
+            }
+
+            [HarmonyPatch(typeof(Animal), "tick")]
+            [HarmonyPostfix]
+            internal static void OnAnimalMovementChangedInvoker(bool __runOriginal, Vector3 __state, Animal __instance)
+            {
+                if (!__runOriginal)
+                    return;
+
+                if (__instance.transform.position == __state)
+                    return;
+
+                OnAnimalMovementChanged?.Invoke(__instance, __state);
+            }
+
+            [HarmonyPatch(typeof(InteractableOil), "askBurn")]
+            [HarmonyPrefix]
+            internal static bool OnOilTankBurnedInvoker(InteractableOil __instance, ref ushort amount)
+            {
+                var shouldAllow = true;
+                OnPreOilTankBurned?.Invoke(BarricadeUtil.FindDropFast(__instance.transform), ref amount,
+                    ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(InteractableOil), "askBurn")]
+            [HarmonyPostfix]
+            internal static void OnOilTankBurnedInvoker(bool __runOriginal, InteractableOil __instance, ushort amount)
+            {
+                if (!__runOriginal)
+                    return;
+
+                OnOilTankBurned?.Invoke(BarricadeUtil.FindDropFast(__instance.transform), amount);
+            }
+
+            [HarmonyPatch(typeof(BarricadeManager), "updateRainBarrel")]
+            [HarmonyPrefix]
+            internal static bool OnRainBarrelUpdatedInvoker(Transform transform, ref bool isFull, ref bool shouldSend)
+            {
+                var shouldAllow = true;
+                OnPreRainBarrelUpdated?.Invoke(BarricadeUtil.FindDropFast(transform), ref isFull, ref shouldSend,
+                    ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(BarricadeManager), "updateRainBarrel")]
+            [HarmonyPostfix]
+            internal static void OnRainBarrelUpdatedInvoker(bool __runOriginal, Transform transform, bool isFull,
+                bool shouldSend)
+            {
+                if (!__runOriginal)
+                    return;
+
+                OnRainBarrelUpdated?.Invoke(BarricadeUtil.FindDropFast(transform), isFull, shouldSend);
+            }
+
+            [HarmonyPatch(typeof(PlayerMovement), "simulate", typeof(uint), typeof(int), typeof(int), typeof(int),
+                typeof(float), typeof(float), typeof(bool), typeof(bool), typeof(float))]
+            [HarmonyPrefix]
+            internal static void OnPlayerMovementChangedInvoker(PlayerMovement __instance, out Vector3 __state,
+                HashSet<LandscapeHoleVolume> ___overlappingHoleVolumes, Vector3 ___velocity, string ___materialName,
+                uint simulation, int recov, int input_x, int input_y, float look_x, float look_y,
+                bool inputJump, bool inputSprint, float deltaTime)
+            {
+                // var go = new GameObject
+                // {
+                //     transform =
+                //     {
+                //         position = __instance.transform.position,
+                //         rotation = __instance.transform.rotation
+                //     }
+                // };
+                // // Logger.LogWarning($"[DEBUG] Prefix Player Last: {__instance.transform.position}");
+                // // Logger.LogWarning($"[DEBUG] Prefix Temp Last: {go.transform.position}");
+                // var controller = go.AddComponent<CharacterController>();
+                // controller.center = controller.center;
+                // controller.height = controller.height;
+                // controller.radius = controller.radius;
+                // controller.detectCollisions = controller.detectCollisions;
+                // controller.skinWidth = controller.skinWidth;
+                // controller.slopeLimit = controller.slopeLimit;
+                // controller.stepOffset = controller.stepOffset;
+                // controller.enableOverlapRecovery = controller.enableOverlapRecovery;
+                // controller.minMoveDistance = controller.minMoveDistance;
+                //
+                // var move = new Vector3(input_x, 0f, input_y);
+                // if (__instance.player.stance.stance == EPlayerStance.CLIMB)
+                // {
+                //     controller.CheckedMove(
+                //         new Vector3(0f, input_y * __instance.speed * 0.5f, 0f) * deltaTime,
+                //         ___overlappingHoleVolumes is {Count: > 0});
+                // }
+                // else if (__instance.player.stance.stance == EPlayerStance.SWIM)
+                // {
+                //     if (__instance.player.stance.isSubmerged || (__instance.player.look.pitch > 110f && move.z > 0.1))
+                //     {
+                //         var velocity = __instance.player.look.aim.rotation * move.normalized * __instance.speed * 5f;
+                //         if (inputJump)
+                //             velocity.y = 3f * __instance.pluginJumpMultiplier;
+                //
+                //         controller.CheckedMove(velocity * deltaTime,
+                //             ___overlappingHoleVolumes is {Count: > 0});
+                //     }
+                //     else
+                //     {
+                //         WaterUtility.getUnderwaterInfo(__instance.transform.position, out _, out var num);
+                //         var velocity = __instance.transform.rotation * move.normalized * __instance.speed * 5f;
+                //         velocity.y = (num - 1.275f - __instance.transform.position.y) / 8f;
+                //         controller.CheckedMove(velocity * deltaTime,
+                //             ___overlappingHoleVolumes is {Count: > 0});
+                //     }
+                // }
+                // else
+                // {
+                //     var flag3 = false;
+                //     if (__instance.isGrounded && __instance.ground.normal.y > 0f)
+                //     {
+                //         var num2 = Vector3.Angle(Vector3.up, __instance.ground.normal);
+                //         var num3 = 59f;
+                //         if (Level.info != null && Level.info.configData != null &&
+                //             Level.info.configData.Max_Walkable_Slope > -0.5f)
+                //         {
+                //             num3 = Level.info.configData.Max_Walkable_Slope;
+                //         }
+                //
+                //         if (num2 > num3)
+                //         {
+                //             flag3 = true;
+                //             var a = Vector3.Cross(Vector3.Cross(Vector3.up, __instance.ground.normal),
+                //                 __instance.ground.normal);
+                //             ___velocity += a * 16f * deltaTime;
+                //         }
+                //     }
+                //
+                //     if (!flag3)
+                //     {
+                //         var vector = __instance.transform.rotation * move.normalized * __instance.speed * 5f;
+                //         if (__instance.isGrounded)
+                //         {
+                //             vector = Vector3.Cross(Vector3.Cross(Vector3.up, vector), __instance.ground.normal);
+                //             vector.y = Mathf.Min(vector.y, 0f);
+                //             // var ewipDoNotUseTemp_SlipMode = Traverse
+                //             //     .Create(Type.GetType("SDG.Unturned.PhysicMaterialCustomData"))
+                //             //     .Method("WipDoNotUseTemp_GetSlipMode")
+                //             //     .GetValue(___materialName) is EWipDoNotUseTemp_SlipMode ? (EWipDoNotUseTemp_SlipMode) Traverse
+                //             //     .Create(Type.GetType("SDG.Unturned.PhysicMaterialCustomData"))
+                //             //     .Method("WipDoNotUseTemp_GetSlipMode")
+                //             //     .GetValue(___materialName) : EWipDoNotUseTemp_SlipMode.None;
+                //             var ewipDoNotUseTemp_SlipMode = EWipDoNotUseTemp_SlipMode.None;
+                //             switch (ewipDoNotUseTemp_SlipMode)
+                //             {
+                //                 case EWipDoNotUseTemp_SlipMode.LegacyIce:
+                //                     ___velocity = Vector3.Lerp(___velocity, vector, deltaTime);
+                //                     break;
+                //                 case EWipDoNotUseTemp_SlipMode.LegacyMetal:
+                //                 {
+                //                     var num4 = __instance.ground.normal.y < 0.75f
+                //                         ? 0f
+                //                         : Mathf.Lerp(0f, 1f, (__instance.ground.normal.y - 0.75f) * 4f);
+                //                     ___velocity = Vector3.Lerp(___velocity, vector * 2f,
+                //                         __instance.isMoving ? (2f * deltaTime) : (0.5f * num4 * deltaTime));
+                //                     break;
+                //                 }
+                //                 default:
+                //                     ___velocity = vector;
+                //                     break;
+                //             }
+                //         }
+                //         else
+                //         {
+                //             ___velocity.y += Physics.gravity.y *
+                //                              (__instance.fall <= 0f ? __instance.totalGravityMultiplier : 1f) * deltaTime * 3f;
+                //             var a2 = __instance.totalGravityMultiplier < 0.99f
+                //                 ? Physics.gravity.y * 2f * __instance.totalGravityMultiplier
+                //                 : -100f;
+                //             ___velocity.y = Mathf.Max(a2, ___velocity.y);
+                //             var horizontalMagnitude = vector.GetHorizontalMagnitude();
+                //             var horizontal = ___velocity.GetHorizontal();
+                //             var horizontalMagnitude2 = ___velocity.GetHorizontalMagnitude();
+                //             float maxMagnitude;
+                //             if (horizontalMagnitude2 > horizontalMagnitude)
+                //             {
+                //                 var num5 = 2f * Provider.modeConfigData.Gameplay.AirStrafing_Deceleration_Multiplier;
+                //                 maxMagnitude = Mathf.Max(horizontalMagnitude, horizontalMagnitude2 - num5 * deltaTime);
+                //             }
+                //             else
+                //                 maxMagnitude = horizontalMagnitude;
+                //
+                //             var a3 = vector *
+                //                      (4f * Provider.modeConfigData.Gameplay.AirStrafing_Acceleration_Multiplier);
+                //             var vector2 = horizontal + a3 * deltaTime;
+                //             vector2 = vector2.ClampHorizontalMagnitude(maxMagnitude);
+                //             ___velocity.x = vector2.x;
+                //             ___velocity.z = vector2.z;
+                //         }
+                //     }
+                //
+                //     if (inputJump && __instance.isGrounded && !__instance.player.life.isBroken &&
+                //         __instance.player.life.stamina >= 10f * (1f - __instance.player.skills.mastery(0, 6) * 0.5f) &&
+                //         __instance.player.stance.stance is EPlayerStance.STAND or EPlayerStance.SPRINT &&
+                //         !MathfEx.IsNearlyZero(__instance.pluginJumpMultiplier, 0.001f))
+                //     {
+                //         ___velocity.y = 7f * (1f + __instance.player.skills.mastery(0, 6) * 0.25f) *
+                //                         __instance.pluginJumpMultiplier;
+                //     }
+                //
+                //     ___velocity += __instance.pendingLaunchVelocity;
+                //     __instance.pendingLaunchVelocity = Vector3.zero;
+                //     controller.CheckedMove(___velocity * deltaTime, ___overlappingHoleVolumes is {Count: > 0});
+                // }
+                //
+                // __state = go.transform.position;
+                // Object.Destroy(go);
+                //
+                // var shouldAllow = true;
+                // OnPrePlayerMovementChanged?.Invoke(__instance.player, __instance.transform.position, __state, ref shouldAllow);
+                // return shouldAllow;
+                __state = __instance.transform.position;
+            }
+
+            [HarmonyPatch(typeof(PlayerMovement), "simulate", typeof(uint), typeof(int), typeof(int), typeof(int),
+                typeof(float), typeof(float), typeof(bool), typeof(bool), typeof(float))]
+            [HarmonyPostfix]
+            internal static void OnPlayerMovementChangedInvoker(bool __runOriginal, PlayerMovement __instance,
+                Vector3 __state, uint simulation, int recov, int input_x, int input_y, float look_x, float look_y,
+                bool inputJump, bool inputSprint, float deltaTime)
+            {
+                if (!__runOriginal)
+                    return;
+
+                if (__instance.transform.position == __state)
+                    return;
+
+                OnPlayerMovementChanged?.Invoke(__instance.player, __state);
+            }
+
+            [HarmonyPatch(typeof(Player), "teleportToLocationUnsafe")]
+            [HarmonyPrefix]
+            internal static bool OnPlayerTeleportedInvoker(Player __instance,
+                out Vector3 __state, ref Vector3 position, ref float yaw)
+            {
+                __state = __instance.transform.position;
+                var shouldAllow = true;
+                OnPrePlayerTeleported?.Invoke(__instance, ref position, ref yaw, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(Player), "teleportToLocationUnsafe")]
+            [HarmonyPostfix]
+            internal static void OnPlayerTeleportedInvoker(bool __runOriginal, Player __instance,
+                Vector3 __state, Vector3 position, float yaw)
+            {
+                if (!__runOriginal)
+                    return;
+
+                OnPlayerTeleported?.Invoke(__instance, __state, position, yaw);
             }
 
             [HarmonyPatch(typeof(AnimalManager), "sendAnimalAlive")]
@@ -262,7 +1341,8 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(AnimalManager), "sendAnimalAlive")]
             [HarmonyPostfix]
-            internal static void OnPreAnimalSpawnedInvoker(bool __runOriginal, Animal animal, Vector3 newPosition, byte newAngle)
+            internal static void OnPreAnimalSpawnedInvoker(bool __runOriginal, Animal animal, Vector3 newPosition,
+                byte newAngle)
             {
                 if (!__runOriginal)
                     return;
@@ -314,22 +1394,52 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(VehicleManager), "addVehicleAtSpawn")]
             [HarmonyPrefix]
-            internal static bool OnPreVehicleSpawnedInvoker(VehicleSpawnpoint spawn)
+            internal static bool OnPreVehicleSpawnedFromSpawnpointInvoker(VehicleSpawnpoint spawn)
             {
                 var shouldAllow = true;
-                OnPreVehicleSpawned?.Invoke(spawn, ref shouldAllow);
+                OnPreVehicleSpawnedFromSpawnpoint?.Invoke(spawn, ref shouldAllow);
                 return shouldAllow;
             }
 
             [HarmonyPatch(typeof(VehicleManager), "addVehicleAtSpawn")]
             [HarmonyPostfix]
-            internal static void OnPreVehicleSpawnedInvoker(bool __runOriginal, ref InteractableVehicle __result,
-                VehicleSpawnpoint spawn)
+            internal static void OnPreVehicleSpawnedFromSpawnpointInvoker(bool __runOriginal,
+                InteractableVehicle __result, VehicleSpawnpoint spawn)
             {
                 if (!__runOriginal)
                     return;
 
-                OnVehicleSpawned?.Invoke(spawn, ref __result);
+                OnVehicleSpawnedFromSpawnpoint?.Invoke(spawn, __result);
+            }
+
+            [HarmonyPatch(typeof(VehicleManager), "SpawnVehicleV3")]
+            [HarmonyPrefix]
+            internal static bool OnPreVehicleSpawnedInvoker(ref VehicleAsset asset, ref ushort skinID,
+                ref ushort mythicID, ref float roadPosition, ref Vector3 point, ref Quaternion angle, ref bool sirens,
+                ref bool blimp,
+                ref bool headlights, ref bool taillights, ref ushort fuel, ref ushort health, ref ushort batteryCharge,
+                ref CSteamID owner,
+                ref CSteamID group, ref bool locked, ref byte[][] turrets, ref byte tireAliveMask)
+            {
+                var shouldAllow = true;
+                OnPreVehicleSpawned?.Invoke(ref asset, ref skinID, ref mythicID, ref roadPosition, ref point, ref angle,
+                    ref sirens, ref blimp, ref headlights, ref taillights, ref fuel, ref health, ref batteryCharge,
+                    ref owner, ref group, ref locked, ref turrets, ref tireAliveMask, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(VehicleManager), "SpawnVehicleV3")]
+            [HarmonyPostfix]
+            internal static void OnPreVehicleSpawnedInvoker(bool __runOriginal,
+                InteractableVehicle __result,
+                VehicleAsset asset, ushort skinID, ushort mythicID, float roadPosition, Vector3 point, Quaternion angle,
+                bool sirens, bool blimp, bool headlights, bool taillights, ushort fuel, ushort health,
+                ushort batteryCharge, CSteamID owner, CSteamID group, bool locked, byte[][] turrets, byte tireAliveMask)
+            {
+                if (!__runOriginal)
+                    return;
+
+                OnVehicleSpawned?.Invoke(__result);
             }
 
             [HarmonyPatch(typeof(ZombieManager), "sendZombieAlive")]
@@ -361,17 +1471,16 @@ namespace RFRocketLibrary.Events
                 typeof(bool), typeof(Vector3), typeof(Quaternion), typeof(float), typeof(float), typeof(int),
                 typeof(float))]
             [HarmonyPrefix]
-            internal static bool OnVehicleMovementChangedByPlayerInvoker(InteractableVehicle __instance,
+            internal static void OnVehicleMovementChangedByPlayerInvoker(InteractableVehicle __instance,
+                out Vector3 __state,
                 Vector3 ___lastUpdatedPos, uint simulation, int recov, bool inputStamina,
                 Vector3 point, Quaternion angle, float newSpeed, float newPhysicsSpeed, int newTurn, float delta)
             {
-                if (__instance.transform.position == ___lastUpdatedPos)
-                    return true;
-
-                var shouldAllow = true;
-                OnPreVehicleMovementChangedByPlayer?.Invoke(__instance,
-                    __instance.passengers.ElementAtOrDefault(0)?.player?.player, ___lastUpdatedPos, ref shouldAllow);
-                return shouldAllow;
+                // var shouldAllow = true;
+                // OnPreVehicleMovementChangedByPlayer?.Invoke(__instance,
+                //     __instance.passengers.ElementAtOrDefault(0)?.player?.player, ___lastUpdatedPos, ref shouldAllow);
+                // return shouldAllow;
+                __state = ___lastUpdatedPos;
             }
 
             [HarmonyPatch(typeof(InteractableVehicle), "simulate", typeof(uint), typeof(int),
@@ -379,71 +1488,60 @@ namespace RFRocketLibrary.Events
                 typeof(float))]
             [HarmonyPostfix]
             internal static void OnVehicleMovementChangedByPlayerInvoker(bool __runOriginal,
-                InteractableVehicle __instance,
-                Vector3 ___lastUpdatedPos, uint simulation, int recov, bool inputStamina,
+                InteractableVehicle __instance, Vector3 __state, uint simulation, int recov, bool inputStamina,
                 Vector3 point, Quaternion angle, float newSpeed, float newPhysicsSpeed, int newTurn, float delta)
             {
                 if (!__runOriginal)
                     return;
 
-                if (__instance.transform.position == ___lastUpdatedPos)
-                    return;
-
                 OnVehicleMovementChangedByPlayer?.Invoke(__instance,
-                    __instance.passengers.ElementAtOrDefault(0)?.player?.player, ___lastUpdatedPos);
+                    __instance.passengers.ElementAtOrDefault(0)?.player?.player, __state);
             }
 
-            // [HarmonyPatch(typeof(InteractableVehicle), "updateSafezoneStatus")]
-            // [HarmonyPrefix]
-            // internal static void OnVehicleMovementChangedInvoker(InteractableVehicle __instance,
-            //     Vector3 ___lastUpdatedPos, float deltaSeconds)
-            // {
-            //     if (__instance.transform.position == ___lastUpdatedPos)
-            //         return;
-            //     
-            //     var shouldAllow = true;
-            //     OnPreVehicleMovementChanged?.Invoke(__instance, ___lastUpdatedPos, ref shouldAllow);
-            //     return shouldAllow;
-            // }
+            [HarmonyPatch(typeof(InteractableVehicle), "updateSafezoneStatus")]
+            [HarmonyPrefix]
+            internal static void OnVehicleMovementChangedInvoker(InteractableVehicle __instance, out Vector3 __state,
+                Vector3 ___lastUpdatedPos, float deltaSeconds)
+            {
+                __state = ___lastUpdatedPos;
+            }
 
             [HarmonyPatch(typeof(InteractableVehicle), "updateSafezoneStatus")]
             [HarmonyPostfix]
             internal static void OnVehicleMovementChangedInvoker(bool __runOriginal, InteractableVehicle __instance,
-                Vector3 ___lastUpdatedPos, float deltaSeconds)
+                Vector3 __state, float deltaSeconds)
             {
                 if (!__runOriginal)
                     return;
 
-                if (__instance.transform.position == ___lastUpdatedPos)
+                if (__instance.transform.position == __state)
                     return;
 
-                OnVehicleMovementChanged?.Invoke(__instance, ___lastUpdatedPos);
+                OnVehicleMovementChanged?.Invoke(__instance, __state);
             }
 
             [HarmonyPatch(typeof(Zombie), "tick")]
             [HarmonyPrefix]
-            internal static bool OnZombieMovementChangedInvoker(Zombie __instance, Vector3 ___lastUpdatedPos)
+            internal static void OnZombieMovementChangedInvoker(Zombie __instance, out Vector3 __state,
+                Vector3 ___lastUpdatedPos)
             {
-                if (__instance.transform.position == ___lastUpdatedPos)
-                    return true;
-
-                var shouldAllow = true;
-                OnPreZombieMovementChanged?.Invoke(__instance, ___lastUpdatedPos, ref shouldAllow);
-                return shouldAllow;
+                // var shouldAllow = true;
+                // OnPreZombieMovementChanged?.Invoke(__instance, ___lastUpdatedPos, ref shouldAllow);
+                // return shouldAllow;
+                __state = ___lastUpdatedPos;
             }
 
             [HarmonyPatch(typeof(Zombie), "tick")]
             [HarmonyPostfix]
-            internal static void OnZombieMovementChangedInvoker(bool __runOriginal, Zombie __instance,
-                Vector3 ___lastUpdatedPos)
+            internal static void OnZombieMovementChangedInvoker(bool __runOriginal, Zombie __instance, Vector3 __state)
             {
                 if (!__runOriginal)
                     return;
 
-                if (__instance.transform.position == ___lastUpdatedPos)
+                if (__instance.transform.position == __state)
                     return;
 
-                OnZombieMovementChanged?.Invoke(__instance, ___lastUpdatedPos);
+                OnZombieMovementChanged?.Invoke(__instance, __state);
             }
 
             [HarmonyPatch(typeof(AnimalManager), "ReceiveAnimalDead")]
@@ -484,6 +1582,14 @@ namespace RFRocketLibrary.Events
                     return;
 
                 OnAnimalDamaged?.Invoke(__instance, amount, kill, xp);
+            }
+
+            [HarmonyPatch(typeof(BarricadeManager), "InternalSetBarricadeTransform")]
+            [HarmonyPostfix]
+            internal static void OnBarricadeTransformedInvoker(bool __runOriginal, byte x, byte y, ushort plant,
+                BarricadeDrop barricade, Vector3 point, byte angle_x, byte angle_y, byte angle_z)
+            {
+                OnBarricadeTransformed?.Invoke(x, y, plant, barricade, point, angle_x, angle_y, angle_z);
             }
 
             [HarmonyPatch(typeof(BarricadeManager), "destroyBarricade")]
@@ -638,12 +1744,33 @@ namespace RFRocketLibrary.Events
                 if (resourceSpawnpoint == null)
                     return;
 
+                OnResourceDestroyed?.Invoke(resourceSpawnpoint, ref ragdoll);
                 if (resourceSpawnpoint.asset.isForage)
                     OnResourceForaged?.Invoke(resourceSpawnpoint, ref ragdoll);
                 if (resourceSpawnpoint.asset.hasDebris && !resourceSpawnpoint.asset.isForage)
                     OnResourceChopped?.Invoke(resourceSpawnpoint, ref ragdoll);
                 if (!resourceSpawnpoint.asset.hasDebris && !resourceSpawnpoint.asset.isForage)
                     OnResourceMined?.Invoke(resourceSpawnpoint, ref ragdoll);
+            }
+
+            [HarmonyPatch(typeof(ObjectManager), "ReceiveObjectRubble")]
+            [HarmonyPostfix]
+            internal static void ObjectRubbleInvoker(byte x, byte y, ushort index, byte section, bool isAlive,
+                Vector3 ragdoll)
+            {
+                var levelObject = LevelObjects.objects[x, y]?[index];
+                if (levelObject == null)
+                    return;
+
+                switch (isAlive)
+                {
+                    case true:
+                        OnObjectSpawned?.Invoke(levelObject, section);
+                        break;
+                    case false:
+                        OnObjectDestroyed?.Invoke(levelObject, section);
+                        break;
+                }
             }
 
             [HarmonyPatch(typeof(UseableGun), "ReceiveChangeFiremode")]
@@ -707,6 +1834,14 @@ namespace RFRocketLibrary.Events
                     return;
 
                 OnPlayerForagedResource?.Invoke(player, resourceSpawnpoint);
+            }
+
+            [HarmonyPatch(typeof(StructureManager), "InternalSetStructureTransform")]
+            [HarmonyPostfix]
+            internal static void OnStructureTransformedInvoker(bool __runOriginal, byte x, byte y, StructureDrop drop,
+                Vector3 point, byte angle_x, byte angle_y, byte angle_z)
+            {
+                OnStructureTransformed?.Invoke(x, y, drop, point, angle_x, angle_y, angle_z);
             }
 
             [HarmonyPatch(typeof(StructureManager), "destroyStructure")]
@@ -827,6 +1962,89 @@ namespace RFRocketLibrary.Events
             {
                 var shouldAllow = true;
                 OnPrePlayerChangedGesture?.Invoke(__instance.player, ref gesture, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(PlayerStance), "checkStance", new[] {typeof(EPlayerStance), typeof(bool)})]
+            [HarmonyPrefix]
+            internal static bool OnPrePlayerChangedStanceInvoker(PlayerStance __instance, ref EPlayerStance newStance,
+                ref bool all)
+            {
+                var shouldAllow = true;
+                OnPrePlayerChangedStance?.Invoke(__instance.player, __instance.stance, ref newStance, ref all,
+                    ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(PlayerLife), "askStarve")]
+            [HarmonyPrefix]
+            internal static bool OnPrePlayerStarvedInvoker(PlayerLife __instance, ref byte amount)
+            {
+                var shouldAllow = true;
+                OnPrePlayerStarved?.Invoke(__instance.player, ref amount, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(PlayerLife), "askDehydrate")]
+            [HarmonyPrefix]
+            internal static bool OnPrePlayerDehydratedInvoker(PlayerLife __instance, ref byte amount)
+            {
+                var shouldAllow = true;
+                OnPrePlayerDehydrated?.Invoke(__instance.player, ref amount, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(PlayerLife), "askRadiate")]
+            [HarmonyPrefix]
+            internal static bool OnPrePlayerRadiatedInvoker(PlayerLife __instance, ref byte amount)
+            {
+                var shouldAllow = true;
+                OnPrePlayerRadiated?.Invoke(__instance.player, ref amount, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(PlayerLife), "askInfect")]
+            [HarmonyPrefix]
+            internal static bool OnPrePlayerInfectedInvoker(PlayerLife __instance, ref byte amount)
+            {
+                var shouldAllow = true;
+                OnPrePlayerInfected?.Invoke(__instance.player, ref amount, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(PlayerLife), "askTire")]
+            [HarmonyPrefix]
+            internal static bool OnPrePlayerTiredInvoker(PlayerLife __instance, ref byte amount)
+            {
+                var shouldAllow = true;
+                OnPrePlayerTired?.Invoke(__instance.player, ref amount, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(PlayerLife), "askSuffocate")]
+            [HarmonyPrefix]
+            internal static bool OnPrePlayerSuffocatedInvoker(PlayerLife __instance, ref byte amount)
+            {
+                var shouldAllow = true;
+                OnPrePlayerSuffocated?.Invoke(__instance.player, ref amount, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(PlayerLife), "askBlind")]
+            [HarmonyPrefix]
+            internal static bool OnPrePlayerHallucinationBlindedInvoker(PlayerLife __instance, ref byte amount)
+            {
+                var shouldAllow = true;
+                OnPrePlayerHallucinationBlinded?.Invoke(__instance.player, ref amount, ref shouldAllow);
+                return shouldAllow;
+            }
+
+            [HarmonyPatch(typeof(PlayerLife), "simulatedModifyWarmth")]
+            [HarmonyPrefix]
+            internal static bool OnPrePlayerWarmUpdatedInvoker(PlayerLife __instance, ref short delta)
+            {
+                var shouldAllow = true;
+                OnPrePlayerWarmUpdated?.Invoke(__instance.player, ref delta, ref shouldAllow);
                 return shouldAllow;
             }
         }

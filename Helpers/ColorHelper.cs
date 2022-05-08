@@ -34,6 +34,9 @@ namespace RFRocketLibrary.Helpers
 
         public static Color GetColorFromName(string colorName, Color fallback)
         {
+            if (string.IsNullOrWhiteSpace(colorName))
+                return fallback;
+            
             switch (colorName.Trim().ToLower())
             {
                 case "black": return Color.black;

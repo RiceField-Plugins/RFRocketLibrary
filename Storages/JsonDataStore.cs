@@ -17,16 +17,10 @@ namespace RFRocketLibrary.Storages
             {
                 if (!File.Exists(DataPath))
                     return null;
+
                 string dataText;
-                using (var stream = File.Open(DataPath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-                {
-                    using (var s = new StreamReader(stream))
-                    {
-                        dataText = s.ReadToEnd();
-                        s.Close();
-                    }
-                    stream.Close();
-                }
+                using (var stream = File.OpenText(DataPath))
+                    dataText = stream.ReadToEnd();
 
                 return JsonConvert.DeserializeObject<T>(dataText);
             }
@@ -46,15 +40,8 @@ namespace RFRocketLibrary.Storages
                 if (!File.Exists(DataPath))
                     return null;
                 string dataText;
-                using (var stream = File.Open(DataPath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-                {
-                    using (var s = new StreamReader(stream))
-                    {
-                        dataText = await s.ReadToEndAsync();
-                        s.Close();
-                    }
-                    stream.Close();
-                }
+                using (var stream = File.OpenText(DataPath))
+                    dataText = await stream.ReadToEndAsync();
 
                 return JsonConvert.DeserializeObject<T>(dataText);
             }
@@ -73,14 +60,9 @@ namespace RFRocketLibrary.Storages
             {
                 var objData = JsonConvert.SerializeObject(obj, Formatting.Indented);
 
-                using var stream = new FileStream(DataPath, FileMode.Create, FileAccess.ReadWrite,
-                    FileShare.ReadWrite);
-                using (var s = new StreamWriter(stream))
-                {
-                    s.Write(objData);
-                    s.Close();
-                }
-                stream.Close();
+                using var stream = new FileStream(DataPath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
+                using var streamWriter = new StreamWriter(stream);
+                streamWriter.Write(objData);
 
                 return true;
             }
@@ -99,14 +81,9 @@ namespace RFRocketLibrary.Storages
             {
                 var objData = JsonConvert.SerializeObject(obj, Formatting.Indented);
 
-                using var stream = new FileStream(DataPath, FileMode.Create, FileAccess.ReadWrite,
-                    FileShare.ReadWrite);
-                using (var s = new StreamWriter(stream))
-                {
-                    await s.WriteAsync(objData);
-                    s.Close();
-                }
-                stream.Close();
+                using var stream = new FileStream(DataPath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
+                using var streamWriter = new StreamWriter(stream);
+                await streamWriter.WriteAsync(objData);
 
                 return true;
             }
@@ -126,9 +103,9 @@ namespace RFRocketLibrary.Storages
             DataPath = Path.Combine(dir, fileName);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
-            
+
             if (!File.Exists(DataPath))
-                File.CreateText(DataPath).Dispose();
+                File.Create(DataPath).Dispose();
         }
 
         private string DataPath { get; set; }

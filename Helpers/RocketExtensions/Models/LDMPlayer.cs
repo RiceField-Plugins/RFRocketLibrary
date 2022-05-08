@@ -8,7 +8,6 @@ using Rocket.API;
 using Rocket.Unturned.Player;
 using Rocket.Unturned.Skills;
 using RocketExtensions.Utilities;
-using RocketExtensions.Utilities.ShimmyMySherbet.Extensions;
 using SDG.NetTransport;
 using SDG.Unturned;
 using Steamworks;
