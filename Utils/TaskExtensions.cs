@@ -1,12 +1,15 @@
 ﻿using System;
-using System.Reflection;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Rocket.Core.Logging;
+using RocketExtensions.Models;
 
 namespace RFRocketLibrary.Utils
 {
     public static class TaskExtensions
     {
+        #region Methods
+
         public static void Forget(this Task task)
         {
             var awaiter = task.GetAwaiter();
@@ -18,7 +21,7 @@ namespace RFRocketLibrary.Utils
                 }
                 catch (Exception e)
                 {
-                    var caller = Assembly.GetCallingAssembly().GetName().Name;
+                    var caller = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly.GetName().Name;
                     Logger.LogError($"[{caller}] [ERROR] Task Forget: {e.Message}");
                     Logger.LogError($"[{caller}] [ERROR] Details: {e}");
                 }
@@ -32,7 +35,7 @@ namespace RFRocketLibrary.Utils
                     }
                     catch (Exception e)
                     {
-                        var caller = Assembly.GetCallingAssembly().GetName().Name;
+                        var caller = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly.GetName().Name;
                         Logger.LogError($"[{caller}] [ERROR] Task Forget: {e.Message}");
                         Logger.LogError($"[{caller}] [ERROR] Details: {e}");
                     }
@@ -50,33 +53,6 @@ namespace RFRocketLibrary.Utils
                 ForgetCoreWithCatch(task, exceptionHandler, handleExceptionOnMainThread).Forget();
         }
 
-        private static async Task ForgetCoreWithCatch(
-            Task task,
-            Action<Exception> exceptionHandler,
-            bool handleExceptionOnMainThread)
-        {
-            try
-            {
-                await task;
-            }
-            catch (Exception ex1)
-            {
-                try
-                {
-                    if (handleExceptionOnMainThread)
-                        TaskDispatcher.QueueOnMainThread(() => exceptionHandler(ex1));
-                    else
-                        exceptionHandler(ex1);
-                }
-                catch (Exception e2)
-                {
-                    var caller = Assembly.GetCallingAssembly().GetName().Name;
-                    Logger.LogError($"[{caller}] [ERROR] Task ForgetCoreWithCatch: {e2.Message}");
-                    Logger.LogError($"[{caller}] [ERROR] Details: {e2}");
-                }
-            }
-        }
-
         public static void Forget<T>(this Task<T> task)
         {
             var awaiter = task.GetAwaiter();
@@ -88,7 +64,7 @@ namespace RFRocketLibrary.Utils
                 }
                 catch (Exception e)
                 {
-                    var caller = Assembly.GetCallingAssembly().GetName().Name;
+                    var caller = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly.GetName().Name;
                     Logger.LogError($"[{caller}] [ERROR] Task Forget: {e.Message}");
                     Logger.LogError($"[{caller}] [ERROR] Details: {e}");
                 }
@@ -102,7 +78,7 @@ namespace RFRocketLibrary.Utils
                     }
                     catch (Exception e)
                     {
-                        var caller = Assembly.GetCallingAssembly().GetName().Name;
+                        var caller = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly.GetName().Name;
                         Logger.LogError($"[{caller}] [ERROR] Task Forget: {e.Message}");
                         Logger.LogError($"[{caller}] [ERROR] Details: {e}");
                     }
@@ -118,33 +94,6 @@ namespace RFRocketLibrary.Utils
                 task.Forget();
             else
                 ForgetCoreWithCatch(task, exceptionHandler, handleExceptionOnMainThread).Forget();
-        }
-
-        private static async Task ForgetCoreWithCatch<T>(
-            Task<T> task,
-            Action<Exception> exceptionHandler,
-            bool handleExceptionOnMainThread)
-        {
-            try
-            {
-                await task;
-            }
-            catch (Exception e)
-            {
-                try
-                {
-                    if (handleExceptionOnMainThread)
-                        TaskDispatcher.QueueOnMainThread(() => exceptionHandler(e));
-                    else
-                        exceptionHandler(e);
-                }
-                catch (Exception e2)
-                {
-                    var caller = Assembly.GetCallingAssembly().GetName().Name;
-                    Logger.LogError($"[{caller}] [ERROR] Task ForgetCoreWithCatch: {e2.Message}");
-                    Logger.LogError($"[{caller}] [ERROR] Details: {e2}");
-                }
-            }
         }
 
         /// <summary>
@@ -173,6 +122,62 @@ namespace RFRocketLibrary.Utils
         public static void Wait(this Task task)
         {
             task.GetAwaiter().GetResult();
+        }
+
+        #endregion
+
+        private static async Task ForgetCoreWithCatch(
+            Task task,
+            Action<Exception> exceptionHandler,
+            bool handleExceptionOnMainThread)
+        {
+            try
+            {
+                await task;
+            }
+            catch (Exception ex1)
+            {
+                try
+                {
+                    if (handleExceptionOnMainThread)
+                        FastTaskDispatcher.QueueOnMainThread(() => exceptionHandler(ex1));
+                    else
+                        exceptionHandler(ex1);
+                }
+                catch (Exception e2)
+                {
+                    var caller = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly.GetName().Name;
+                    Logger.LogError($"[{caller}] [ERROR] Task ForgetCoreWithCatch: {e2.Message}");
+                    Logger.LogError($"[{caller}] [ERROR] Details: {e2}");
+                }
+            }
+        }
+
+        private static async Task ForgetCoreWithCatch<T>(
+            Task<T> task,
+            Action<Exception> exceptionHandler,
+            bool handleExceptionOnMainThread)
+        {
+            try
+            {
+                await task;
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    if (handleExceptionOnMainThread)
+                        FastTaskDispatcher.QueueOnMainThread(() => exceptionHandler(e));
+                    else
+                        exceptionHandler(e);
+                }
+                catch (Exception e2)
+                {
+                    var caller = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly.GetName().Name;
+                    Logger.LogError($"[{caller}] [ERROR] Task ForgetCoreWithCatch: {e2.Message}");
+                    Logger.LogError($"[{caller}] [ERROR] Details: {e2}");
+                }
+            }
         }
     }
 }

@@ -28,21 +28,27 @@ namespace RFRocketLibrary.Models
             if (playerClothing.backpack != 0)
                 clothing.Add(new ItemWrapper(playerClothing.backpack, 1, playerClothing.backpackQuality,
                     playerClothing.backpackState));
+
             if (playerClothing.glasses != 0)
                 clothing.Add(new ItemWrapper(playerClothing.glasses, 1, playerClothing.glassesQuality,
                     playerClothing.glassesState));
+
             if (playerClothing.hat != 0)
                 clothing.Add(new ItemWrapper(playerClothing.hat, 1, playerClothing.hatQuality,
                     playerClothing.hatState));
+
             if (playerClothing.mask != 0)
                 clothing.Add(new ItemWrapper(playerClothing.mask, 1, playerClothing.maskQuality,
                     playerClothing.maskState));
+
             if (playerClothing.pants != 0)
                 clothing.Add(new ItemWrapper(playerClothing.pants, 1, playerClothing.pantsQuality,
                     playerClothing.pantsState));
+
             if (playerClothing.shirt != 0)
                 clothing.Add(new ItemWrapper(playerClothing.shirt, 1, playerClothing.shirtQuality,
                     playerClothing.shirtState));
+
             if (playerClothing.vest != 0)
                 clothing.Add(new ItemWrapper(playerClothing.vest, 1, playerClothing.vestQuality,
                     playerClothing.vestState));
@@ -63,12 +69,14 @@ namespace RFRocketLibrary.Models
                     InventoryUtil.ClearInventory(player);
                     foreach (var clothing in Clothing)
                         clothing.GiveItem(player);
+
                     foreach (var itemsWrapper in Items)
                         itemsWrapper.GiveTo(player);
                     break;
                 case false:
                     foreach (var clothing in Clothing)
                         clothing.GiveItem(player);
+
                     foreach (var itemsWrapper in Items)
                         itemsWrapper.GiveTo(player);
                     break;

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Reflection;
+using System.Diagnostics;
 using Rocket.Core.Logging;
 using Rocket.Unturned.Player;
 
@@ -7,6 +7,8 @@ namespace RFRocketLibrary.Utils
 {
     public static class InventoryUtil
     {
+        #region Methods
+
         public static void ClearInventory(UnturnedPlayer player)
         {
             try
@@ -76,10 +78,12 @@ namespace RFRocketLibrary.Utils
             }
             catch (Exception e)
             {
-                var caller = Assembly.GetCallingAssembly().GetName().Name;
+                var caller = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly.GetName().Name;
                 Logger.LogError($"[{caller}] [ERROR] InventoryUtil ClearInventory: {e.Message}");
                 Logger.LogError($"[{caller}] [ERROR] Details: {e}");
             }
         }
+
+        #endregion
     }
 }

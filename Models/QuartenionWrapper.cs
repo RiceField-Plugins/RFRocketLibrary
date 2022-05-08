@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace RFRocketLibrary.Models
 {
+    //Typo lol
     [Serializable]
     public struct QuartenionWrapper
     {

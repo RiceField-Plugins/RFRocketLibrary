@@ -11,13 +11,36 @@ namespace RFRocketLibrary.Hooks
     // ReSharper disable once InconsistentNaming
     public static class RFPlayerLibraryHook
     {
-        private static bool _initialized;
-        private static object? _databaseInstance;
-        private static object? _playerManagerInstance;
-        private static object? _playerGeolocationManagerInstance;
-        private static MethodInfo? _getInfoBySteamIdMethod;
-        private static MethodInfo? _getInfoByNameMethod;
-        private static MethodInfo? _getGeolocationInfoBySteamIdMethod;
+        #region Methods
+
+        public static bool CanBeLoaded()
+        {
+            return R.Plugins.GetPlugins().Any(c => c.Name.ToLower() == "rfplayerlibrary") && !_initialized;
+        }
+
+        public static IDictionary<string, object>? GetPlayerGeolocationInfoBySteamId(ulong steamId)
+        {
+            return _getGeolocationInfoBySteamIdMethod?.Invoke(_playerGeolocationManagerInstance, new object[]
+            {
+                steamId
+            }) as IDictionary<string, object>;
+        }
+
+        public static List<IDictionary<string, object>>? GetPlayerInfoByName(string name)
+        {
+            return _getInfoByNameMethod?.Invoke(_playerManagerInstance, new object[]
+            {
+                name
+            }) as List<IDictionary<string, object>>;
+        }
+
+        public static IDictionary<string, object>? GetPlayerInfoBySteamId(ulong steamId)
+        {
+            return _getInfoBySteamIdMethod?.Invoke(_playerManagerInstance, new object[]
+            {
+                steamId
+            }) as IDictionary<string, object>;
+        }
 
         public static void Load()
         {
@@ -41,13 +64,13 @@ namespace RFRocketLibrary.Hooks
                 Logger.LogWarning("[RFPlayerLibraryHook] Obtaining methods...");
                 _playerManagerInstance =
                     _databaseInstance?.GetType().GetField("PlayerManager")?.GetValue(_databaseInstance);
-                _getInfoBySteamIdMethod = ReflectUtil.GetMethod(_playerManagerInstance?.GetType(),
+                _getInfoBySteamIdMethod = ReflectionHelper.GetMethod(_playerManagerInstance?.GetType(),
                     "GetInfoBySteamId", new[] {typeof(ulong)});
-                _getInfoByNameMethod = ReflectUtil.GetMethod(_playerManagerInstance?.GetType(),
+                _getInfoByNameMethod = ReflectionHelper.GetMethod(_playerManagerInstance?.GetType(),
                     "GetInfoByName", new[] {typeof(string)});
                 _playerGeolocationManagerInstance = _databaseInstance?.GetType().GetField("PlayerGeolocationManager")?
                     .GetValue(_databaseInstance);
-                _getGeolocationInfoBySteamIdMethod = ReflectUtil.GetMethod(_playerGeolocationManagerInstance?.GetType(),
+                _getGeolocationInfoBySteamIdMethod = ReflectionHelper.GetMethod(_playerGeolocationManagerInstance?.GetType(),
                     "GetInfoBySteamId", new[] {typeof(ulong)});
                 Logger.LogWarning("[RFPlayerLibraryHook] Methods obtained.");
 
@@ -63,33 +86,14 @@ namespace RFRocketLibrary.Hooks
             }
         }
 
-        public static bool CanBeLoaded()
-        {
-            return R.Plugins.GetPlugins().Any(c => c.Name.ToLower() == "rfplayerlibrary") && !_initialized;
-        }
+        #endregion
 
-        public static IDictionary<string, object>? GetPlayerInfoBySteamId(ulong steamId)
-        {
-            return _getInfoBySteamIdMethod?.Invoke(_playerManagerInstance, new object[]
-            {
-                steamId
-            }) as IDictionary<string, object>;
-        }
-
-        public static List<IDictionary<string, object>>? GetPlayerInfoByName(string name)
-        {
-            return _getInfoByNameMethod?.Invoke(_playerManagerInstance, new object[]
-            {
-                name
-            }) as List<IDictionary<string, object>>;
-        }
-
-        public static IDictionary<string, object>? GetPlayerGeolocationInfoBySteamId(ulong steamId)
-        {
-            return _getGeolocationInfoBySteamIdMethod?.Invoke(_playerGeolocationManagerInstance, new object[]
-            {
-                steamId
-            }) as IDictionary<string, object>;
-        }
+        private static bool _initialized;
+        private static object? _databaseInstance;
+        private static object? _playerManagerInstance;
+        private static object? _playerGeolocationManagerInstance;
+        private static MethodInfo? _getInfoBySteamIdMethod;
+        private static MethodInfo? _getInfoByNameMethod;
+        private static MethodInfo? _getGeolocationInfoBySteamIdMethod;
     }
 }

@@ -9,42 +9,37 @@ using Rocket.Unturned.Player;
 
 namespace RFRocketLibrary.Hooks
 {
-    public abstract class AviEconomyHook
+    public static class AviEconomyHook
     {
-        private static bool _initialized;
-        private static Type? _bankType;
-        private static MethodInfo? _getBalanceMethod;
-        private static MethodInfo? _payAsServerMethod;
-
-        public static decimal InitialBalance { get; set; }
-        public static bool XpMode { get; set; }
-        public static bool XpModeUseInitialBalance { get; set; }
-        public static string? CurrencySymbol { get; set; }
-        public static string? CurrencyName { get; set; }
-        public static bool CurrencySymbolBeforeValue { get; set; }
-        public static float SalaryInterval { get; set; }
-        public static float ExperienceExchangeRate { get; set; }
-        public static float MoneyExchangeRate { get; set; }
-        public static decimal RewardForZombieHead { get; set; }
-        public static decimal RewardForMegaZombieHead { get; set; }
-        public static decimal MaxPaidZombiesPerHour { get; set; }
-        public static decimal MaxPaidZombiesPerDay { get; set; }
-        public static bool ShowZombieRewardMessages { get; set; }
-        public static bool ShowZombieOverLimitMessages { get; set; }
-        public static decimal RewardForPlayerHead { get; set; }
-        public static decimal PenaltyForDeath { get; set; }
-        internal static string? PenaltyForSuicide { get; set; }
-        public static ushort BalanceBgEffectId { get; set; }
-        public static ushort BalanceFgEffectId { get; set; }
-        public static string? BalanceTextColor { get; set; }
-        public static bool AddCurrencySymbolToUI { get; set; }
-        public static bool UseOpenModEconomy { get; set; }
-        public static string? MySqlConnectionString { get; set; }
-        public static string? MySqlTableNamePrefix { get; set; }
+        #region Delegates
 
         public delegate void BalanceChanged(string playerId, decimal oldAmount, decimal toValue);
 
+        #endregion
+
+        #region Events
+
         public static event BalanceChanged? OnBalanceChanged;
+
+        #endregion
+
+        #region Methods
+
+        public static bool CanBeLoaded() =>
+            R.Plugins.GetPlugins().Any(c => c.Name.ToLower() == "avieconomy") && !_initialized;
+
+        public static decimal? Deposit(UnturnedPlayer? player, decimal amount)
+        {
+            // args[3] = out decimal pFinalBalance
+            var args = new object?[] {player, amount, false, null, null};
+            _payAsServerMethod?.Invoke(_bankType, args);
+            return args[3] as decimal?;
+        }
+
+        public static decimal GetBalance(UnturnedPlayer player) =>
+            _getBalanceMethod != null ? (decimal) _getBalanceMethod.Invoke(_bankType, new object[] {player.Id}) : default;
+
+        public static bool Has(UnturnedPlayer player, decimal amount) => GetBalance(player) - amount >= 0;
 
         public static void Load()
         {
@@ -131,12 +126,12 @@ namespace RFRocketLibrary.Hooks
                 _bankType = economyPlugin.GetType().Assembly.GetType("avirockets.unturned.AviEconomy.Bank");
                 if (_bankType == null)
                     Logger.LogError("[AviEconomyHook] AviEconomy Bank type couldn't be loaded...");
-                _getBalanceMethod = ReflectUtil.GetMethod(_bankType, "GetBalance",
+                _getBalanceMethod = ReflectionHelper.GetMethod(_bankType, "GetBalance",
                     BindingFlags.Static | BindingFlags.Public,
                     new[] {typeof(string)});
                 if (_getBalanceMethod == null)
                     Logger.LogError("[AviEconomyHook] AviEconomy GetBalance method couldn't be loaded...");
-                _payAsServerMethod = ReflectUtil.GetMethod(_bankType, "PayAsServer",
+                _payAsServerMethod = ReflectionHelper.GetMethod(_bankType, "PayAsServer",
                     BindingFlags.Static | BindingFlags.Public,
                     new[]
                     {
@@ -183,26 +178,43 @@ namespace RFRocketLibrary.Hooks
             }
         }
 
-        public static bool CanBeLoaded() =>
-            R.Plugins.GetPlugins().Any(c => c.Name.ToLower() == "avieconomy") && !_initialized;
-
         public static decimal? Withdraw(UnturnedPlayer? player, decimal amount)
         {
             return Deposit(player, -amount);
         }
 
-        public static decimal? Deposit(UnturnedPlayer? player, decimal amount)
-        {
-            // args[3] = out decimal pFinalBalance
-            var args = new object?[] {player, amount, false, null, null};
-            _payAsServerMethod?.Invoke(_bankType, args);
-            return args[3] as decimal?;
-        }
+        #endregion
 
-        public static decimal GetBalance(UnturnedPlayer player) =>
-            _getBalanceMethod != null ? (decimal) _getBalanceMethod.Invoke(_bankType, new object[] {player.Id}) : default;
+        private static bool _initialized;
+        private static Type? _bankType;
+        private static MethodInfo? _getBalanceMethod;
+        private static MethodInfo? _payAsServerMethod;
 
-        public static bool Has(UnturnedPlayer player, decimal amount) => GetBalance(player) - amount >= 0;
+        public static decimal InitialBalance { get; set; }
+        public static bool XpMode { get; set; }
+        public static bool XpModeUseInitialBalance { get; set; }
+        public static string? CurrencySymbol { get; set; }
+        public static string? CurrencyName { get; set; }
+        public static bool CurrencySymbolBeforeValue { get; set; }
+        public static float SalaryInterval { get; set; }
+        public static float ExperienceExchangeRate { get; set; }
+        public static float MoneyExchangeRate { get; set; }
+        public static decimal RewardForZombieHead { get; set; }
+        public static decimal RewardForMegaZombieHead { get; set; }
+        public static decimal MaxPaidZombiesPerHour { get; set; }
+        public static decimal MaxPaidZombiesPerDay { get; set; }
+        public static bool ShowZombieRewardMessages { get; set; }
+        public static bool ShowZombieOverLimitMessages { get; set; }
+        public static decimal RewardForPlayerHead { get; set; }
+        public static decimal PenaltyForDeath { get; set; }
+        internal static string? PenaltyForSuicide { get; set; }
+        public static ushort BalanceBgEffectId { get; set; }
+        public static ushort BalanceFgEffectId { get; set; }
+        public static string? BalanceTextColor { get; set; }
+        public static bool AddCurrencySymbolToUI { get; set; }
+        public static bool UseOpenModEconomy { get; set; }
+        public static string? MySqlConnectionString { get; set; }
+        public static string? MySqlTableNamePrefix { get; set; }
 
         private static void ReflectOnBalanceChanged(string playerId, decimal oldAmount, decimal toValue)
         {

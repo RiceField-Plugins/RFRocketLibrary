@@ -1,10 +1,14 @@
 ﻿using System;
+using HarmonyLib;
 using SDG.Unturned;
+using UnityEngine;
 
 namespace RFRocketLibrary.Utils
 {
     public static class BarricadeUtil
     {
+        #region Methods
+
         public static void ChangeOwnerAndGroup(EBuild build, ulong owner, ulong group, ref byte[] state)
         {
             switch (build)
@@ -23,5 +27,13 @@ namespace RFRocketLibrary.Utils
                 }
             }
         }
+        
+        public static BarricadeDrop FindDropFast(Transform barricadeTransform)
+        {
+            var fastBarricade = Traverse.Create<BarricadeDrop>().Method("FindByRootFast", new[] {typeof(Transform)});
+            return fastBarricade.GetValue<BarricadeDrop>(barricadeTransform);
+        }
+
+        #endregion
     }
 }

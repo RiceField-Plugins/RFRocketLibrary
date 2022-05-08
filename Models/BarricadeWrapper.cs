@@ -39,14 +39,12 @@ namespace RFRocketLibrary.Models
         public static BarricadeWrapper Create(BarricadeDrop drop)
         {
             var data = drop.GetServersideData();
-            return new BarricadeWrapper(data.barricade.id, drop.instanceID, data.owner, data.group,
-                data.barricade.health, data.barricade.state, new Vector3Wrapper(data.point),
-                new Vector3Wrapper(drop.model.transform.localEulerAngles));
+            return Create(drop, data);
         }
 
         public static BarricadeWrapper Create(BarricadeDrop drop, BarricadeData data)
         {
-            return new BarricadeWrapper(data.barricade.id, drop.instanceID, data.owner, data.group,
+            return new BarricadeWrapper(data.barricade.asset.id, drop.instanceID, data.owner, data.group,
                 data.barricade.health, data.barricade.state, new Vector3Wrapper(data.point),
                 new Vector3Wrapper(drop.model.transform.localEulerAngles));
         }
@@ -58,45 +56,35 @@ namespace RFRocketLibrary.Models
 
         public Transform SpawnBarricade(Transform? hit = null)
         {
-            var barricade = new Barricade(Id, Health, State, GetItemBarricadeAsset());
+            var barricadeAsset = GetItemBarricadeAsset();
+            var barricade = new Barricade(barricadeAsset, barricadeAsset.health, State);
             BarricadeUtil.ChangeOwnerAndGroup(barricade.asset.build, Owner, Group, ref barricade.state);
+            
+            BarricadeManager.onBarricadeSpawned += OnBarricadeSpawned;
             var spawnedBarricade = hit != null
                 ? BarricadeManager.dropPlantedBarricade(hit, barricade, Position.ToVector3(),
                     Quaternion.Euler(Rotation.X, Rotation.Y, Rotation.Z), Owner, Group)
                 : BarricadeManager.dropNonPlantedBarricade(barricade, Position.ToVector3(),
                     Quaternion.Euler(Rotation.X, Rotation.Y, Rotation.Z), Owner, Group);
-            BarricadeManager.updateReplicatedState(spawnedBarricade, barricade.state, barricade.state.Length);
-            BarricadeManager.changeOwnerAndGroup(spawnedBarricade, Owner, Group);
+            BarricadeManager.onBarricadeSpawned -= OnBarricadeSpawned;
+            
+            // BarricadeManager.updateReplicatedState(spawnedBarricade, barricade.state, barricade.state.Length);
+            // BarricadeManager.changeOwnerAndGroup(spawnedBarricade, Owner, Group);
             return spawnedBarricade;
         }
 
-        public Transform SpawnBarricade(ulong owner, ulong group, Transform? hit = null)
+        public Transform SpawnBarricade(UnturnedPlayer player, Transform? hit = null)
         {
-            var barricade = new Barricade(Id, Health, State, GetItemBarricadeAsset());
-            BarricadeUtil.ChangeOwnerAndGroup(barricade.asset.build, owner, group, ref barricade.state);
-            var spawnedBarricade = hit != null
-                ? BarricadeManager.dropPlantedBarricade(hit, barricade, Position.ToVector3(),
-                    Quaternion.Euler(Rotation.X, Rotation.Y, Rotation.Z), owner, group)
-                : BarricadeManager.dropNonPlantedBarricade(barricade, Position.ToVector3(),
-                    Quaternion.Euler(Rotation.X, Rotation.Y, Rotation.Z), owner, group);
-            BarricadeManager.updateReplicatedState(spawnedBarricade, barricade.state, barricade.state.Length);
-            BarricadeManager.changeOwnerAndGroup(spawnedBarricade, owner, group);
-            return spawnedBarricade;
+            Owner = player.CSteamID.m_SteamID;
+            Group = player.Player.quests.groupID.m_SteamID;
+            return SpawnBarricade(hit);
         }
 
-        public Transform SpawnBarricade(UnturnedPlayer player, Vector3 position, Quaternion rotation,
-            Transform? hit = null, bool isGive = false)
+        private void OnBarricadeSpawned(BarricadeRegion region, BarricadeDrop drop)
         {
-            var owner = !isGive ? Owner : player.CSteamID.m_SteamID;
-            var group = !isGive ? Owner : player.CSteamID.m_SteamID;
-            var barricade = new Barricade(Id, Health, State, GetItemBarricadeAsset());
-            BarricadeUtil.ChangeOwnerAndGroup(barricade.asset.build, owner, group, ref barricade.state);
-            var spawnedBarricade = hit != null
-                ? BarricadeManager.dropPlantedBarricade(hit, barricade, position, rotation, owner, group)
-                : BarricadeManager.dropNonPlantedBarricade(barricade, position, rotation, owner, group);
-            BarricadeManager.updateReplicatedState(spawnedBarricade, barricade.state, barricade.state.Length);
-            BarricadeManager.changeOwnerAndGroup(spawnedBarricade, owner, group);
-            return spawnedBarricade;
+            var damage = drop.asset.health - Health;
+            if (damage != 0)
+                BarricadeManager.damage(drop.model, damage, 1, false);
         }
     }
 }
