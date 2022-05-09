@@ -61,12 +61,12 @@ namespace RFRocketLibrary.Utils
         {
             if (!CanBeLoaded(dependency))
                 return;
-            
+
             using var wc = new WebClient();
             wc.Proxy = null;
             byte[] assembly;
             var cachePath = GetCachePath(dependency);
-            if (IsCacheExists(dependency))
+            if (dependency != EDependency.RFRocketLibrary && IsCacheExists(dependency))
             {
                 try
                 {
@@ -78,7 +78,8 @@ namespace RFRocketLibrary.Utils
                 {
                     try
                     {
-                        assembly = wc.DownloadData(typeof(DependencyLink).GetField(dependency + $"{(mirror ? "Mirror" : string.Empty)}").GetValue(null)
+                        assembly = wc.DownloadData(typeof(DependencyLink)
+                            .GetField(dependency + $"{(mirror ? "Mirror" : string.Empty)}").GetValue(null)
                             .ToString());
                     }
                     catch
@@ -92,7 +93,8 @@ namespace RFRocketLibrary.Utils
             {
                 try
                 {
-                    assembly = wc.DownloadData(typeof(DependencyLink).GetField(dependency + $"{(mirror ? "Mirror" : string.Empty)}").GetValue(null)
+                    assembly = wc.DownloadData(typeof(DependencyLink)
+                        .GetField(dependency + $"{(mirror ? "Mirror" : string.Empty)}").GetValue(null)
                         .ToString());
                 }
                 catch
@@ -100,10 +102,11 @@ namespace RFRocketLibrary.Utils
                     assembly = wc.DownloadData(typeof(DependencyLink).GetField(dependency + "Mirror").GetValue(null)
                         .ToString());
                 }
-                
+
                 try
                 {
-                    File.WriteAllBytes(cachePath, assembly);
+                    if (dependency != EDependency.RFRocketLibrary)
+                        File.WriteAllBytes(cachePath, assembly);
                 }
                 catch (Exception)
                 {
@@ -135,30 +138,33 @@ namespace RFRocketLibrary.Utils
                 {
                     try
                     {
-                        assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency + $"{(mirror ? "Mirror" : string.Empty)}").GetValue(null)
+                        assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink)
+                            .GetField(dependency + $"{(mirror ? "Mirror" : string.Empty)}").GetValue(null)
                             .ToString());
                     }
                     catch
                     {
-                        assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency + "Mirror").GetValue(null)
+                        assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency + "Mirror")
+                            .GetValue(null)
                             .ToString());
                     }
-
                 }
             }
             else
             {
                 try
                 {
-                    assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency + $"{(mirror ? "Mirror" : string.Empty)}").GetValue(null)
+                    assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink)
+                        .GetField(dependency + $"{(mirror ? "Mirror" : string.Empty)}").GetValue(null)
                         .ToString());
                 }
                 catch
                 {
-                    assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency + "Mirror").GetValue(null)
+                    assembly = await wc.DownloadDataTaskAsync(typeof(DependencyLink).GetField(dependency + "Mirror")
+                        .GetValue(null)
                         .ToString());
                 }
-                
+
                 try
                 {
                     File.WriteAllBytes(cachePath, assembly);

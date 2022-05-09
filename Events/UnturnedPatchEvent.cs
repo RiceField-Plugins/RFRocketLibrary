@@ -27,140 +27,27 @@ namespace RFRocketLibrary.Events
 
         public delegate void AnimalMovementChanged(Animal animal, Vector3 lastPosition);
 
-        public delegate void PreRainBarrelUpdated(BarricadeDrop drop, ref bool isFull, ref bool shouldSend,
-            ref bool shouldAllow);
-
-        public delegate void RainBarrelUpdated(BarricadeDrop drop, bool isFull, bool shouldSend);
-
-        public delegate void PreObjectResourceUpdated(LevelObject levelObject, ref ushort amount, ref bool shouldAllow);
-
-        public delegate void ObjectResourceUpdated(LevelObject levelObject, ushort amount);
-
-        public delegate void PreTankUpdated(BarricadeDrop drop, ref ushort amount, ref bool shouldAllow);
-
-        public delegate void TankUpdated(BarricadeDrop drop, ushort amount);
-
-        public delegate void PreOilTankBurned(BarricadeDrop drop, ref ushort fuel, ref bool shouldAllow);
-
-        public delegate void OilTankBurned(BarricadeDrop drop, ushort fuel);
-
-        public delegate void PrePlayerStealVehicleBattery(Player player, InteractableVehicle vehicle,
-            ref bool shouldAllow);
-
-        public delegate void PlayerStealVehicleBattery(Player player, InteractableVehicle vehicle);
-
-        public delegate void PreGeneratorBurned(InteractableGenerator generator, ushort amount, ref bool shouldAllow);
-
-        public delegate void PrePlayerConnected(SteamPlayerID playerID, ref Vector3 point, ref byte angle, bool isPro,
-            bool isAdmin, ref byte face, ref byte hair, ref byte beard, ref Color skin, ref Color color, bool hand,
-            ref int shirtItem, ref int pantsItem, ref int hatItem, ref int backpackItem, ref int vestItem,
-            ref int maskItem,
-            ref int glassesItem, ref int[] skinItems, ref string[] skinTags, ref string[] skinDynamicProps,
-            EPlayerSkillset skillset, string language);
-
-        public delegate void PreAnimalMovementChanged(Animal animal, Vector3 lastPosition, ref bool shouldAllow);
+        public delegate void AnimalSpawned(Animal animal, Vector3 position, byte angle);
 
         public delegate void BarricadeDestroyed(BarricadeDrop drop, byte x, byte y, ushort plant);
 
+        public delegate void BarricadeTransformed(byte x, byte y, ushort plant, BarricadeDrop barricade, Vector3 point,
+            byte angle_x, byte angle_y, byte angle_z);
+
+        public delegate void ItemSpawned(byte x, byte y, ushort id, byte amount, byte quality,
+            byte[] state, Vector3 point, uint instanceID);
+
+        public delegate void ObjectDestroyed(LevelObject levelObject, byte section);
+
+        public delegate void ObjectResourceUpdated(LevelObject levelObject, ushort amount);
+
+        public delegate void ObjectSpawned(LevelObject levelObject, byte section);
+
+        public delegate void OilTankBurned(BarricadeDrop drop, ushort fuel);
+
         public delegate void PlayerAttack(Player player);
-        public delegate void PrePlayerStarved(Player player, ref byte amount, ref bool shouldAllow);
-        public delegate void PrePlayerDehydrated(Player player, ref byte amount, ref bool shouldAllow);
-        public delegate void PrePlayerInfected(Player player, ref byte amount, ref bool shouldAllow);
-        public delegate void PrePlayerRadiated(Player player, ref byte amount, ref bool shouldAllow);
-        public delegate void PrePlayerTired(Player player, ref byte amount, ref bool shouldAllow);
-        public delegate void PrePlayerSuffocated(Player player, ref byte amount, ref bool shouldAllow);
-        public delegate void PrePlayerHallucinationBlinded(Player player, ref byte amount, ref bool shouldAllow);
-        public delegate void PrePlayerWarmUpdated(Player player, ref short delta, ref bool shouldAllow);
-
-        public delegate void PrePlayerInteractedBed(Player player, InteractableBed bed, bool claim,
-            ref bool shouldAllow);
-
-        public delegate void PlayerInteractedBed(Player player, InteractableBed bed, bool claim);
-
-        public delegate void PrePlayerInteractedMannequinUpdate(Player player, InteractableMannequin mannequin,
-            EMannequinUpdateMode updateMode, ref bool shouldAllow);
-
-        public delegate void PlayerInteractedMannequinUpdate(Player player, InteractableMannequin mannequin,
-            EMannequinUpdateMode updateMode);
-
-        public delegate void PrePlayerInteractedMannequinPose(Player player, InteractableMannequin mannequin, byte pose,
-            ref bool shouldAllow);
-
-        public delegate void PlayerInteractedMannequinPose(Player player, InteractableMannequin mannequin, byte pose);
-
-        public delegate void PrePlayerInteractedStorage(Player player, InteractableStorage storage, bool quickGrab,
-            ref bool shouldAllow);
-
-        public delegate void PlayerInteractedStorage(Player player, InteractableStorage storage, bool quickGrab);
-
-        public delegate void PrePlayerInteractedDisplay(Player player, InteractableStorage display, byte rot,
-            ref bool shouldAllow);
-
-        public delegate void PlayerInteractedDisplay(Player player, InteractableStorage display, byte rot);
-
-        public delegate void PrePlayerInteractedDoor(Player player, InteractableDoor door, bool open,
-            ref bool shouldAllow);
-
-        public delegate void PlayerInteractedDoor(Player player, InteractableDoor door, bool open);
-
-        public delegate void PrePlayerInteractedFire(Player player, InteractableFire fire, bool lit,
-            ref bool shouldAllow);
-
-        public delegate void PlayerInteractedFire(Player player, InteractableFire fire, bool lit);
-
-        public delegate void PrePlayerInteractedGenerator(Player player, InteractableGenerator generator, bool powered,
-            ref bool shouldAllow);
-
-        public delegate void PlayerInteractedGenerator(Player player, InteractableGenerator generator, bool powered);
-
-        public delegate void PrePlayerInteractedOven(Player player, InteractableOven oven, bool lit,
-            ref bool shouldAllow);
-
-        public delegate void PlayerInteractedOven(Player player, InteractableOven oven, bool lit);
-
-        public delegate void PrePlayerInteractedOxygenator(Player player, InteractableOxygenator oxygenator,
-            bool powered, ref bool shouldAllow);
-
-        public delegate void PlayerInteractedOxygenator(Player player, InteractableOxygenator oxygenator, bool powered);
-
-        public delegate void PrePlayerInteractedSafezone(Player player, InteractableSafezone safezone, bool powered,
-            ref bool shouldAllow);
-
-        public delegate void PlayerInteractedSafezone(Player player, InteractableSafezone safezone, bool powered);
-
-        public delegate void PrePlayerInteractedSign(Player player, InteractableSign sign, string text,
-            ref bool shouldAllow);
-
-        public delegate void PlayerInteractedSign(Player player, InteractableSign sign, string text);
-
-        public delegate void PrePlayerInteractedSpot(Player player, InteractableSpot spot, bool powered,
-            ref bool shouldAllow);
-
-        public delegate void PlayerInteractedSpot(Player player, InteractableSpot spot, bool powered);
-
-        public delegate void PrePlayerInteractedStereoTrack(Player player, InteractableStereo stereo, Guid track,
-            ref bool shouldAllow);
-
-        public delegate void PlayerInteractedStereoTrack(Player player, InteractableStereo stereo, Guid track);
-
-        public delegate void PrePlayerInteractedStereoVolume(Player player, InteractableStereo stereo, byte volume,
-            ref bool shouldAllow);
-
-        public delegate void PlayerInteractedStereoVolume(Player player, InteractableStereo stereo, byte volume);
-
-        public delegate void PrePlayerInteractedLibrary(Player player, InteractableLibrary library, byte transaction,
-            uint delta, ref bool shouldAllow);
-
-        public delegate void PlayerInteractedLibrary(Player player, InteractableLibrary library, byte transaction,
-            uint delta);
-
-        public delegate void PrePlayerClimbed(Player player, Vector3 direction, ref bool shouldAllow);
 
         public delegate void PlayerClimbed(Player player, Vector3 direction);
-
-        public delegate void PlayerSuicided(Player player);
-
-        public delegate void PrePlayerSuicided(Player player, ref bool shouldAllow);
 
         public delegate void PlayerDamaged(Player player, byte amount, EDeathCause newCause, ELimb newLimb,
             CSteamID newKiller, EPlayerKill kill);
@@ -169,36 +56,68 @@ namespace RFRocketLibrary.Events
 
         public delegate void PlayerForagedResource(Player player, ResourceSpawnpoint resourceSpawnpoint);
 
+        public delegate void PlayerInteractedBed(Player player, InteractableBed bed, bool claim);
+
+        public delegate void PlayerInteractedDisplay(Player player, InteractableStorage display, byte rot);
+
+        public delegate void PlayerInteractedDoor(Player player, InteractableDoor door, bool open);
+
+        public delegate void PlayerInteractedFire(Player player, InteractableFire fire, bool lit);
+
+        public delegate void PlayerInteractedGenerator(Player player, InteractableGenerator generator, bool powered);
+
+        public delegate void PlayerInteractedLibrary(Player player, InteractableLibrary library, byte transaction,
+            uint delta);
+
+        public delegate void PlayerInteractedMannequinPose(Player player, InteractableMannequin mannequin, byte pose);
+
+        public delegate void PlayerInteractedMannequinUpdate(Player player, InteractableMannequin mannequin,
+            EMannequinUpdateMode updateMode);
+
+        public delegate void PlayerInteractedOven(Player player, InteractableOven oven, bool lit);
+
+        public delegate void PlayerInteractedOxygenator(Player player, InteractableOxygenator oxygenator, bool powered);
+
+        public delegate void PlayerInteractedSafezone(Player player, InteractableSafezone safezone, bool powered);
+
+        public delegate void PlayerInteractedSign(Player player, InteractableSign sign, string text);
+
+        public delegate void PlayerInteractedSpot(Player player, InteractableSpot spot, bool powered);
+
+        public delegate void PlayerInteractedStereoTrack(Player player, InteractableStereo stereo, Guid track);
+
+        public delegate void PlayerInteractedStereoVolume(Player player, InteractableStereo stereo, byte volume);
+
+        public delegate void PlayerInteractedStorage(Player player, InteractableStorage storage, bool quickGrab);
+
         public delegate void PlayerMovementChanged(Player player, Vector3 lastPosition);
 
-        public delegate void PrePlayerTeleported(Player player, ref Vector3 teleportPosition, ref float rotation,
-            ref bool shouldAllow);
+        public delegate void PlayerStealVehicleBattery(Player player, InteractableVehicle vehicle);
+
+        public delegate void PlayerSuicided(Player player);
 
         public delegate void PlayerTeleported(Player player, Vector3 lastPosition, Vector3 teleportPosition,
             float rotation);
 
-        public delegate void PrePlayerMovementChanged(Player player, Vector3 lastPosition, Vector3 newPosition,
-            ref bool shouldAllow);
-
         public delegate void PreAnimalKilled(Animal animal, ref Vector3 newRagdoll, ref EPlayerKill kill, ref uint xp,
             ref bool trackKill, ref bool dropLoot, ref ERagdollEffect ragdollEffect, ref bool shouldAllow);
+
+        public delegate void PreAnimalMovementChanged(Animal animal, Vector3 lastPosition, ref bool shouldAllow);
 
         public delegate void PreAnimalSpawned(Animal animal, ref Vector3 position, ref byte angle,
             ref bool shouldAllow);
 
-        public delegate void AnimalSpawned(Animal animal, Vector3 position, byte angle);
-
-        public delegate void BarricadeTransformed(byte x, byte y, ushort plant, BarricadeDrop barricade, Vector3 point,
-            byte angle_x, byte angle_y, byte angle_z);
-
         public delegate void PreBarricadeDestroyed(BarricadeDrop drop, byte x, byte y, ushort plant,
             ref bool shouldAllow);
+
+        public delegate void PreGeneratorBurned(InteractableGenerator generator, ushort amount, ref bool shouldAllow);
 
         public delegate void PreItemSpawned(byte x, byte y, ref ushort id, ref byte amount, ref byte quality,
             ref byte[] state, ref Vector3 point, uint instanceID, ref bool shouldAllow);
 
-        public delegate void ItemSpawned(byte x, byte y, ushort id, byte amount, byte quality,
-            byte[] state, Vector3 point, uint instanceID);
+        public delegate void PreObjectResourceUpdated(LevelObject levelObject, ref ushort amount, ref bool shouldAllow);
+
+        public delegate void PreOilTankBurned(BarricadeDrop drop, ref ushort fuel, ref bool shouldAllow);
 
         public delegate void PrePlayerCaughtFish(Player player, ref bool giveFishReward);
 
@@ -213,6 +132,17 @@ namespace RFRocketLibrary.Events
         public delegate void PrePlayerChatted(Player player, ref EChatMode chatMode, ref string text,
             ref bool shouldAllow);
 
+        public delegate void PrePlayerClimbed(Player player, Vector3 direction, ref bool shouldAllow);
+
+        public delegate void PrePlayerConnected(SteamPlayerID playerID, ref Vector3 point, ref byte angle, bool isPro,
+            bool isAdmin, ref byte face, ref byte hair, ref byte beard, ref Color skin, ref Color color, bool hand,
+            ref int shirtItem, ref int pantsItem, ref int hatItem, ref int backpackItem, ref int vestItem,
+            ref int maskItem,
+            ref int glassesItem, ref int[] skinItems, ref string[] skinTags, ref string[] skinDynamicProps,
+            EPlayerSkillset skillset, string language);
+
+        public delegate void PrePlayerDehydrated(Player player, ref byte amount, ref bool shouldAllow);
+
         public delegate void PrePlayerDraggedItem(PlayerInventory inventory, byte page_0, byte x_0, byte y_0,
             byte page_1, byte x_1, byte y_1, byte rot_1, ref bool shouldAllow);
 
@@ -223,36 +153,110 @@ namespace RFRocketLibrary.Events
         public delegate void PrePlayerForagedResource(Player player, ResourceSpawnpoint resourceSpawnpoint,
             ref bool shouldAllow);
 
+        public delegate void PrePlayerHallucinationBlinded(Player player, ref byte amount, ref bool shouldAllow);
+
+        public delegate void PrePlayerInfected(Player player, ref byte amount, ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedBed(Player player, InteractableBed bed, bool claim,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedDisplay(Player player, InteractableStorage display, byte rot,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedDoor(Player player, InteractableDoor door, bool open,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedFire(Player player, InteractableFire fire, bool lit,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedGenerator(Player player, InteractableGenerator generator, bool powered,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedLibrary(Player player, InteractableLibrary library, byte transaction,
+            uint delta, ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedMannequinPose(Player player, InteractableMannequin mannequin, byte pose,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedMannequinUpdate(Player player, InteractableMannequin mannequin,
+            EMannequinUpdateMode updateMode, ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedOven(Player player, InteractableOven oven, bool lit,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedOxygenator(Player player, InteractableOxygenator oxygenator,
+            bool powered, ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedSafezone(Player player, InteractableSafezone safezone, bool powered,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedSign(Player player, InteractableSign sign, string text,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedSpot(Player player, InteractableSpot spot, bool powered,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedStereoTrack(Player player, InteractableStereo stereo, Guid track,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedStereoVolume(Player player, InteractableStereo stereo, byte volume,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerInteractedStorage(Player player, InteractableStorage storage, bool quickGrab,
+            ref bool shouldAllow);
+
         public delegate void PrePlayerKilled(Player player, ref Vector3 newRagdoll, ref EDeathCause newCause,
             ref ELimb newLimb, ref CSteamID newKiller, ref EPlayerKill kill, ref bool trackKill,
             ref ERagdollEffect newRagdollEffect,
             ref bool shouldAllow);
 
+        public delegate void PrePlayerMovementChanged(Player player, Vector3 lastPosition, Vector3 newPosition,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerRadiated(Player player, ref byte amount, ref bool shouldAllow);
+
+        public delegate void PrePlayerStarved(Player player, ref byte amount, ref bool shouldAllow);
+
+        public delegate void PrePlayerStealVehicleBattery(Player player, InteractableVehicle vehicle,
+            ref bool shouldAllow);
+
+        public delegate void PrePlayerSuffocated(Player player, ref byte amount, ref bool shouldAllow);
+
+        public delegate void PrePlayerSuicided(Player player, ref bool shouldAllow);
+
         public delegate void PrePlayerSwappedItem(PlayerInventory inventory, byte page_0, byte x_0, byte y_0,
             byte rot_0, byte page_1, byte x_1, byte y_1, byte rot_1, ref bool shouldAllow);
 
-        public delegate void PreVehicleDestroyed(InteractableVehicle vehicle, ref bool shouldAllow);
+        public delegate void PrePlayerTeleported(Player player, ref Vector3 teleportPosition, ref float rotation,
+            ref bool shouldAllow);
 
-        public delegate void PreVehicleExploded(InteractableVehicle vehicle, ref bool shouldAllow);
+        public delegate void PrePlayerTired(Player player, ref byte amount, ref bool shouldAllow);
+
+        public delegate void PrePlayerWarmUpdated(Player player, ref short delta, ref bool shouldAllow);
+
+        public delegate void PreRainBarrelUpdated(BarricadeDrop drop, ref bool isFull, ref bool shouldSend,
+            ref bool shouldAllow);
 
         public delegate void PreResourceSpawned(ResourceSpawnpoint resourceSpawnpoint, ref bool shouldAllow);
-
-        public delegate void ResourceSpawned(ResourceSpawnpoint resourceSpawnpoint);
 
         public delegate void PreServerSentMessage(ref string text, ref Color color, ref SteamPlayer fromPlayer,
             ref SteamPlayer toPlayer, ref EChatMode mode, ref string iconURL, ref bool useRichTextFormatting,
             ref bool shouldAllow);
 
-        public delegate void StructureTransformed(byte x, byte y, StructureDrop drop, Vector3 point, byte angle_x,
-            byte angle_y, byte angle_z);
-
         public delegate void PreStructureDestroyed(StructureDrop drop, byte x, byte y, ref Vector3 ragdoll,
             ref bool shouldAllow);
 
-        public delegate void PreVehicleSpawnedFromSpawnpoint(VehicleSpawnpoint vehicleSpawnpoint, ref bool shouldAllow);
+        public delegate void PreTankUpdated(BarricadeDrop drop, ref ushort amount, ref bool shouldAllow);
 
-        public delegate void VehicleSpawnedFromSpawnpoint(VehicleSpawnpoint vehicleSpawnpoint,
-            InteractableVehicle vehicle);
+        public delegate void PreVehicleDestroyed(InteractableVehicle vehicle, ref bool shouldAllow);
+
+        public delegate void PreVehicleExploded(InteractableVehicle vehicle, ref bool shouldAllow);
+
+        public delegate void PreVehicleMovementChanged(InteractableVehicle vehicle, Vector3 lastPosition,
+            ref bool shouldAllow);
+
+        public delegate void PreVehicleMovementChangedByPlayer(InteractableVehicle vehicle, Player? player,
+            Vector3 lastPosition, ref bool shouldAllow);
 
         public delegate void PreVehicleSpawned(ref VehicleAsset asset, ref ushort skinID,
             ref ushort mythicID, ref float roadPosition, ref Vector3 point, ref Quaternion angle, ref bool sirens,
@@ -261,47 +265,51 @@ namespace RFRocketLibrary.Events
             ref CSteamID owner,
             ref CSteamID group, ref bool locked, ref byte[][] turrets, ref byte tireAliveMask, ref bool shouldAllow);
 
-        public delegate void VehicleSpawned(InteractableVehicle vehicle);
+        public delegate void PreVehicleSpawnedFromSpawnpoint(VehicleSpawnpoint vehicleSpawnpoint, ref bool shouldAllow);
 
         public delegate void PreZombieKilled(Zombie zombie, ref Vector3 newRagdoll, ref EPlayerKill kill, ref uint xp,
             ref bool trackKill, ref bool dropLoot, ref EZombieStunOverride zombieStunOverride,
             ref ERagdollEffect ragdollEffect, ref bool shouldAllow);
 
+        public delegate void PreZombieMovementChanged(Zombie zombie, Vector3 lastPosition, ref bool shouldAllow);
+
         public delegate void PreZombieSpawned(Zombie zombie, ref byte newType, ref byte newSpeciality,
             ref byte newShirt, ref byte newPants, ref byte newHat, ref byte newGear, ref Vector3 newPosition,
             ref byte newAngle, ref bool shouldAllow);
 
-        public delegate void ZombieSpawned(Zombie zombie, byte newType, byte newSpeciality,
-            byte newShirt, byte newPants, byte newHat, byte newGear, Vector3 newPosition,
-            byte newAngle);
+        public delegate void RainBarrelUpdated(BarricadeDrop drop, bool isFull, bool shouldSend);
 
         public delegate void ResourceDead(ResourceSpawnpoint resourceSpawnpoint, ref Vector3 ragdoll);
 
-        public delegate void ObjectSpawned(LevelObject levelObject, byte section);
-
-        public delegate void ObjectDestroyed(LevelObject levelObject, byte section);
+        public delegate void ResourceSpawned(ResourceSpawnpoint resourceSpawnpoint);
 
         public delegate void StructureDestroyed(StructureDrop drop, byte x, byte y, Vector3 ragdoll);
 
-        public delegate void PreVehicleMovementChanged(InteractableVehicle vehicle, Vector3 lastPosition,
-            ref bool shouldAllow);
+        public delegate void StructureTransformed(byte x, byte y, StructureDrop drop, Vector3 point, byte angle_x,
+            byte angle_y, byte angle_z);
+
+        public delegate void TankUpdated(BarricadeDrop drop, ushort amount);
 
         public delegate void VehicleMovementChanged(InteractableVehicle vehicle, Vector3 lastPosition);
 
-        public delegate void PreVehicleMovementChangedByPlayer(InteractableVehicle vehicle, Player? player,
-            Vector3 lastPosition, ref bool shouldAllow);
-
         public delegate void VehicleMovementChangedByPlayer(InteractableVehicle vehicle, Player? player,
             Vector3 lastPosition);
+
+        public delegate void VehicleSpawned(InteractableVehicle vehicle);
+
+        public delegate void VehicleSpawnedFromSpawnpoint(VehicleSpawnpoint vehicleSpawnpoint,
+            InteractableVehicle vehicle);
 
         public delegate void ZombieDamaged(Zombie zombie, ushort damage, EPlayerKill kill, uint xp);
 
         public delegate void ZombieKilled(Zombie? zombie, ZombieRegion? zombieRegion, ref Vector3 ragdoll,
             ref ERagdollEffect ragdollEffect);
 
-        public delegate void PreZombieMovementChanged(Zombie zombie, Vector3 lastPosition, ref bool shouldAllow);
-
         public delegate void ZombieMovementChanged(Zombie zombie, Vector3 lastPosition);
+
+        public delegate void ZombieSpawned(Zombie zombie, byte newType, byte newSpeciality,
+            byte newShirt, byte newPants, byte newHat, byte newGear, Vector3 newPosition,
+            byte newAngle);
 
         #endregion
 
@@ -311,126 +319,126 @@ namespace RFRocketLibrary.Events
         public static event AnimalKilled? OnAnimalKilled;
 
         public static event AnimalMovementChanged? OnAnimalMovementChanged;
-        public static event PreRainBarrelUpdated? OnPreRainBarrelUpdated;
-        public static event RainBarrelUpdated? OnRainBarrelUpdated;
-        public static event PreObjectResourceUpdated? OnPreObjectResourceUpdated;
-        public static event ObjectResourceUpdated? OnObjectResourceUpdated;
-        public static event PreTankUpdated? OnPreTankUpdated;
-        public static event TankUpdated? OnTankUpdated;
-        public static event PreOilTankBurned? OnPreOilTankBurned;
-        public static event OilTankBurned? OnOilTankBurned;
-        public static event PrePlayerStealVehicleBattery? OnPrePlayerStealVehicleBattery;
-        public static event PlayerStealVehicleBattery? OnPlayerStealVehicleBattery;
-        public static event PrePlayerConnected? OnPrePlayerConnected;
-        public static event PrePlayerClimbed? OnPrePlayerClimbed;
-        public static event PlayerClimbed? OnPlayerClimbed;
-        public static event PreGeneratorBurned? OnPreGeneratorBurned;
-        public static event PrePlayerSuicided? OnPrePlayerSuicided;
-        public static event PlayerSuicided? OnPlayerSuicided;
-        public static event PrePlayerStarved? OnPrePlayerStarved;
-        public static event PrePlayerDehydrated? OnPrePlayerDehydrated;
-        public static event PrePlayerInfected? OnPrePlayerInfected;
-        public static event PrePlayerRadiated? OnPrePlayerRadiated;
-        public static event PrePlayerTired? OnPrePlayerTired;
-        public static event PrePlayerSuffocated? OnPrePlayerSuffocated;
-        public static event PrePlayerHallucinationBlinded? OnPrePlayerHallucinationBlinded;
-        public static event PrePlayerWarmUpdated? OnPrePlayerWarmUpdated;
-        public static event PrePlayerInteractedBed? OnPrePlayerInteractedBed;
-        public static event PlayerInteractedBed? OnPlayerInteractedBed;
-        public static event PrePlayerInteractedMannequinUpdate? OnPrePlayerInteractedMannequinUpdate;
-        public static event PlayerInteractedMannequinUpdate? OnPlayerInteractedMannequinUpdate;
-        public static event PrePlayerInteractedMannequinPose? OnPrePlayerInteractedMannequinPose;
-        public static event PlayerInteractedMannequinPose? OnPlayerInteractedMannequinPose;
-        public static event PrePlayerInteractedStorage? OnPrePlayerInteractedStorage;
-        public static event PlayerInteractedStorage? OnPlayerInteractedStorage;
-        public static event PrePlayerInteractedDisplay? OnPrePlayerInteractedDisplay;
-        public static event PlayerInteractedDisplay? OnPlayerInteractedDisplay;
-        public static event PrePlayerInteractedDoor? OnPrePlayerInteractedDoor;
-        public static event PlayerInteractedDoor? OnPlayerInteractedDoor;
-        public static event PrePlayerInteractedFire? OnPrePlayerInteractedFire;
-        public static event PlayerInteractedFire? OnPlayerInteractedFire;
-        public static event PrePlayerInteractedGenerator? OnPrePlayerInteractedGenerator;
-        public static event PlayerInteractedGenerator? OnPlayerInteractedGenerator;
-        public static event PrePlayerInteractedOxygenator? OnPrePlayerInteractedOxygenator;
-        public static event PlayerInteractedOxygenator? OnPlayerInteractedOxygenator;
-        public static event PrePlayerInteractedOven? OnPrePlayerInteractedOven;
-        public static event PlayerInteractedOven? OnPlayerInteractedOven;
-        public static event PrePlayerInteractedSafezone? OnPrePlayerInteractedSafezone;
-        public static event PlayerInteractedSafezone? OnPlayerInteractedSafezone;
-        public static event PrePlayerInteractedSign? OnPrePlayerInteractedSign;
-        public static event PlayerInteractedSign? OnPlayerInteractedSign;
-        public static event PrePlayerInteractedSpot? OnPrePlayerInteractedSpot;
-        public static event PlayerInteractedSpot? OnPlayerInteractedSpot;
-        public static event PrePlayerInteractedStereoTrack? OnPrePlayerInteractedStereoTrack;
-        public static event PlayerInteractedStereoTrack? OnPlayerInteractedStereoTrack;
-        public static event PrePlayerInteractedStereoVolume? OnPrePlayerInteractedStereoVolume;
-        public static event PlayerInteractedStereoVolume? OnPlayerInteractedStereoVolume;
-        public static event PrePlayerInteractedLibrary? OnPrePlayerInteractedLibrary;
-        public static event PlayerInteractedLibrary? OnPlayerInteractedLibrary;
+        public static event AnimalSpawned? OnAnimalSpawned;
 
         // public static event PreAnimalMovementChanged? OnPreAnimalMovementChanged;
         public static event BarricadeDestroyed? OnBarricadeDestroyed;
+        public static event BarricadeTransformed? OnBarricadeTransformed;
+        public static event ItemSpawned? OnItemSpawned;
+        public static event ObjectDestroyed? OnObjectDestroyed;
+        public static event ObjectResourceUpdated? OnObjectResourceUpdated;
+        public static event ObjectSpawned? OnObjectSpawned;
+        public static event OilTankBurned? OnOilTankBurned;
 
         public static event PlayerAttack? OnPlayerAttack;
+        public static event PlayerClimbed? OnPlayerClimbed;
         public static event PlayerDamaged? OnPlayerDamaged;
         public static event PlayerFiremodeChanged? OnPlayerFiremodeChanged;
         public static event PlayerForagedResource? OnPlayerForagedResource;
+        public static event PlayerInteractedBed? OnPlayerInteractedBed;
+        public static event PlayerInteractedDisplay? OnPlayerInteractedDisplay;
+        public static event PlayerInteractedDoor? OnPlayerInteractedDoor;
+        public static event PlayerInteractedFire? OnPlayerInteractedFire;
+        public static event PlayerInteractedGenerator? OnPlayerInteractedGenerator;
+        public static event PlayerInteractedLibrary? OnPlayerInteractedLibrary;
+        public static event PlayerInteractedMannequinPose? OnPlayerInteractedMannequinPose;
+        public static event PlayerInteractedMannequinUpdate? OnPlayerInteractedMannequinUpdate;
+        public static event PlayerInteractedOven? OnPlayerInteractedOven;
+        public static event PlayerInteractedOxygenator? OnPlayerInteractedOxygenator;
+        public static event PlayerInteractedSafezone? OnPlayerInteractedSafezone;
+        public static event PlayerInteractedSign? OnPlayerInteractedSign;
+        public static event PlayerInteractedSpot? OnPlayerInteractedSpot;
+        public static event PlayerInteractedStereoTrack? OnPlayerInteractedStereoTrack;
+        public static event PlayerInteractedStereoVolume? OnPlayerInteractedStereoVolume;
+        public static event PlayerInteractedStorage? OnPlayerInteractedStorage;
 
         public static event PlayerMovementChanged? OnPlayerMovementChanged;
-        public static event PrePlayerTeleported? OnPrePlayerTeleported;
+        public static event PlayerStealVehicleBattery? OnPlayerStealVehicleBattery;
+        public static event PlayerSuicided? OnPlayerSuicided;
         public static event PlayerTeleported? OnPlayerTeleported;
 
         // public static event PrePlayerMovementChanged? OnPrePlayerMovementChanged;
         public static event PreAnimalKilled? OnPreAnimalKilled;
         public static event PreAnimalSpawned? OnPreAnimalSpawned;
-        public static event AnimalSpawned? OnAnimalSpawned;
-        public static event BarricadeTransformed? OnBarricadeTransformed;
         public static event PreBarricadeDestroyed? OnPreBarricadeDestroyed;
+        public static event PreGeneratorBurned? OnPreGeneratorBurned;
         public static event PreItemSpawned? OnPreItemSpawned;
-        public static event ItemSpawned? OnItemSpawned;
+        public static event PreObjectResourceUpdated? OnPreObjectResourceUpdated;
+        public static event PreOilTankBurned? OnPreOilTankBurned;
 
         public static event PrePlayerCaughtFish? OnPrePlayerCaughtFish;
         public static event PrePlayerChangedEquipment? OnPrePlayerChangedEquipment;
         public static event PrePlayerChangedGesture? OnPrePlayerChangedGesture;
         public static event PrePlayerChangedStance? OnPrePlayerChangedStance;
         public static event PrePlayerChatted? OnPrePlayerChatted;
+        public static event PrePlayerClimbed? OnPrePlayerClimbed;
+        public static event PrePlayerConnected? OnPrePlayerConnected;
+        public static event PrePlayerDehydrated? OnPrePlayerDehydrated;
         public static event PrePlayerDraggedItem? OnPrePlayerDraggedItem;
         public static event PrePlayerDroppedItem? OnPrePlayerDroppedItem;
         public static event PrePlayerFiremodeChanged? OnPrePlayerFiremodeChanged;
         public static event PrePlayerForagedResource? OnPrePlayerForagedResource;
+        public static event PrePlayerHallucinationBlinded? OnPrePlayerHallucinationBlinded;
+        public static event PrePlayerInfected? OnPrePlayerInfected;
+        public static event PrePlayerInteractedBed? OnPrePlayerInteractedBed;
+        public static event PrePlayerInteractedDisplay? OnPrePlayerInteractedDisplay;
+        public static event PrePlayerInteractedDoor? OnPrePlayerInteractedDoor;
+        public static event PrePlayerInteractedFire? OnPrePlayerInteractedFire;
+        public static event PrePlayerInteractedGenerator? OnPrePlayerInteractedGenerator;
+        public static event PrePlayerInteractedLibrary? OnPrePlayerInteractedLibrary;
+        public static event PrePlayerInteractedMannequinPose? OnPrePlayerInteractedMannequinPose;
+        public static event PrePlayerInteractedMannequinUpdate? OnPrePlayerInteractedMannequinUpdate;
+        public static event PrePlayerInteractedOven? OnPrePlayerInteractedOven;
+        public static event PrePlayerInteractedOxygenator? OnPrePlayerInteractedOxygenator;
+        public static event PrePlayerInteractedSafezone? OnPrePlayerInteractedSafezone;
+        public static event PrePlayerInteractedSign? OnPrePlayerInteractedSign;
+        public static event PrePlayerInteractedSpot? OnPrePlayerInteractedSpot;
+        public static event PrePlayerInteractedStereoTrack? OnPrePlayerInteractedStereoTrack;
+        public static event PrePlayerInteractedStereoVolume? OnPrePlayerInteractedStereoVolume;
+        public static event PrePlayerInteractedStorage? OnPrePlayerInteractedStorage;
         public static event PrePlayerKilled? OnPrePlayerKilled;
+        public static event PrePlayerRadiated? OnPrePlayerRadiated;
+        public static event PrePlayerStarved? OnPrePlayerStarved;
+        public static event PrePlayerStealVehicleBattery? OnPrePlayerStealVehicleBattery;
+        public static event PrePlayerSuffocated? OnPrePlayerSuffocated;
+        public static event PrePlayerSuicided? OnPrePlayerSuicided;
         public static event PrePlayerSwappedItem? OnPrePlayerSwappedItem;
+        public static event PrePlayerTeleported? OnPrePlayerTeleported;
+        public static event PrePlayerTired? OnPrePlayerTired;
+        public static event PrePlayerWarmUpdated? OnPrePlayerWarmUpdated;
+        public static event PreRainBarrelUpdated? OnPreRainBarrelUpdated;
+        public static event PreResourceSpawned? OnPreResourceSpawned;
+        public static event PreServerSentMessage? OnPreServerMessageSent;
+        public static event PreStructureDestroyed? OnPreStructureDestroyed;
+        public static event PreTankUpdated? OnPreTankUpdated;
         public static event PreVehicleDestroyed? OnPreVehicleDestroyed;
         public static event PreVehicleExploded? OnPreVehicleExploded;
-        public static event PreResourceSpawned? OnPreResourceSpawned;
-        public static event ResourceSpawned? OnResourceSpawned;
-        public static event PreServerSentMessage? OnPreServerMessageSent;
-        public static event StructureTransformed? OnStructureTransformed;
-        public static event PreStructureDestroyed? OnPreStructureDestroyed;
-        public static event PreVehicleSpawnedFromSpawnpoint? OnPreVehicleSpawnedFromSpawnpoint;
-        public static event VehicleSpawnedFromSpawnpoint? OnVehicleSpawnedFromSpawnpoint;
+        public static event PreVehicleMovementChangedByPlayer? OnPreVehicleMovementChangedByPlayer;
         public static event PreVehicleSpawned? OnPreVehicleSpawned;
-        public static event VehicleSpawned? OnVehicleSpawned;
+        public static event PreVehicleSpawnedFromSpawnpoint? OnPreVehicleSpawnedFromSpawnpoint;
         public static event PreZombieKilled? OnPreZombieKilled;
+        public static event PreZombieMovementChanged? OnPreZombieMovementChanged;
         public static event PreZombieSpawned? OnPreZombieSpawned;
-        public static event ZombieSpawned? OnZombieSpawned;
-        public static event ResourceDead? OnResourceDestroyed;
+        public static event RainBarrelUpdated? OnRainBarrelUpdated;
         public static event ResourceDead? OnResourceChopped;
+        public static event ResourceDead? OnResourceDestroyed;
         public static event ResourceDead? OnResourceForaged;
         public static event ResourceDead? OnResourceMined;
-        public static event ObjectSpawned? OnObjectSpawned;
-        public static event ObjectDestroyed? OnObjectDestroyed;
+        public static event ResourceSpawned? OnResourceSpawned;
 
         public static event StructureDestroyed? OnStructureDestroyed;
+        public static event StructureTransformed? OnStructureTransformed;
+        public static event TankUpdated? OnTankUpdated;
 
         // public static event PreVehicleMovementChanged? OnPreVehicleMovementChanged;
         public static event VehicleMovementChanged? OnVehicleMovementChanged;
-        public static event PreVehicleMovementChangedByPlayer? OnPreVehicleMovementChangedByPlayer;
         public static event VehicleMovementChangedByPlayer? OnVehicleMovementChangedByPlayer;
+        public static event VehicleSpawned? OnVehicleSpawned;
+        public static event VehicleSpawnedFromSpawnpoint? OnVehicleSpawnedFromSpawnpoint;
         public static event ZombieDamaged? OnZombieDamaged;
         public static event ZombieKilled? OnZombieKilled;
-        public static event PreZombieMovementChanged? OnPreZombieMovementChanged;
         public static event ZombieMovementChanged? OnZombieMovementChanged;
+        public static event ZombieSpawned? OnZombieSpawned;
 
         #endregion
 
@@ -1606,8 +1614,7 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(Animal), "askDamage")]
             [HarmonyPostfix]
-            internal static void OnPreAnimalKilledInvoker(bool __state, Animal __instance, ushort ___health,
-                ushort amount,
+            internal static void OnAnimalKilledInvoker(bool __state, Animal __instance, ushort amount,
                 ref Vector3 newRagdoll, ref EPlayerKill kill, ref uint xp, ref bool trackKill, ref bool dropLoot,
                 ref ERagdollEffect ragdollEffect)
             {
@@ -1639,7 +1646,7 @@ namespace RFRocketLibrary.Events
             [HarmonyPatch(typeof(BarricadeManager), "destroyBarricade")]
             [HarmonyPatch(new[] {typeof(BarricadeDrop), typeof(byte), typeof(byte), typeof(ushort)})]
             [HarmonyPostfix]
-            internal static void OnPreBarricadeDestroyedInvoker(bool __state, BarricadeDrop barricade, byte x,
+            internal static void OnBarricadeDestroyedInvoker(bool __state, BarricadeDrop barricade, byte x,
                 byte y, ushort plant)
             {
                 if (!__state)
@@ -1751,7 +1758,7 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(PlayerLife), "doDamage")]
             [HarmonyPostfix]
-            internal static void OnPrePlayerKilledInvoker(bool __state, PlayerLife __instance, byte amount,
+            internal static void OnPlayerKilledInvoker(bool __state, PlayerLife __instance, byte amount,
                 ref Vector3 newRagdoll,
                 ref EDeathCause newCause, ref ELimb newLimb, ref CSteamID newKiller, ref EPlayerKill kill,
                 ref bool trackKill, ref ERagdollEffect newRagdollEffect, bool canCauseBleeding = true)
@@ -1764,7 +1771,7 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(ResourceManager), "ReceiveResourceDead")]
             [HarmonyPostfix]
-            internal static void OnPreResourceDeadInvoker(byte x, byte y, ushort index,
+            internal static void OnResourceDeadInvoker(byte x, byte y, ushort index,
                 ref Vector3 ragdoll)
             {
                 var resourceSpawnpoint = LevelGround.trees[x, y]?[index];
@@ -1817,7 +1824,7 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(UseableGun), "ReceiveChangeFiremode")]
             [HarmonyPostfix]
-            internal static void OnPrePlayerFiremodeChangedInvoker(bool __state, UseableGun __instance,
+            internal static void OnPlayerFiremodeChangedInvoker(bool __state, UseableGun __instance,
                 EFiremode newFiremode)
             {
                 if (!__state)
@@ -1852,7 +1859,7 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(ResourceManager), "ReceiveForageRequest")]
             [HarmonyPostfix]
-            internal static void OnPrePlayerForagedResourceInvoker(bool __state,
+            internal static void OnPlayerForagedResourceInvoker(bool __state,
                 in ServerInvocationContext context, byte x, byte y,
                 ushort index)
             {
@@ -1893,7 +1900,7 @@ namespace RFRocketLibrary.Events
             [HarmonyPatch(typeof(StructureManager), "destroyStructure")]
             [HarmonyPatch(new[] {typeof(StructureDrop), typeof(byte), typeof(byte), typeof(Vector3)})]
             [HarmonyPostfix]
-            internal static void OnPreStructureDestroyedInvoker(bool __state, StructureDrop structure, byte x,
+            internal static void OnStructureDestroyedInvoker(bool __state, StructureDrop structure, byte x,
                 byte y, ref Vector3 ragdoll)
             {
                 if (!__state)
@@ -1917,7 +1924,7 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(VehicleManager), "ReceiveVehicleExploded")]
             [HarmonyPrefix]
-            internal static bool OnPrePreVehicleExplodedInvoker(uint instanceID)
+            internal static bool OnPreVehicleExplodedInvoker(uint instanceID)
             {
                 var vehicle = VehicleManager.findVehicleByNetInstanceID(instanceID);
 
@@ -1955,7 +1962,7 @@ namespace RFRocketLibrary.Events
 
             [HarmonyPatch(typeof(Zombie), "askDamage")]
             [HarmonyPostfix]
-            internal static void OnPreZombieKilledInvoker(bool __state, Zombie __instance, ushort amount,
+            internal static void OnZombieKilledInvoker(bool __state, Zombie __instance, ushort amount,
                 Vector3 newRagdoll, EPlayerKill kill, uint xp, bool trackKill, bool dropLoot,
                 EZombieStunOverride stunOverride, ERagdollEffect ragdollEffect)
             {

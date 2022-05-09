@@ -4,6 +4,8 @@
     {
         Dapper,
         Harmony,
+        I18N,
+        I18NWest,
         LiteDB,
         LiteDBAsync,
         MySqlData,
@@ -13,5 +15,6 @@
         SystemManagement,
         SystemXmlLinq,
         UbietyDnsCore,
+        ZstdNet,
     }
 }

@@ -14,6 +14,18 @@
         public static string HarmonyMirror =
             "https://gitlab.com/RiceField-Plugins/LibraryDependencies/-/raw/main/0Harmony.2.2.1.1.dll";
 
+        public static string I18N =
+            "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/I18N.4.0.0.0.dll";
+
+        public static string I18NMirror =
+            "https://gitlab.com/RiceField-Plugins/LibraryDependencies/-/raw/main/I18N.4.0.0.0.dll";
+
+        public static string I18NWest =
+            "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/I18N.West.4.0.0.0.dll";
+
+        public static string I18NWestMirror =
+            "https://gitlab.com/RiceField-Plugins/LibraryDependencies/-/raw/main/I18N.West.4.0.0.0.dll";
+
         public static string LiteDB =
             "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/LiteDB.5.0.11.0.dll";
 
@@ -27,10 +39,10 @@
             "https://gitlab.com/RiceField-Plugins/LibraryDependencies/-/raw/main/litedbasync.0.0.11.dll";
 
         public static string MySqlData =
-            "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/MySql.Data.8.0.25.0.dll";
+            "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/MySql.Data.8.0.29.0.dll";
 
         public static string MySqlDataMirror =
-            "https://gitlab.com/RiceField-Plugins/LibraryDependencies/-/raw/main/MySql.Data.8.0.25.0.dll";
+            "https://gitlab.com/RiceField-Plugins/LibraryDependencies/-/raw/main/MySql.Data.8.0.29.0.dll";
 
         public static string NewtonsoftJson =
             "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/Newtonsoft.Json.13.0.1.dll";
@@ -70,5 +82,11 @@
 
         public static string UbietyDnsCoreMirror =
             "https://gitlab.com/RiceField-Plugins/LibraryDependencies/-/raw/main/Ubiety.Dns.Core.2.2.1.0.dll";
+
+        public static string ZstdNet =
+            "https://cdn.jsdelivr.net/gh/RiceField-Plugins/LibraryDependencies@main/ZstdNet.1.4.5.0.dll";
+
+        public static string ZstdNetMirror =
+            "https://gitlab.com/RiceField-Plugins/LibraryDependencies/-/raw/main/ZstdNet.1.4.5.0.dll";
     }
 }

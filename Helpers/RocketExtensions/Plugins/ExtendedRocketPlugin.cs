@@ -18,7 +18,7 @@ namespace RocketExtensions.Plugins
     public class ExtendedRocketPlugin<TPluginConfig> : ExtendedRocketPlugin, IRocketPlugin<TPluginConfig>
         where TPluginConfig : class, IRocketPluginConfiguration
     {
-        public IAsset<TPluginConfig?> Configuration { get; }
+        public IAsset<TPluginConfig> Configuration { get; }
 
         public ExtendedRocketPlugin()
         {
@@ -32,9 +32,9 @@ namespace RocketExtensions.Plugins
                 url = File.ReadAllLines(configurationFile).First().Trim();
 
             if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
-                Configuration = new WebXMLFileAsset<TPluginConfig?>(uri, null, _ => { base.LoadPlugin(); });
+                Configuration = new WebXMLFileAsset<TPluginConfig>(uri, null, _ => { base.LoadPlugin(); });
             else
-                Configuration = new XMLFileAsset<TPluginConfig?>(configurationFile);
+                Configuration = new XMLFileAsset<TPluginConfig>(configurationFile);
         }
 
         public override void LoadPlugin()
