@@ -82,6 +82,7 @@ namespace RFRocketLibrary.Models
                 Tires = vehicle.tires?.Select(c => c.isAlive).ToArray() ?? Array.Empty<bool>(),
                 Turrets = vehicleTurret,
                 Group = vehicle.lockedGroup.m_SteamID,
+                Owner = vehicle.lockedOwner.m_SteamID,
             };
 
             if (!BarricadeManager.tryGetPlant(vehicle.transform, out _, out _, out _, out var region))

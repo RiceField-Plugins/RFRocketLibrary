@@ -49,18 +49,18 @@ namespace Discord.Webhook
             if (string.IsNullOrWhiteSpace(Url))
                 throw new ArgumentNullException(nameof(Url), "Invalid Webhook URL.");
 
-            string bound = "------------------------" + DateTime.Now.Ticks.ToString("x");
-            WebClient webhookRequest = new WebClient();
+            var bound = "------------------------" + DateTime.Now.Ticks.ToString("x");
+            using var webhookRequest = new WebClient();
             webhookRequest.Headers.Add("Content-Type", "multipart/form-data; boundary=" + bound);
             
-            MemoryStream stream = new MemoryStream();
-            for (int i = 0; i < files.Length; i++)
+            var stream = new MemoryStream();
+            for (var i = 0; i < files.Length; i++)
                 SetFile(stream, bound, i, files[i]);
 
-            string json = message.ToString();
+            var json = message.ToString();
             SetJsonPayload(stream, bound, json);
 
-            byte[] bodyEnd = Utils.Encode($"\r\n--{bound}--");
+            var bodyEnd = Utils.Encode($"\r\n--{bound}--");
             stream.Write(bodyEnd, 0, bodyEnd.Length);
 
             //byte[] beginBodyBuffer = Encoding.UTF8.GetBytes("--" + bound + "\r\n");

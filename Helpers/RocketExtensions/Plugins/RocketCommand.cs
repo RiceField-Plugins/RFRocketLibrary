@@ -7,6 +7,7 @@ using RocketExtensions.Models;
 using RocketExtensions.Models.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -201,7 +202,7 @@ namespace RocketExtensions.Plugins
             }
             else
                 runningCommand.Instances++;
-            
+
             if (ExtendedPlugin == null)
                 Task.Run(async () => await Run(context));
             else
@@ -216,10 +217,12 @@ namespace RocketExtensions.Plugins
             {
                 if (!AllowSimultaneousCalls && runningCommand.Instances > 1)
                 {
-                    await context.ReplyAsync($"This command does not support simultaneous calls. Please wait for previous command to finish!", Color.yellow);
+                    await context.ReplyAsync(
+                        $"This command does not support simultaneous calls. Please wait for previous command to finish!",
+                        Color.yellow);
                     await context.CancelCooldownAsync();
                 }
-                
+
                 await Execute(context);
             }
             catch (InvalidArgumentException invalid)
@@ -247,8 +250,8 @@ namespace RocketExtensions.Plugins
             catch (Exception ex)
             {
                 Logger.LogError($"Error while executing /{Name}");
-                Logger.LogError($"[{ex.GetType().FullName}] {ex.Message}");
-                Logger.LogError(ex.StackTrace);
+                Logger.LogError($"[{Plugin.Name}] Message: {ex.Message}");
+                Logger.LogError($"[{Plugin.Name}] Details: {ex}");
                 await context.ReplyAsync("An error occurred during the execution of this command", Color.red);
             }
             finally
